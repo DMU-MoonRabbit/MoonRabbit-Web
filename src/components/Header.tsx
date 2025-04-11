@@ -35,7 +35,7 @@ const Header = () => {
         )}
       </div>
 
-      {/* PC용 네비게이션(오른쪽쪽) */}
+      {/* PC용 네비게이션(오른쪽) */}
       {!isMobile && (
         <div className="flex items-center space-x-10 font-mainFont text-base">
           <Link to="/login">로그인 / 회원가입</Link>
