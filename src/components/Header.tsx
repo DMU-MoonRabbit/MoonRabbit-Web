@@ -9,7 +9,7 @@ const Header = () => {
         ⋆˚.•✩‧₊⋆
         </Link>
 
-        <nav className="flex font-mainFont text-sm tracking-wide">
+        <nav className="flex tracking-wide space-x-18 font-mainFont text-base">
           <Link to="/sky">밤하늘</Link>
           <Link to="/question">오늘의 질문</Link>
           <Link to="/stars">별자리</Link>
@@ -17,7 +17,7 @@ const Header = () => {
         </nav>
       </div>
 
-      <div className="flex items-center space-x-6 text-sm font-mainFont">
+      <div className="flex items-center space-x-18 font-mainFont text-base">
         <Link to="/login">로그인 / 회원가입</Link>
         <Link to="/settings">설정</Link>
       </div>
