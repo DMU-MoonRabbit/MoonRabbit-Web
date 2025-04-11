@@ -1,4 +1,12 @@
 @import "tailwindcss";
+
+@font-face {
+    font-family: 'HSBombaram2.1';
+    src: url('assets/fonts/HSBombaram2.1.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
 @theme {
     --color-mainColor: #E25F47;
     --color-lightBeige: #FDF7EA;
@@ -12,6 +20,5 @@
     --color-subBlack: #26262D;
     --color-mainGray: #A8A8A8;
 
-    --font-mainFont: 'HSBombaram2.1';
+    --font-mainFont: 'HSBombaram2.1', sans-serif;
   }
-  

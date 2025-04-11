@@ -1,13 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import MoonStar from '../assets/MoonStar.png'
 
 const Header = () => {
   return (
     <div className="bg-darkWalnut text-darkBeige h-14 flex items-center justify-between px-8 shadow-md">
       <div className="flex items-center space-x-10">
         <Link to="/">
-          <img src={MoonStar} alt="MoonStar" />
+        ⋆˚.•✩‧₊⋆
         </Link>
 
         <nav className="flex font-mainFont text-sm tracking-wide">
