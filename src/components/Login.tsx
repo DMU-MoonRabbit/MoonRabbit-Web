@@ -42,7 +42,7 @@ export const LoginFormHeader = () => {
           <span className="text-lightCaramel">Moon</span>Rabbit
         </span>
       </div>
-      <div className="flex items-end font-bold ml-auto text-[14px] flex-col lg:flex-row lx:text-[0.8vw]">
+      <div className="flex items-end font-bold ml-auto text-[14px] flex-col lg:items-center lg:flex-row">
         <span>ID&PW 로그인</span>
         <div className="flex items-center">
           <div className="h-[25px] w-[1px] bg-black mx-2 opacity-0 lg:opacity-100" />
