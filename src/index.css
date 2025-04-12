@@ -1,3 +1,24 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@font-face {
+    font-family: 'HSBombaram2.1';
+    src: url('assets/fonts/HSBombaram2.1.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+@theme {
+    --color-mainColor: #E25F47;
+    --color-lightBeige: #FDF7EA;
+    --color-darkBeige: #F0D093;
+    --color-lightCaramel: #D48C5B;
+    --color-lightWalnut: #937066;
+    --color-darkWalnut: #473C2C;
+    --color-mainWhite: #F9F9FA;
+    --color-subWhite: #F5F5F5;
+    --color-mainBlack: #17171B;
+    --color-subBlack: #26262D;
+    --color-mainGray: #A8A8A8;
+
+    --font-mainFont: 'HSBombaram2.1', sans-serif;
+  }
