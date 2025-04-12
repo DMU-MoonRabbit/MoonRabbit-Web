@@ -34,7 +34,7 @@ export const LoginFormHeader = () => {
   return res === 'pc' ? (
     <div className="mb-6 flex items-center">
       <img src={LogoImg} alt="logo" className="w-20 -ml-5 lg:w-30 inline" />
-      <div className="flex flex-col items-center font-mainFont text-darkWalnut">
+      <div className="flex flex-col items-center font-mainFont text-darkWalnut -ml-2 mt-auto mb-4">
         <span className="text-[2.5vw] lg:text-[30px]">
           <span className="text-lightCaramel">달</span>토끼
         </span>
