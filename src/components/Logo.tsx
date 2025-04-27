@@ -25,7 +25,7 @@ const Logo: React.FC = () => {
       <img
         src="/images/MoonRabbitLogo.png"
         alt="달토끼 로고"
-        className="w-full h-auto object-contain"
+        className="w-full h-auto object-contain mt-12"
         style={{ 
           maxWidth: '569px',
           maxHeight: '642px'
