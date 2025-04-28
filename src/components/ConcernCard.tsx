@@ -30,25 +30,46 @@ const textEllipsis = css`
   text-overflow: ellipsis;
 `;
 
+// 좌우로 움직이는 애니메이션
+const floatingAnimation = css`
+  @keyframes float {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-0.5rem) rotate(1deg);
+    }
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+  }
+
+  animation: float 4s ease-in-out infinite;
+  &:hover {
+    animation-play-state: paused;
+  }
+`;
+
 // 카드의 기본 컨테이너
 const Card = styled.div<{ backgroundImage?: string }>`
   width: 100%;
-  max-width: 560px;
+  max-width: 35rem;
   height: auto;
-  min-height: 260px;
+  min-height: 16.25rem;
   position: relative;
   background: ${props => props.backgroundImage ? `url(${props.backgroundImage})` : 'url(/images/ConcernBackground.png)'};
   background-size: 100% 100%;
   background-position: center;
-  border-radius: 24px;
+  border-radius: 1.5rem;
   overflow: hidden;
   margin: 0 auto;
   ${flexCenter}
-  padding: 0 10px;
+  padding: 0 0.625rem;
   transition: transform 0.2s ease-in-out;
+  ${floatingAnimation}
 
   &:hover {
-    transform: translateY(-2px);
+    transform: translateY(-0.125rem);
   }
 `;
 
@@ -58,17 +79,17 @@ const CardContent = styled.div`
   z-index: 2;
   width: 100%;
   height: 100%;
-  padding: 0 5px;
+  padding: 0 0.3125rem;
 `;
 
 // 프로필 이미지 컨테이너
 const ProfileImage = styled.div`
   position: absolute;
-  left: 30px;
-  top: 19px;
-  width: 80px;
-  height: 80px;
-  border-radius: 40px;
+  left: 1.875rem;
+  top: 1.1875rem;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 2.5rem;
   background: var(--color-lightBackground);
   overflow: hidden;
   transition: transform 0.2s ease-in-out;
@@ -84,66 +105,55 @@ const ProfileImage = styled.div`
   }
 `;
 
-// 제목 컨테이너
-const TitleSection = styled.div`
-  position: absolute;
-  left: 120px;
-  top: 19px;
-  width: calc(100% - 140px);
-  max-width: 380px;
-  height: 44px;
-  background: var(--color-lightBackground);
-  border-radius: 20px;
-  padding: 0 12px;
-  transition: background-color 0.2s ease-in-out;
-`;
-
 // 제목 텍스트
 const Title = styled.h3`
+  position: absolute;
+  left: 7.5rem;
+  top: 1.5rem;
   font-size: 1.2rem;
   font-family: var(--font-mainFont);
   color: var(--color-darkWalnut);
   background: var(--color-lightBeige);
-  border-radius: 40px;
-  padding: 6px 16px;
+  border-radius: 2.5rem;
+  padding: 0.375rem 1rem;
   line-height: 1.2;
+  margin: 0;
+  max-width: 23.75rem;
   ${textEllipsis}
 `;
 
 // 카테고리 태그
-const Category = styled.span`
+const CategoryButton = styled.span`
   position: absolute;
-  left: 120px;
-  top: 71px;
+  left: 7.5rem;
+  top: 4.25rem;
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1.25rem;
+  background-color: var(--color-lightBeige);
+  color: var(--color-mainColor);
   font-size: 0.9rem;
-  color: var(--color-accent);
-  background: var(--color-white);
-  padding: 5px 10px;
-  border-radius: 20px;
-  box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 0.25rem 0.25rem rgba(0, 0, 0, 0.25);
   transition: transform 0.2s ease-in-out;
 
   &:hover {
-    transform: translateY(-1px);
+    transform: translateY(-0.0625rem);
   }
 `;
 
 // 본문 내용 컨테이너
 const Content = styled.div`
   position: absolute;
-  left: 30px;
-  top: 119px;
-  width: calc(100% - 60px);
-  max-width: 470px;
-  height: 64px;
+  left: 1.875rem;
+  top: 7.4375rem;
+  width: calc(100% - 3.75rem);
+  max-width: 29.375rem;
+  height: 4rem;
   background: var(--color-white);
-  border-radius: 20px;
-  padding: 8px 16px;
-  transition: box-shadow 0.2s ease-in-out;
-
-  &:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
+  border-radius: 1.25rem;
+  padding: 0.5rem 1rem;
 `;
 
 // 본문 텍스트 (2줄 제한)
@@ -161,8 +171,8 @@ const ContentText = styled.p`
 // 날짜 표시
 const Date = styled.span`
   position: absolute;
-  right: 16px;
-  bottom: 8px;
+  right: 1rem;
+  bottom: 0.5rem;
   font-size: 0.7rem;
   color: var(--color-darkWalnut);
   opacity: 0.8;
@@ -176,14 +186,14 @@ const Date = styled.span`
 // 댓글 섹션 컨테이너
 const CommentSection = styled.div`
   position: absolute;
-  left: 30px;
-  bottom: 21px;
-  width: calc(100% - 60px);
-  max-width: 470px;
-  height: 32px;
+  left: 1.875rem;
+  bottom: 1.3125rem;
+  width: calc(100% - 3.75rem);
+  max-width: 29.375rem;
+  height: 2rem;
   background: var(--color-lightBeige);
-  border-radius: 40px;
-  padding: 6px 16px;
+  border-radius: 0.75rem;
+  padding: 1rem;
   display: flex;
   align-items: center;
   transition: background-color 0.2s ease-in-out;
@@ -193,18 +203,35 @@ const CommentSection = styled.div`
 const CommentAuthor = styled.span`
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--color-darkWalnut);
-  margin-right: 8px;
+  color: var(--color-mainBlack);
+  margin-right: 0.5rem;
   ${textEllipsis}
 `;
 
 // 댓글 내용
 const CommentText = styled.p`
   font-size: 0.9rem;
-  color: var(--color-darkWalnut);
+  color: var(--color-mainBlack);
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.4;
   ${textEllipsis}
+`;
+
+// 카테고리 컨테이너
+const CategoryContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin: 0 auto 32px;
+  max-width: 680px;
+  padding: 0 20px;
+  justify-content: center;
+
+  @media (max-width: 600px) {
+    gap: 8px 8px;
+    max-width: 100%;
+    padding: 0 4px;
+  }
 `;
 
 // ConcernCard 컴포넌트
@@ -223,65 +250,63 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
   const mobileStyles = {
     card: res === 'mo' ? {
       maxWidth: '100%',
-      borderRadius: '16px',
+      borderRadius: '1rem',
       backgroundSize: '100% 100%',
-      padding: '0 15px'
+      padding: '0 0.9375rem'
     } : {},
     cardContent: res === 'mo' ? {
-      padding: '0 5px',
+      padding: '0 0.3125rem',
       width: '100%'
     } : {},
     profileImage: res === 'mo' ? {
-      width: '60px',
-      height: '60px',
-      borderRadius: '30px',
-      left: '30px',
-      top: '15px'
-    } : {},
-    titleSection: res === 'mo' ? {
-      left: '100px',
-      top: '15px',
-      height: '40px',
-      padding: '8px 10px',
-      width: 'calc(100% - 120px)'
+      width: '3.75rem',
+      height: '3.75rem',
+      borderRadius: '1.875rem',
+      left: '1.875rem',
+      top: '0.9375rem'
     } : {},
     title: res === 'mo' ? {
-      fontSize: '1rem'
+      left: '6.25rem',
+      top: '0.9375rem',
+      fontSize: '1rem',
+      padding: '0.25rem 0.75rem',
+      maxWidth: 'calc(100% - 7.5rem)'
     } : {},
     category: res === 'mo' ? {
-      left: '100px',
-      top: '60px',
+      left: '6.25rem',
+      top: '3.75rem',
       fontSize: '0.8rem',
-      padding: '4px 8px'
+      padding: '0.25rem 0.5rem',
+      maxWidth: 'calc(100% - 7.5rem)'
     } : {},
     content: res === 'mo' ? {
-      left: '30px',
-      top: '100px',
+      left: '1.875rem',
+      top: '6.25rem',
       height: 'auto',
-      minHeight: '60px',
-      padding: '8px 12px',
-      width: 'calc(100% - 60px)'
+      minHeight: '3.75rem',
+      padding: '0.5rem 0.75rem',
+      width: 'calc(100% - 3.75rem)'
     } : {},
     contentText: res === 'mo' ? {
       fontSize: '0.9rem'
     } : {},
     date: res === 'mo' ? {
-      right: '12px',
-      bottom: '6px',
+      right: '0.75rem',
+      bottom: '0.375rem',
       fontSize: '0.65rem'
     } : {},
     commentSection: res === 'mo' ? {
-      left: '30px',
-      bottom: '15px',
+      left: '1.875rem',
+      bottom: '0.9375rem',
       height: 'auto',
-      minHeight: '28px',
-      padding: '4px 12px',
-      width: 'calc(100% - 60px)',
+      minHeight: '1.75rem',
+      padding: '0.25rem 0.75rem',
+      width: 'calc(100% - 3.75rem)',
       justifyContent: 'flex-start'
     } : {},
     commentAuthor: res === 'mo' ? {
       fontSize: '0.8rem',
-      marginRight: '6px'
+      marginRight: '0.375rem'
     } : {},
     commentText: res === 'mo' ? {
       fontSize: '0.8rem'
@@ -294,10 +319,12 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
         <ProfileImage style={mobileStyles.profileImage}>
           <img src={profileImage} alt="Profile" />
         </ProfileImage>
-        <TitleSection style={mobileStyles.titleSection}>
-          <Title style={mobileStyles.title}>{title}</Title>
-        </TitleSection>
-        <Category style={mobileStyles.category}>{category}</Category>
+        <Title style={mobileStyles.title}>{title}</Title>
+        <CategoryContainer>
+          {category.split(',').map((cat, index) => (
+            <CategoryButton key={index}>{cat.trim()}</CategoryButton>
+          ))}
+        </CategoryContainer>
         <Content style={mobileStyles.content}>
           <ContentText style={mobileStyles.contentText}>{content}</ContentText>
           {date && <Date style={mobileStyles.date}>{date}</Date>}

@@ -10,7 +10,7 @@ const TalkSection: React.FC = () => {
         편하게 이야기해요
       </h2>
       
-      <div className="bg-white p-10 md:p-16 rounded-[200px] shadow-md min-h-[480px] flex items-center justify-center">
+      <div className="bg-white p-6 md:p-16 rounded-2xl md:rounded-[200px] shadow-md min-h-[220px] md:min-h-[480px] flex items-center justify-center">
         <p 
           className="text-base md:text-lg lg:text-3xl leading-relaxed text-center max-w-6xl"
           style={{ color: 'var(--color-lightWalnut)' }}
