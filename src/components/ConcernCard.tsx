@@ -141,6 +141,11 @@ const CategoryButton = styled.span`
   &:hover {
     transform: translateY(-0.0625rem);
   }
+
+  @media (max-width: 768px) {
+    top: 3rem; /* 모바일 화면에서 top을 2rem로 고정 */
+    left: 6rem;
+  }
 `;
 
 // 본문 내용 컨테이너
