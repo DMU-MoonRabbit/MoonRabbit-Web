@@ -12,7 +12,7 @@ const TalkSection: React.FC = () => {
       
       <div className="bg-white p-6 md:p-16 rounded-2xl md:rounded-[200px] shadow-md min-h-[220px] md:min-h-[480px] flex items-center justify-center">
         <p 
-          className="text-base md:text-lg lg:text-3xl leading-relaxed text-center max-w-6xl"
+          className="text-base font-gothicFont md:text-lg lg:text-3xl leading-relaxed text-center max-w-6xl"
           style={{ color: 'var(--color-lightWalnut)' }}
         >
           마음이 답답한데 어디에도 털어놓지 못하고 있다면,<br/> 여기는 네가 잠시 쉬어갈 수 있는 곳이야.<br/> 
