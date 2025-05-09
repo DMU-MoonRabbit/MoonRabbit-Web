@@ -34,8 +34,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
         isMobile ? 'max-w-full rounded-xl px-[0.9375rem]' : 'max-w-[35rem] rounded-4xl px-[0.625rem]'
       )}
       style={{
-        // backgroundImage: `url(${backgroundImage || '/images/ConcernBackground.png'})`,
-        backgroundColor: '#FBE4B8',
+        backgroundImage: `url(${backgroundImage || '/images/ConcernBackground.png'})`,
         boxShadow: 'inset 0 0 0 2px #473C2C',
       }}
     >
