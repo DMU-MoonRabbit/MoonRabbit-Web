@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="max-w-screen-xl mx-auto flex flex-col lg:flex-row justify-between items-center px-6 gap-6">
         
         {/* 왼쪽: 이용약관 */}
-        <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-6 text-sm sm:text-base">
+        <div className="flex flex-col lg:flex-row items-center gap-4 lg:gap-6 text-sm sm:text-base mt-4">
           <Link to="/terms" className="hover:underline">서비스 이용약관</Link>
           <span className="hidden lg:inline-block w-px h-4 bg-darkBeige opacity-50" />
           <Link to="/privacy" className="hover:underline">개인정보 처리방침</Link>

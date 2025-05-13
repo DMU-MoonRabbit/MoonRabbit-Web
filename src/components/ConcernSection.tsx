@@ -116,6 +116,9 @@ const ConcernSection: React.FC = () => {
       ? concerns
       : concerns.filter((concern) => concern.category === selectedCategory);
 
+  const displayedConcerns =
+    res === 'pc' ? filteredConcerns : filteredConcerns.slice(0, 3);
+
   return (
     <section className="w-full max-w-[1920px] mx-auto px-[47px]">
       <h2 className="text-2xl text-center text-darkWalnut font-mainFont mb-4">
@@ -134,7 +137,7 @@ const ConcernSection: React.FC = () => {
           columns === 3 ? 'grid-cols-3' : 'grid-cols-1'
         )}
       >
-        {filteredConcerns.map((concern) => (
+        {displayedConcerns.map((concern) => (
           <ConcernCard
             key={concern.id}
             profileImage={concern.profileImage}
