@@ -3,6 +3,7 @@ import { useResponsiveStore } from './stores/useResponsiveStore'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import MainPage from './pages/MainPage'
+import Footer from './components/Footer'
 
 function App() {
   const res = useResponsiveStore((state) => state.res)
@@ -19,11 +20,12 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div>
+      <div className='bg-lightBeige'>
         <Header />
         <Routes>
           <Route path="/" element={<MainPage />} />
         </Routes>
+        <Footer />
       </div>
     </BrowserRouter>
   )
