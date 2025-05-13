@@ -28,7 +28,7 @@ const ServiceExplainCard: React.FC<ServiceExplainCardProps> = ({
           {title}
         </h2>
 
-        <p className="text-mainWhite whitespace-pre-line text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl font-gothicFont leading-relaxed text-center sm:text-left mt-4">
+        <p className="text-mainWhite whitespace-pre-line text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl font-gothicFont leading-relaxed text-center sm:text-left mt-4">
           {subtitle}
         </p>
       </div>
