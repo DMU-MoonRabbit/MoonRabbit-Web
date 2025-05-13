@@ -12,7 +12,7 @@ const ConcernSection: React.FC = () => {
   const concerns = [
     {
       id: 1,
-      profileImage: '/images/MoonRabbitLogo.png',
+      profileImage: 'images/MoonRabbitLogo.png',
       title: '학교 생활이 힘들어요',
       category: '학교',
       content: '친구들과 잘 어울리지 못하고 있어요. 어떻게 하면 좋을까요?',
@@ -23,7 +23,7 @@ const ConcernSection: React.FC = () => {
     },
     {
       id: 2,
-      profileImage: '/images/MoonRabbitLogo.png',
+      profileImage: 'images/MoonRabbitLogo.png',
       title: '취업 준비가 걱정돼요',
       category: '진로',
       content: '졸업을 앞두고 있는데, 취업 준비가 너무 걱정됩니다.',
@@ -34,7 +34,7 @@ const ConcernSection: React.FC = () => {
     },
     {
       id: 3,
-      profileImage: '/images/MoonRabbitLogo.png',
+      profileImage: 'images/MoonRabbitLogo.png',
       title: '가족 관계가 어려워요',
       category: '가족',
       content: '부모님과 자주 다투게 되고 있어요. 어떻게 대화해야 할지 모르겠어요.',
@@ -45,7 +45,7 @@ const ConcernSection: React.FC = () => {
     },
     {
       id: 4,
-      profileImage: '/images/MoonRabbitLogo.png',
+      profileImage: 'images/MoonRabbitLogo.png',
       title: '연인과의 관계가 불안해요',
       category: '연인',
       content: '서로의 미래가 불확실해서 걱정이에요. 어떻게 해야 할까요?',
@@ -56,7 +56,7 @@ const ConcernSection: React.FC = () => {
     },
     {
       id: 5,
-      profileImage: '/images/MoonRabbitLogo.png',
+      profileImage: 'images/MoonRabbitLogo.png',
       title: '스트레스가 너무 심해요',
       category: '정신건강',
       content: '일과 공부로 인한 스트레스가 너무 심해요. 어떻게 해소해야 할까요?',
@@ -67,7 +67,7 @@ const ConcernSection: React.FC = () => {
     },
     {
       id: 6,
-      profileImage: '/images/MoonRabbitLogo.png',
+      profileImage: 'images/MoonRabbitLogo.png',
       title: '직장 생활이 힘들어요',
       category: '사회생활',
       content: '직장에서의 인간관계가 어려워요. 어떻게 적응해야 할까요?',
@@ -78,7 +78,7 @@ const ConcernSection: React.FC = () => {
     },
     {
       id: 7,
-      profileImage: '/images/MoonRabbitLogo.png',
+      profileImage: 'images/MoonRabbitLogo.png',
       title: '친구들과의 관계가 어색해요',
       category: '대인관계',
       content: '친구들과 만날 때마다 어색함이 느껴져요. 어떻게 해야 할까요?',
@@ -89,7 +89,7 @@ const ConcernSection: React.FC = () => {
     },
     {
       id: 8,
-      profileImage: '/images/MoonRabbitLogo.png',
+      profileImage: 'images/MoonRabbitLogo.png',
       title: '자신감이 부족해요',
       category: '정신건강',
       content: '무엇을 해도 자신감이 생기지 않아요. 어떻게 극복해야 할까요?',
@@ -100,7 +100,7 @@ const ConcernSection: React.FC = () => {
     },
     {
       id: 9,
-      profileImage: '/images/MoonRabbitLogo.png',
+      profileImage: 'images/MoonRabbitLogo.png',
       title: '미래가 불안해요',
       category: '진로',
       content: '앞으로의 삶이 어떻게 될지 모르겠어요. 어떻게 준비해야 할까요?',

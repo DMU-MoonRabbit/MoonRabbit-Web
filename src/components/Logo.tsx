@@ -16,7 +16,7 @@ const Logo: React.FC = () => {
       }}
     >
       <img
-        src="/images/MoonRabbitSleep2.png"
+        src="images/MoonRabbitSleep2.png"
         alt="달토끼 로고"
         className="w-full h-auto object-contain mt-12"
         style={{
