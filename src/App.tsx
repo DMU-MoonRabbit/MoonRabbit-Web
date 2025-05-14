@@ -2,8 +2,10 @@ import React, { useEffect } from 'react'
 import { useResponsiveStore } from './stores/useResponsiveStore'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
+import MainPage from './pages/MainPage'
 import LoginPage from './pages/LoginPage'
 import SignupPage from './pages/SignupPage'
+import Footer from './components/Footer'
 
 function App() {
   const res = useResponsiveStore((state) => state.res)
@@ -20,29 +22,14 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div>
+      <div className='bg-lightBeige'>
         <Header />
-        
         <Routes>
-          <Route path="/" element={
-            <>
-              <header>
-                <h1>
-                  {res === 'pc' ? 'PC View' : 'Mobile View'}
-                </h1>
-              </header>
-
-              <main className="p-6 text-center">
-                <p className="text-lg">
-                  현재 뷰포트: {res}
-                </p>
-              </main>
-            </>
-          }/>
-
+          <Route path="/" element={<MainPage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/signup' element={<SignupPage />} />
         </Routes>
+        <Footer />
       </div>
     </BrowserRouter>
   )
