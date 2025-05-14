@@ -2,7 +2,7 @@ import React from "react"
 import useAuthStore from "../stores/useAuthStore"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 import { LogoPanel, LoginInputField, LoginButton, LoginFormHeader } from "../components/Login"
-import GoogleLoginImg from "../assets/google.svg"
+import GoogleLoginImg from "../assets/web_neutral_sq_SI.svg"
 import kakaoLoginImg from "../assets/kakao_login_large_narrow.png"
 
 const LoginForm = ({ className }: any) => {
@@ -33,27 +33,25 @@ const LoginForm = ({ className }: any) => {
 
       <div className="text-sm ml-[16px] mb-10">아이디 / 비밀번호 찾기</div>
 
-      <LoginButton onClick={handleLogin} className="mb-4">
+      <LoginButton onClick={handleLogin} className="mb-4 rounded-[10px]">
         로그인 (Login)
       </LoginButton>
 
       {res === 'pc' ? (
-        <div className="flex gap-4 px-4 flex-col lg:flex-row">
-          <div className="flex-1 border p-2 rounded text-[14px] flex items-center justify-center max-h-[50px]">
-            <img src={GoogleLoginImg} className="mr-3 w-[2.5vw] max-w-[20px]" />
-            Sign in with Google
+        <div className="flex gap-2 lg:gap-4 px-0 flex-col lg:flex-row lg:px-4">
+          <div className="cursor-pointer flex-1 items-center justify-center flex p-1 bg-[#F2F2F2] rounded min-h-[50px] max-h-[50px]">
+            <img src={GoogleLoginImg} className="h-full object-contain"/>
           </div>
-          <div className="flex-1 items-center justify-center flex bg-[#FEE500] rounded max-h-[50px]">
+          <div className="cursor-pointer flex-1 items-center justify-center flex bg-[#FEE500] rounded max-h-[50px]">
             <img src={kakaoLoginImg} className="h-full object-contain"/>
           </div>
         </div>
       ) : (
         <div className="flex flex-col gap-2">
-          <div className="border p-2 rounded text-[12px] flex items-center justify-center h-[50px]">
-            <img src={GoogleLoginImg} className="mr-2 w-[3vw]" />
-            Sign in with Google
+          <div className="cursor-pointer items-center justify-center flex p-[2px] bg-[#F2F2F2] rounded h-[50px]">
+            <img src={GoogleLoginImg} className="h-full object-contain"/>
           </div>
-          <div className="items-center justify-center flex bg-[#FEE500] rounded h-[50px]">
+          <div className="cursor-pointer items-center justify-center flex bg-[#FEE500] rounded h-[50px]">
             <img src={kakaoLoginImg} className="h-full object-contain"/>
           </div>
         </div>

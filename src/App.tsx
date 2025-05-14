@@ -3,6 +3,7 @@ import { useResponsiveStore } from './stores/useResponsiveStore'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
 
 function App() {
   const res = useResponsiveStore((state) => state.res)
@@ -40,6 +41,7 @@ function App() {
           }/>
 
           <Route path='/login' element={<LoginPage />} />
+          <Route path='/signup' element={<SignupPage />} />
         </Routes>
       </div>
     </BrowserRouter>

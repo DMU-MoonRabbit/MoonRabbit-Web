@@ -1,4 +1,5 @@
 import React from "react"
+import { useNavigate } from "react-router-dom"
 import LogoImg from "../assets/moonRabbitLogo.svg"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 
@@ -23,7 +24,7 @@ export const LoginInputField = ({ type, placeholder, value, onChange, className 
 export const LoginButton = ({ children, onClick, className }: any) => (
   <button
     onClick={onClick}
-    className={`cursor-pointer font-subFont w-full h-[50px] lg:h-[4vw] max-h-[62px] py-2 rounded-[10px] text-white bg-mainColor hover:bg-orange-600 transition ${className}`}
+    className={`${className} cursor-pointer font-subFont h-[56px] lg:h-[62px] py-2 text-white bg-mainColor hover:bg-orange-600 transition`}
   >
     {children}
   </button>
@@ -31,6 +32,14 @@ export const LoginButton = ({ children, onClick, className }: any) => (
 
 export const LoginFormHeader = () => {
   const res = useResponsiveStore((state) => state.res)
+  const navigate = useNavigate()
+  const hoverText = `
+    text-black 
+    hover:text-transparent hover:bg-clip-text 
+    hover:bg-gradient-to-r hover:from-yellow-500 hover:to-orange-500 
+    transition-all duration-500 ease-in-out
+  `
+
   return res === 'pc' ? (
     <div className="mb-6 flex items-center">
       <img src={LogoImg} alt="logo" className="w-20 -ml-5 lg:w-30 inline" />
@@ -43,19 +52,19 @@ export const LoginFormHeader = () => {
         </span>
       </div>
       <div className="flex items-end font-bold ml-auto text-[14px] flex-col lg:items-center lg:flex-row">
-        <span>ID&PW 로그인</span>
+        <span onClick={() => navigate('/login')} className={`cursor-pointer ${hoverText}`}>ID&PW 로그인</span>
         <div className="flex items-center">
           <div className="h-[25px] w-[1px] bg-black mx-2 opacity-0 lg:opacity-100" />
-          <span>회원가입</span>
+          <span onClick={() => navigate('/signup')} className={`cursor-pointer ${hoverText}`}>회원가입</span>
         </div>
       </div>
     </div>
   ) : (
     <div className="flex">
       <div className="flex items-center font-bold ml-auto mb-5">
-        <span>ID&PW 로그인</span>
+        <span onClick={() => navigate('/login')} className={`cursor-pointer ${hoverText}`}>ID&PW 로그인</span>
         <div className="h-[25px] w-[1px] mx-2 bg-black" />
-        <span>회원가입</span>
+        <span onClick={() => navigate('/signup')} className={`cursor-pointer ${hoverText}`}>회원가입</span>
       </div>
     </div>
   )
