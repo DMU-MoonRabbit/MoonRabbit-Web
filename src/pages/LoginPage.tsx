@@ -2,8 +2,8 @@ import React from "react"
 import useAuthStore from "../stores/useAuthStore"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 import { LogoPanel, LoginInputField, LoginButton, LoginFormHeader } from "../components/Login"
-import GoogleLoginImg from "../assets/web_neutral_sq_SI.svg"
-import kakaoLoginImg from "../assets/kakao_login_large_narrow.png"
+import GoogleLoginImg from "../assets/images/GoogleLogin.svg"
+import kakaoLoginImg from "../assets/images/KakaoLogin.png"
 
 const LoginForm = ({ className }: any) => {
   const { email, password, setEmail, setPassword } = useAuthStore()
@@ -66,14 +66,15 @@ const LoginPage: React.FC = () => {
   const res = useResponsiveStore((state) => state.res)
   return (
     <div className="w-full h-screen bg-black flex items-center justify-center">
+    {/*이거 반응형으로 나눈거 컴포넌트에서 설정하는거로 수정예정 */}
     {res === 'pc' ? (
       <div className="flex w-full max-w-[1200px] h-full max-h-[600px] m-10">
-        <LogoPanel divClassName='w-3/7' imgClassName='w-full' />
+        <LogoPanel divClassName='w-3/7' imgClassName='w-[70%] pb-[10px]' />
         <LoginForm className='w-4/7'/>
       </div>
     ) : (
       <div className="flex flex-col w-full items-center justify-center m-10">
-        <LogoPanel divClassName='w-full' imgClassName='w-[180px]' />
+        <LogoPanel divClassName='w-full' imgClassName='w-[140px] pb-[10px]' />
         <LoginForm className='w-full'/>
       </div>
     )}

@@ -86,12 +86,12 @@ const SignupPage: React.FC = () => {
     <div className="w-full h-screen bg-black flex items-center justify-center">
     {res === 'pc' ? (
       <div className="flex w-full max-w-[1200px] h-full max-h-[600px] m-10">
-        <LogoPanel divClassName='w-3/7' imgClassName='w-full' />
+        <LogoPanel divClassName='w-3/7' imgClassName='w-[70%] pb-[10px]' />
         <SignupForm className='w-4/7'/>
       </div>
     ) : (
       <div className="flex flex-col w-full items-center justify-center m-10">
-        <LogoPanel divClassName='w-full' imgClassName='w-[180px]' />
+        <LogoPanel divClassName='w-full' imgClassName='w-[140px] pb-[10px]' />
         <SignupForm className='w-full'/>
       </div>
     )}

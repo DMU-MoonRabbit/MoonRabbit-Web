@@ -1,11 +1,12 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
-import LogoImg from "../assets/moonRabbitLogo.svg"
+import LogoImg from "../assets/images/moonRabbitLogo.png"
+import LogoRabbitImg from "../assets/images/MoonRabbitSleep2.png"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 
 export const LogoPanel = ({ divClassName, imgClassName }: any) => (
   <div className={`flex flex-col justify-center items-center font-mainFont text-darkWalnut bg-lightBeige p-10 ${divClassName}`}>
-    <img src={LogoImg} alt="logo" className={`${imgClassName}`} />
+    <img src={LogoRabbitImg} alt="logo" className={`${imgClassName}`} />
     <p className="text-[4vw] xl:text-[48px]"><span className="text-lightCaramel">달</span>토끼</p>
     <p className="text-[8px] sm:text-[1.2vw] xl:text-[16px] leading-[0.6]"><span className="text-lightCaramel">Moon</span>Rabbit</p>
   </div>
@@ -42,7 +43,7 @@ export const LoginFormHeader = () => {
 
   return res === 'pc' ? (
     <div className="mb-6 flex items-center">
-      <img src={LogoImg} alt="logo" className="w-20 -ml-5 lg:w-30 inline" />
+      <img src={LogoImg} alt="logo" className="w-15 -ml-5 lg:w-20 mr-5 inline" />
       <div className="flex flex-col items-center font-mainFont text-darkWalnut -ml-2 mt-auto mb-2.5 lg:mb-4">
         <span className="text-[2.5vw] lg:text-[30px]">
           <span className="text-lightCaramel">달</span>토끼
