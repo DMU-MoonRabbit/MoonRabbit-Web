@@ -1,18 +1,67 @@
 import React from "react"
 import { useNavigate } from "react-router-dom"
-import LogoImg from "../assets/images/moonRabbitLogo.png"
-import LogoRabbitImg from "../assets/images/MoonRabbitSleep2.png"
+import useAuthStore from "../stores/useAuthStore"
+import clsx from "clsx"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
+import LogoImg from "../assets/images/moonRabbitSleep2.png"
+import GoogleLoginImg from "../assets/images/GoogleLogin.svg"
+import kakaoLoginImg from "../assets/images/KakaoLogin.png"
 
-export const LogoPanel = ({ divClassName, imgClassName }: any) => (
-  <div className={`flex flex-col justify-center items-center font-mainFont text-darkWalnut bg-lightBeige p-10 ${divClassName}`}>
-    <img src={LogoRabbitImg} alt="logo" className={`${imgClassName}`} />
-    <p className="text-[4vw] xl:text-[48px]"><span className="text-lightCaramel">달</span>토끼</p>
-    <p className="text-[8px] sm:text-[1.2vw] xl:text-[16px] leading-[0.6]"><span className="text-lightCaramel">Moon</span>Rabbit</p>
-  </div>
-)
 
-export const LoginInputField = ({ type, placeholder, value, onChange, className }: any) => (
+export const LogoPanel = () => {
+  const res = useResponsiveStore((state) => state.res)
+  const isMobile = res === 'mo'
+  return (
+    <div className={clsx('flex flex-col justify-center items-center font-mainFont text-darkWalnut bg-lightBeige p-10', isMobile ? 'w-full' : 'w-3/7')}>
+      <img src={LogoImg} alt="logo" className={clsx(isMobile ? 'w-[140px] pb-[10px]': 'w-[70%] pb-[10px]')} />
+      <p className="text-[4vw] xl:text-[48px]"><span className="text-lightCaramel">달</span>토끼</p>
+      <p className="text-[8px] sm:text-[1.2vw] xl:text-[16px] leading-[0.6]"><span className="text-lightCaramel">Moon</span>Rabbit</p>
+    </div>
+  )
+}
+
+export const LoginForm = () => {
+  const { email, password, setEmail, setPassword } = useAuthStore()
+  const res = useResponsiveStore((state) => state.res)
+  const isMobile = res === 'mo'
+  const handleLogin = () => {
+  }
+  return (
+    <div className={clsx('flex flex-col justify-center p-15 bg-white', isMobile ? 'w-full' : 'w-4/7')}>
+      <LoginFormHeader />
+      
+      <LoginInputField
+        type="email"
+        placeholder="이메일 (e-mail)"
+        value={email}
+        onChange={(e: any) => setEmail(e.target.value)}
+      />
+      <LoginInputField
+        type="password"
+        placeholder="비밀번호 (Password)"
+        value={password}
+        onChange={(e: any) => setPassword(e.target.value)}
+      />
+      <div className="text-sm ml-[16px] mb-10">아이디 / 비밀번호 찾기</div>
+      <LoginButton onClick={handleLogin} className="mb-4 rounded-[10px]">
+        로그인 (Login)
+      </LoginButton>
+      <div className={clsx('flex gap-2', isMobile ? 'flex-col' : 'lg:gap-4 px-0 flex-col lg:flex-row lg:px-4')}>
+        <SocialLogin SNSLoginImg={GoogleLoginImg} />
+        <SocialLogin SNSLoginImg={kakaoLoginImg} />
+      </div>
+    </div>
+  )
+}
+
+interface LoginInputFieldProps {
+  type: string;
+  placeholder?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
+}
+export const LoginInputField = ({ type, placeholder, value, onChange, className }: LoginInputFieldProps) => (
   <input
     type={type}
     placeholder={placeholder}
@@ -22,7 +71,12 @@ export const LoginInputField = ({ type, placeholder, value, onChange, className 
   />
 )
 
-export const LoginButton = ({ children, onClick, className }: any) => (
+interface LoginButtonProps {
+  children: React.ReactNode;
+  onClick: () => void;
+  className?: string;
+}
+export const LoginButton = ({ children, onClick, className }: LoginButtonProps) => (
   <button
     onClick={onClick}
     className={`${className} cursor-pointer font-subFont h-[56px] lg:h-[62px] py-2 text-white bg-mainColor hover:bg-orange-600 transition`}
@@ -30,6 +84,23 @@ export const LoginButton = ({ children, onClick, className }: any) => (
     {children}
   </button>
 )
+
+export const SocialLogin = ({ SNSLoginImg }) => {
+  const isGoogle = SNSLoginImg === GoogleLoginImg
+  const res = useResponsiveStore((state) => state.res)
+  const isMobile = res === 'mo'
+  return(
+  <div className={
+    clsx(
+      'cursor-pointer items-center justify-center flex rounded', 
+      isGoogle ? 
+      (isMobile ? 'p-[2px] bg-[#F2F2F2] h-[50px]' : 'flex-1 bg-[#F2F2F2] p-1 min-h-[50px] max-h-[50px]') : 
+      (isMobile ? 'bg-[#FEE500] h-[50px]' : 'flex-1 bg-[#FEE500] max-h-[50px]')
+      )}>
+    <img src={SNSLoginImg} className="h-full object-contain"/>
+  </div>
+  )
+}
 
 export const LoginFormHeader = () => {
   const res = useResponsiveStore((state) => state.res)
@@ -40,7 +111,6 @@ export const LoginFormHeader = () => {
     hover:bg-gradient-to-r hover:from-yellow-500 hover:to-orange-500 
     transition-all duration-500 ease-in-out
   `
-
   return res === 'pc' ? (
     <div className="mb-6 flex items-center">
       <img src={LogoImg} alt="logo" className="w-15 -ml-5 lg:w-20 mr-5 inline" />
