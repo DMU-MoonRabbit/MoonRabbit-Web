@@ -6,12 +6,18 @@ interface AuthState {
   setEmail: (email: string) => void
   setPassword: (password: string) => void
 }
-
-const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set) => ({
   email: "",
   password: "",
   setEmail: (email) => set({ email }),
   setPassword: (password) => set({ password }),
 }))
 
-export default useAuthStore
+interface AuthFormState {
+  isLogin: boolean;
+  setIsLogin: (isLogin: boolean) => void;
+}
+export const useAuthFormStore = create<AuthFormState>((set) => ({
+  isLogin: true,
+  setIsLogin: (isLogin) => set({ isLogin }),
+}))

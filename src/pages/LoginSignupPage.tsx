@@ -1,19 +1,22 @@
 import React from "react"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
-import { LogoPanel, LoginForm } from "../components/Login"
+import { useAuthFormStore } from "../stores/useAuthStore"
+import { LogoPanel, LoginForm, SignupForm } from "../components/Login"
 import clsx from "clsx"
 
-const LoginPage: React.FC = () => {
+const LoginSignupPage: React.FC = () => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
+  const {isLogin} = useAuthFormStore()
+
   return (
     <div className="w-full h-screen bg-black flex items-center justify-center">
       <div className={clsx('flex w-full m-10', isMobile ? ' items-center justify-center flex-col' : 'max-w-[1200px] h-full max-h-[600px]')}>
         <LogoPanel />
-        <LoginForm />
+        {isLogin ? <LoginForm /> : <SignupForm />}
       </div>
     </div>
   )
 }
 
-export default LoginPage
+export default LoginSignupPage
