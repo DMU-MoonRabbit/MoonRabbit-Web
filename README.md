@@ -1,54 +1,73 @@
-# React + TypeScript + Vite
+<div align="center">
+  <img src="https://avatars.githubusercontent.com/u/202031785?s=200&v=4" alt="달토끼 로고" width="200"/>
+  <h1>🌙 달토끼: 감정을 나누는 AI 고민상담 플랫폼</h1>
+  <p>AI 감정 분석과 따뜻한 커뮤니티가 함께하는 고민상담 서비스</p>
+</div>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## 📌 소개
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**달토끼**는 현대인의 증가하는 정신적 스트레스 문제를 해결하기 위해 만들어진 AI 기반 감정 고민 상담 플랫폼입니다.  
+AI 감정 분석, 멘토 시스템, 신뢰도 기반 커뮤니티 기능을 통해 사용자에게 익명성, 공감과 전문성을 제공합니다.
 
-## Expanding the ESLint configuration
+> “오늘 하루도 괜찮았는지, 달토끼가 물어봐줄게요.”
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## 👀 개발 배경
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **정신건강 문제의 심각성**  
+  - 성인의 27.8%가 우울 증상 경험 (2021 보건복지부)
+  - 청소년의 32.5%가 심리적 어려움 호소 (2022 교육부)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **전문 상담 접근성의 한계**  
+  - 서울/경기 지역 중심, 지방은 상담 인프라 부족
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+- **기존 커뮤니티의 신뢰성 문제**  
+  - 악성 댓글, 허위 정보, 공감 부족
+
+- **AI 기술의 가능성**  
+  - AI 챗봇은 우울감 감소 효과 15%↑ (서울대, 2022)
+  - 커뮤니티 기반 공감 활동은 스트레스 완화에 효과적 (고려대, 2021)
+
+---
+
+## ✨ 핵심 기능
+
+| 분류 | 주요 기능 | 비고 |
+|------|----------|------|
+| 🧑 사용자 | 회원가입 / 로그인 | 이메일, Kakao, Google 지원 |
+| 🛡️ 신뢰도 시스템 | 좋아요/답변 활동으로 포인트 획득, 신고 시 감소 |
+| 🧍 프로필 커스터마이징 | 배너, 테두리, 닉네임 색상, 뱃지 시스템 |
+| 🧠 고민 등록 | 카테고리 + AI 감정 분석 기반 태그 자동 생성 |
+| 🤖 AI 답변 | 공감형/해결형 스타일 선택, 유사 고민 기반 추천 |
+| 🧓 멘토 시스템 | 고민 유형별 멘토 매칭, 멘토 답변 우선 노출 |
+| 💬 커뮤니티 | 댓글, 유사 고민 추천, 북마크 및 즐겨찾기 기능 |
+| 🔔 알림 | 고민 답변, 피드백, 댓글 등의 실시간 알림 |
+| 🧰 관리자 기능 | 신고 관리, 사용자 모니터링, 통계 대시보드 |
+| 📊 데이터 분석 | 트렌드, 고민 유형 통계, AI 학습 데이터 축적 |
+| 🎁 포인트 시스템 | 활동 포인트로 꾸미기/아이템/레벨업/랭킹 제공 |
+| 🎧 감정 플리 추천 | 유튜브 기반 감성 플레이리스트 공유 및 조회 |
+
+---
+
+## 🧪 기술 스택
+
+| 영역 | 사용 기술 |
+|------|-----------|
+| Frontend | React, TypeScript, Zustand, Tailwind CSS |
+| Backend | Spring Boot, Spring JPA, Spring Security, MySQL |
+| AI | GPT API |
+| Infra | AWS EC2, S3, RDS, GitHub Actions, Docker |
+| 기타 | OpenAPI Docs (Swagger), ESLint/Prettier |
+
+---
+
+## 😺 팀 소개
+| **분야** | **이름** | **포지션** |
+| --- | --- | --- |
+| PM | <a href="https://github.com/dohy-eon">최도현</a>  | **프론트엔드 리드**, 프론트 인프라 구축 & 서버 연동 및 배포, 화면 UI 구현, <br> UI/UX, GUI 디자인, 백엔드 서버 연동 및 배포, API 및 DB 구축 |
+| 백엔드 | <a href="https://github.com/Vloeiolzlr">김동민</a>  | **백엔드**, 백엔드 인프라 구축, API 및 DB 구축 |
+| 백엔드 | <a href="https://github.com/lsho2">이승회</a>  | **백엔드**, API 및 DB 구축 |
+| 프론트엔드 | <a href="https://github.com/sooh329">김수현</a>  | **프론트엔드**, 화면 UI 구현, API 연동 |
