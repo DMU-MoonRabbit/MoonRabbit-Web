@@ -4,6 +4,7 @@ import clsx from 'clsx';
 interface CategoryBarProps {
   selectedCategory: string;
   onCategoryChange: (category: string) => void;
+  disableCentering?: boolean;
 }
 
 const categories = [
@@ -16,15 +17,18 @@ const categories = [
   '대인관계'
 ];
 
-const CategoryBar: React.FC<CategoryBarProps> = ({ selectedCategory, onCategoryChange }) => {
+const CategoryBar: React.FC<CategoryBarProps> = ({ selectedCategory, onCategoryChange, disableCentering }) => {
   return (
-    <div className="grid grid-cols-4 gap-x-3 gap-y-3 px-4 max-w-[720px] mx-auto mb-8 md:flex md:justify-center">
+    <div className={clsx(
+      'flex flex-row flex-wrap gap-3 px-4 max-w-[720px] items-center',
+      !disableCentering && 'mx-auto md:justify-center items-center'
+    )}>
     {categories.map((category) => (
       <button
         key={category}
         onClick={() => onCategoryChange(category)}
         className={clsx(
-          'w-full h-8 rounded-full font-semibold text-sm shadow-md transition-transform duration-200 ease-in-out transform hover:-translate-y-0.5 text-ellipsis whitespace-nowrap overflow-hidden',
+          'w-auto h-8 rounded-full font-semibold text-sm shadow-md transition-transform duration-200 ease-in-out transform hover:-translate-y-0.5 text-ellipsis overflow-hidden px-4',
           selectedCategory === category
             ? 'bg-[var(--color-mainColor)] text-[var(--color-white)]'
             : 'bg-[var(--color-white)] text-[var(--color-mainColor)]'

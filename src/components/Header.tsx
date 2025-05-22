@@ -27,7 +27,7 @@ const Header = () => {
         {/* PC용 네비게이션(왼쪽) */}
         {!isMobile && (
           <nav className="flex tracking-wide space-x-10 font-mainFont text-base">
-            <Link to="/sky">밤하늘</Link>
+            <Link to="/night-sky">밤하늘</Link>
             <Link to="/question">오늘의 질문</Link>
             <Link to="/stars">별자리</Link>
             <Link to="/shop">상점</Link>
@@ -57,7 +57,7 @@ const Header = () => {
       {/* Mobile 드롭다운 메뉴 */}
       {isOpen && isMobile && (
         <div className="absolute top-14 left-0 w-full bg-darkWalnut flex flex-col items-start px-6 py-4 space-y-4 font-mainFont text-base z-50 shadow-lg">
-          <Link to="/sky" onClick={() => setIsOpen(false)}>밤하늘</Link>
+          <Link to="/night-sky" onClick={() => setIsOpen(false)}>밤하늘</Link>
           <Link to="/question" onClick={() => setIsOpen(false)}>오늘의 질문</Link>
           <Link to="/stars" onClick={() => setIsOpen(false)}>별자리</Link>
           <Link to="/shop" onClick={() => setIsOpen(false)}>상점</Link>

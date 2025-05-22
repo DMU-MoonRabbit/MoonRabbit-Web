@@ -13,7 +13,7 @@ const ServiceExplainSection: React.FC = () => {
       </h2>
 
       {/* 별 배경 이미지 */}
-      <div className="absolute inset-0 w-full h-full mt-40">
+      <div className="absolute inset-0 w-full h-80% mt-40 z-index-0">
         <img
           src="/images/MoonRabbitStars.png"
           alt="달토끼 별 배경"
@@ -38,7 +38,7 @@ const ServiceExplainSection: React.FC = () => {
         />
       </div>
 
-      <div className="relative mt-20">
+      <div className="relative mt-20 mb-20">
         <ServiceExplainCard
           title="오늘의 질문"
           subtitle={`오늘의 질문은 매일매일 바뀌는 질문에 답을 하며 스스로에게 말을 걸어보는 시간이에요.\n내 마음을 천천히 들여다보는 작은 계기를 놓치지 마세요.`}

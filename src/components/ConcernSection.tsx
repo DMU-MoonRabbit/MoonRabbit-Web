@@ -127,10 +127,12 @@ const ConcernSection: React.FC = () => {
       <p className="text-[1.2rem] text-center text-lightWalnut font-mainFont mb-8">
         벌써 2,193개의 고민들이 밤하늘을 수놓고 있어요.
       </p>
+      <div className="mb-8">
       <CategoryBar
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
       />
+      </div>
       <div
         className={clsx(
           'grid gap-6 mx-auto max-w-[1800px]',
