@@ -15,18 +15,18 @@ interface Concern {
 }
 
 interface ConcernStore {
-  // Concerns data
+  // 고민 데이터 
   concerns: Concern[];
   selectedCategory: string;
   filteredConcerns: Concern[];
   
-  // Modal state
+  // 모달 상태 
   isModalOpen: boolean;
   newConcernTitle: string;
   newConcernContent: string;
   newConcernCategory: string;
   
-  // Actions
+  // 상태 
   setSelectedCategory: (category: string) => void;
   setIsModalOpen: (isOpen: boolean) => void;
   setNewConcernTitle: (title: string) => void;
