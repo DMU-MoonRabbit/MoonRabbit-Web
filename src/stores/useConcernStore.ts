@@ -1,11 +1,42 @@
-import React, { useState } from 'react';
-import CategoryBar from '../components/CategoryBar';
-import ConcernCard from '../components/ConcernCard';
-import CreateConcernButton from '../components/CreateConcernButton';
-import CreateConcernModal from '../components/CreateConcernModal';
+import { create } from 'zustand'
 
-// 임시 데이터 (ConcernCard prop에 맞게 수정)
-const concerns = [
+interface Concern {
+  id: number;
+  profileImage: string;
+  title: string;
+  category: string;
+  content: string;
+  recentComment: {
+    author: string;
+    text: string;
+  };
+  date: string;
+  backgroundImage: string;
+}
+
+interface ConcernStore {
+  // Concerns data
+  concerns: Concern[];
+  selectedCategory: string;
+  filteredConcerns: Concern[];
+  
+  // Modal state
+  isModalOpen: boolean;
+  newConcernTitle: string;
+  newConcernContent: string;
+  newConcernCategory: string;
+  
+  // Actions
+  setSelectedCategory: (category: string) => void;
+  setIsModalOpen: (isOpen: boolean) => void;
+  setNewConcernTitle: (title: string) => void;
+  setNewConcernContent: (content: string) => void;
+  setNewConcernCategory: (category: string) => void;
+  resetForm: () => void;
+}
+
+// 임시 데이터
+const initialConcerns: Concern[] = [
   {
     id: 1,
     profileImage: 'images/MoonRabbitLogo.png',
@@ -125,84 +156,35 @@ const concerns = [
   },
 ];
 
-const NightSky: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState('전체');
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [newConcernTitle, setNewConcernTitle] = useState('');
-  const [newConcernContent, setNewConcernContent] = useState('');
-  const [newConcernCategory, setNewConcernCategory] = useState('학교');
-
-  // 카테고리 필터링
-  const filteredConcerns = selectedCategory === '전체'
-    ? concerns
-    : concerns.filter(concern => concern.category === selectedCategory);
-
-  const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const handleCloseModal = () => {
-    setIsModalOpen(false);
-    // 모달 닫을 때 선택적으로 폼 필드 초기화
-    setNewConcernTitle('');
-    setNewConcernContent('');
-    setNewConcernCategory('학교');
-  };
-
-  const handleCreateConcern = () => {
-    // TODO: 고민 생성 로직 추가
-    handleCloseModal();
-  };
-
-  return (
-    <div className="w-full min-h-screen relative overflow-hidden">
-      {/* 배경 이미지 div */}
-      <div
-        className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: 'url("/images/MoonRabbitStars.png")' }}
-      ></div>
-
-      {/* 컨텐츠 컨테이너 */}
-      <div className="relative z-10 py-8 px-4">
-        <div className="flex justify-between items-center mb-4 ml-2">
-          <CategoryBar
-            selectedCategory={selectedCategory}
-            onCategoryChange={setSelectedCategory}
-            disableCentering={true}
-          />
-          <CreateConcernButton onClick={handleOpenModal} />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {filteredConcerns.map((concern, index) => (
-            <ConcernCard
-              key={index}
-              profileImage={concern.profileImage}
-              title={concern.title}
-              content={concern.content}
-              category={concern.category}
-              recentComment={concern.recentComment}
-              date={concern.date}
-              backgroundImage={concern.backgroundImage}
-            />
-          ))}
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <CreateConcernModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onCategoryChange={setNewConcernCategory}
-          selectedCategory={newConcernCategory}
-          onTitleChange={setNewConcernTitle}
-          onContentChange={setNewConcernContent}
-          onCreateConcern={handleCreateConcern}
-          title={newConcernTitle}
-          content={newConcernContent}
-        />
-      )}
-    </div>
-  );
-};
-
-export default NightSky;
+export const useConcernStore = create<ConcernStore>((set, get) => ({
+  concerns: initialConcerns,
+  selectedCategory: '전체',
+  filteredConcerns: initialConcerns,
+  isModalOpen: false,
+  newConcernTitle: '',
+  newConcernContent: '',
+  newConcernCategory: '학교',
+  
+  setSelectedCategory: (category) => {
+    const { concerns } = get();
+    const filtered = category === '전체'
+      ? concerns
+      : concerns.filter(concern => concern.category === category);
+    
+    set({ 
+      selectedCategory: category,
+      filteredConcerns: filtered
+    });
+  },
+  
+  setIsModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
+  setNewConcernTitle: (title) => set({ newConcernTitle: title }),
+  setNewConcernContent: (content) => set({ newConcernContent: content }),
+  setNewConcernCategory: (category) => set({ newConcernCategory: category }),
+  
+  resetForm: () => set({
+    newConcernTitle: '',
+    newConcernContent: '',
+    newConcernCategory: '학교'
+  })
+})) 

@@ -1,5 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import CategoryBar from './CategoryBar';
+
+const MODAL_STYLES = {
+  width: 'w-[1200px]',
+  height: 'h-[600px]',
+  sectionSpacing: 'mb-6',
+  logoSpacing: 'mb-10',
+} as const;
 
 interface CreateConcernModalProps {
   isOpen: boolean;
@@ -28,7 +35,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-[1200px] h-[600px] relative flex flex-col">
+      <div className={`bg-white rounded-xl shadow-lg p-8 ${MODAL_STYLES.width} ${MODAL_STYLES.height} relative flex flex-col`}>
         
         <button onClick={onClose} className="absolute top-3 right-6 text-4xl z-10">
           &times;
@@ -36,7 +43,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
 
         <div className="flex-grow overflow-y-auto p-4 hide-scrollbar">
           {/* 로고  */}
-          <div className="mb-6 flex items-center justify-center mb-10">
+          <div className={`flex items-center justify-center ${MODAL_STYLES.logoSpacing}`}>
              <img src="/images/MoonRabbitSleep.png" alt="Moon Rabbit Logo" className="h-24 w-auto mr-4" />
              <div className="font-mainFont">
                 <p className="text-xl text-gray-800"><span style={{ color: 'var(--color-lightCaramel)' }}>달</span>토끼</p>
@@ -45,7 +52,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
           </div>
 
           {/* 고민제목 */}
-          <div className="mb-6 block items-center gap-4">
+          <div className={`${MODAL_STYLES.sectionSpacing} block items-center gap-4`}>
             <label htmlFor="concernTitle" className="block text-lg font-mainFont">제목</label>
             <input
               type="text"
@@ -58,7 +65,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
           </div>
 
           {/* 태그 + 카테고리바 */}
-          <div className="mb-6">
+          <div className={MODAL_STYLES.sectionSpacing}>
             <label className="flex text-lg font-mainFont">태그</label>
             <div className="mt-2 justify-end">
               <CategoryBar
@@ -70,7 +77,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
           </div>
 
           {/* 고민내용 */}
-          <div className="mb-6 flex-grow">
+          <div className={`${MODAL_STYLES.sectionSpacing} flex-grow`}>
              <label htmlFor="concernContent" className="block text-lg font-mainFont">내용</label>
              <textarea
                id="concernContent"

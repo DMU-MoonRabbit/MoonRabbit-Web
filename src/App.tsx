@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Header from './components/Header'
 import MainPage from './pages/MainPage'
 import LoginSignupPage from './pages/LoginSignupPage'
-import NightSky from './pages/NightSky'
+import NightSkyPage from './pages/NightSkyPage'
 import Footer from './components/Footer'
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path='/login' element={<LoginSignupPage />} />
-          <Route path='/night-sky' element={<NightSky />} />
+          <Route path='/night-sky' element={<NightSkyPage />} />
         </Routes>
         <Footer />
       </div>
