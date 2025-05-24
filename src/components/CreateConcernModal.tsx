@@ -1,5 +1,6 @@
 import React from 'react';
 import CategoryBar from './CategoryBar';
+import { useResponsiveStore } from '../stores/useResponsiveStore';
 
 const MODAL_STYLES = {
   width: 'w-[1200px]',
@@ -31,11 +32,17 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
   title,
   content,
 }) => {
+  const { res } = useResponsiveStore();
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className={`bg-white rounded-xl shadow-lg p-8 ${MODAL_STYLES.width} ${MODAL_STYLES.height} relative flex flex-col`}>
+      <div className={`bg-white rounded-xl shadow-lg p-8 ${
+        res === 'pc' 
+          ? `${MODAL_STYLES.width} ${MODAL_STYLES.height}` 
+          : 'w-[90%] h-[80vh]'
+      } relative flex flex-col`}>
         
         <button onClick={onClose} className="absolute top-3 right-6 text-4xl z-10">
           &times;
@@ -52,15 +59,17 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
           </div>
 
           {/* 고민제목 */}
-          <div className={`${MODAL_STYLES.sectionSpacing} block items-center gap-4`}>
-            <label htmlFor="concernTitle" className="block text-lg font-mainFont">제목</label>
+          <div className="mb-6">
+            <label htmlFor="title" className="block text-[20px] font-mainFont mb-2 text-mainBlack">
+              제목
+            </label>
             <input
+              id="title"
               type="text"
-              id="concernTitle"
               value={title}
               onChange={(e) => onTitleChange(e.target.value)}
-              className="w-full rounded-md border-mainColor shadow-sm focus:border-mainColor sm:text-sm"
-              placeholder="제목을 입력하세요."
+              placeholder="고민의 제목을 입력해주세요"
+              className="w-full px-4 py-3 text-[16px] border-2 border-lightBeige rounded-lg focus:outline-none focus:border-mainColor transition-colors duration-200 placeholder:text-mainGray"
             />
           </div>
 
@@ -77,16 +86,17 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
           </div>
 
           {/* 고민내용 */}
-          <div className={`${MODAL_STYLES.sectionSpacing} flex-grow`}>
-             <label htmlFor="concernContent" className="block text-lg font-mainFont">내용</label>
-             <textarea
-               id="concernContent"
-               value={content}
-               onChange={(e) => onContentChange(e.target.value)}
-               rows={8}
-               className="mt-1 block w-full rounded-md border-mainColor shadow-sm focus:border-mainColor sm:text-sm"
-               placeholder="당신의 고민을 자유롭게 작성해주세요."
-             ></textarea>
+          <div className="mb-6">
+            <label htmlFor="content" className="block text-[20px] mb-2 font-mainFont">
+              내용
+            </label>
+            <textarea
+              id="content"
+              value={content}
+              onChange={(e) => onContentChange(e.target.value)}
+              placeholder="고민을 자유롭게 작성해주세요"
+              className="w-full px-4 py-3 text-[16px] border-2 border-lightBeige rounded-lg focus:outline-none focus:border-mainColor transition-colors duration-200 placeholder:text-mainGray min-h-[200px] resize-none"
+            />
           </div>
 
         </div>

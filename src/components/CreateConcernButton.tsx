@@ -14,7 +14,7 @@ const CreateConcernButton: React.FC<CreateConcernButtonProps> = ({ onClick }) =>
       onClick={onClick}
       className={`flex items-center justify-center rounded-lg bg-mainColor text-white font-mainFont ${
         res === 'pc' 
-          ? 'w-[188px] h-[48px] text-[20px] mr-8' 
+          ? 'w-[188px] h-[48px] text-[18px] mr-8' 
           : 'w-[220px] h-[40px] text-[12px]'
       }`}
     >
