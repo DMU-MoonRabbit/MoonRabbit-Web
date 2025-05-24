@@ -4,6 +4,7 @@ import ConcernCard from '../components/ConcernCard';
 import CreateConcernButton from '../components/CreateConcernButton';
 import CreateConcernModal from '../components/CreateConcernModal';
 import { useConcernStore } from '../stores/useConcernStore';
+import { useResponsiveStore } from '../stores/useResponsiveStore';
 
 // 임시 데이터 (ConcernCard prop에 맞게 수정)
 const concerns = [
@@ -127,13 +128,14 @@ const concerns = [
 ];
 
 const NightSkyPage: React.FC = () => {
+  //고민 관련 상태관리 
   const {
-    selectedCategory,
-    filteredConcerns,
-    isModalOpen,
-    newConcernTitle,
-    newConcernContent,
-    newConcernCategory,
+    selectedCategory, //현재 선택된 카테고리
+    filteredConcerns, // 필터링 된 고민 목록
+    isModalOpen, // 고민 작성 중인지 아닌지
+    newConcernTitle, //새로 작성할 고민 제목
+    newConcernContent, //고민 내용
+    newConcernCategory, //고민 카테고리리
     setSelectedCategory,
     setIsModalOpen,
     setNewConcernTitle,
@@ -141,6 +143,8 @@ const NightSkyPage: React.FC = () => {
     setNewConcernCategory,
     resetForm
   } = useConcernStore();
+
+  const { res } = useResponsiveStore();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -155,6 +159,9 @@ const NightSkyPage: React.FC = () => {
     // TODO: 고민 생성 로직 추가
     handleCloseModal();
   };
+
+  // 모바일 뷰에서는 3개의 카드만 표시
+  const displayConcerns = res === 'mo' ? filteredConcerns.slice(0, 3) : filteredConcerns;
 
   return (
     <div className="w-full min-h-screen relative overflow-hidden">
@@ -175,7 +182,7 @@ const NightSkyPage: React.FC = () => {
           <CreateConcernButton onClick={handleOpenModal} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {filteredConcerns.map((concern, index) => (
+          {displayConcerns.map((concern, index) => (
             <ConcernCard
               key={index}
               profileImage={concern.profileImage}

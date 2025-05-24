@@ -1,18 +1,25 @@
 import React from 'react';
 import { PenBox } from 'lucide-react';
+import { useResponsiveStore } from '../stores/useResponsiveStore';
 
 interface CreateConcernButtonProps {
-  onClick?: () => void;
+  onClick: () => void;
 }
 
 const CreateConcernButton: React.FC<CreateConcernButtonProps> = ({ onClick }) => {
+  const { res } = useResponsiveStore();
+
   return (
     <button
       onClick={onClick}
-      className="flex items-center justify-center px-6 py-3 mr-7 bg-mainColor text-white rounded-lg shadow-md transition-transform duration-200 ease-in-out hover:scale-105"
+      className={`flex items-center justify-center rounded-lg bg-mainColor text-white font-mainFont ${
+        res === 'pc' 
+          ? 'w-[188px] h-[48px] text-[20px] mr-8' 
+          : 'w-[220px] h-[40px] text-[12px]'
+      }`}
     >
-      <PenBox size={20} className="mr-2" /> 
-      <span className="font-semibold text-base">밤하늘 그리기</span>
+      <PenBox size={res === 'pc' ? 24 : 20} className="mr-2" />
+      <span>밤하늘 그리기</span>
     </button>
   );
 };
