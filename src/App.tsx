@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react'
 import { useResponsiveStore } from './stores/useResponsiveStore'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useParams } from 'react-router-dom'
 import Header from './components/Header'
 import MainPage from './pages/MainPage'
 import LoginSignupPage from './pages/LoginSignupPage'
 import NightSkyPage from './pages/NightSkyPage'
+import NightSkyDetailPage from './pages/NightSkyDetailPage'
 import Footer from './components/Footer'
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route path='/login' element={<LoginSignupPage />} />
           <Route path='/night-sky' element={<NightSkyPage />} />
+          <Route path='/night-sky/:pageNumber' element={<NightSkyDetailPage />} />
         </Routes>
         <Footer />
       </div>
