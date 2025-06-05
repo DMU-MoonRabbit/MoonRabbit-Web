@@ -37,11 +37,11 @@ export const ConcernContent: React.FC = () => {
         <p className='whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight'>{concern?.content}</p>
         <div className='flex mt-[60px] justify-between'>
           <div className='flex items-center'>
-            <img src={Comment} alt='댓글아이콘' />
+            <img src={Comment} alt='댓글아이콘' className='h-[24px]' />
             <p className='mt-[2px] ml-[4px] mr-[20px] text-[20px]'>{totalCommentCount}</p>
-            <img src={Report} alt='신고' className='mr-[16px] cursor-pointer' />
+            <img src={Report} alt='신고' className='mr-[16px] cursor-pointer h-[25px]' />
             <div onClick={toggleConcernLike}>
-              <img src={concern?.like ? Liked : Like} className='cursor-pointer'  />
+              <img src={concern?.like ? Liked : Like} className='cursor-pointer h-[25px]'  />
             </div>
           </div>
           <p>{concern?.date}</p>
