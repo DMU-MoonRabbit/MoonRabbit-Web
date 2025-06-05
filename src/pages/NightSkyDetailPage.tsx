@@ -9,7 +9,7 @@ const NightSkyDetailPage: React.FC = () => {
       <ConcernAnswer />
       <ConcernComment />
     </div>
-  );
-};
+  )
+}
 
-export default NightSkyDetailPage;
+export default NightSkyDetailPage
