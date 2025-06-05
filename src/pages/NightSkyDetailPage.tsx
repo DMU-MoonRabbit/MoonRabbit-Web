@@ -1,5 +1,6 @@
 import React from 'react';
-import { ConcernContent, ConcernAnswer, ConcernComment } from '../components/ConcernArticle';
+import { ConcernContent, ConcernAnswer } from '../components/ConcernPost';
+import { ConcernComment } from '../components/ConcernComment';
 
 const NightSkyDetailPage: React.FC = () => {
   
