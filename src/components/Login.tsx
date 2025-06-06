@@ -27,9 +27,11 @@ export const LoginForm = () => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
+  const navigate = useNavigate()
+
   const handleLogin = async() => {
     try {
-      const response = await axios.post('https://moonrabbit-api.kro.kr/api/users/login', {
+      const response = await axios.post('http://moonrabbit-api.kro.kr/api/users/login', {
         email,
         password,
       })
@@ -38,6 +40,8 @@ export const LoginForm = () => {
       const { accessToken, refreshToken } = response.data
       localStorage.setItem('accessToken', accessToken)
       localStorage.setItem('refreshToken', refreshToken)
+
+      navigate('/')
     } catch (error) {
       console.error('에러:', error)
     }
@@ -72,6 +76,9 @@ export const LoginForm = () => {
 }
 
 export const SignupForm = () => {
+
+  const setIsLogin = useAuthFormStore((state) => state.setIsLogin)
+  
   const { 
     email, 
     phoneNum, 
@@ -105,14 +112,15 @@ export const SignupForm = () => {
 
     // API 요청
     try {
-      const response = await axios.post('https://moonrabbit-api.kro.kr/api/users/register', {
+      const response = await axios.post('http://moonrabbit-api.kro.kr/api/users/register', {
         email,
         password,
         passwordConfirm,
         phoneNum,
         verification,
       })
-      console.log('응답 데이터:', response.data)
+      //console.log('응답 데이터:', response.data)
+      setIsLogin(true)
     } catch (error) {
       console.error('에러:', error)
     }
@@ -120,7 +128,7 @@ export const SignupForm = () => {
 
   const handleVerification = async() => {
     try {
-      const response = await axios.post('https://moonrabbit-api.kro.kr/api/sms/send', {
+      const response = await axios.post('http://moonrabbit-api.kro.kr/api/sms/send', {
         phoneNum
       })
       console.log('응답 데이터:', response.data)
