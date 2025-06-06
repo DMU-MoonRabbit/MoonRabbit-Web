@@ -120,6 +120,7 @@ export const SignupForm = () => {
         verification,
       })
       //console.log('응답 데이터:', response.data)
+      alert('회원가입이 완료되었습니다!')
       setIsLogin(true)
     } catch (error) {
       console.error('에러:', error)
