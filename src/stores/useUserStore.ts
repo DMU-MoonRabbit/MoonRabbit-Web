@@ -2,28 +2,28 @@ import { create } from "zustand"
 
 interface UserState {
   email: string
-  phoneNo: string
-  verificationNo: string
+  phoneNum: string
+  verification: string
   password: string
-  confirmPassword: string
+  passwordConfirm: string
   setEmail: (email: string) => void
-  setPhoneNo: (phoneNo: string) => void
-  setVerificationNo: (verificationNo: string) => void
+  setPhoneNum: (phoneNum: string) => void
+  setVerification: (verification: string) => void
   setPassword: (password: string) => void
-  setConfirmPassword: (confirmPassword: string) => void
+  setPasswordConfirm: (passwordConfirm: string) => void
 }
 
 const useAuthStore = create<UserState>((set) => ({
   email: "",
-  phoneNo: "",
-  verificationNo: "",
+  phoneNum: "",
+  verification: "",
   password: "",
-  confirmPassword: "",
+  passwordConfirm: "",
   setEmail: (email) => set({ email }),
-  setPhoneNo: (phoneNo) => set({ phoneNo }),
-  setVerificationNo: (verificationNo) => set({ verificationNo }),
+  setPhoneNum: (phoneNum) => set({ phoneNum }),
+  setVerification: (verification) => set({ verification }),
   setPassword: (password) => set({ password }),
-  setConfirmPassword: (confirmPassword) => set({ confirmPassword }),
+  setPasswordConfirm: (passwordConfirm) => set({ passwordConfirm }),
 }))
 
 export default useAuthStore
