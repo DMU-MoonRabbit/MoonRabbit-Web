@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
 import CategoryBar from './CategoryBar';
 import { useResponsiveStore } from '../stores/useResponsiveStore';
 import { useAnonymousStore } from '../stores/useAnonymousStore';
@@ -35,28 +36,61 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
 }) => {
   const { res } = useResponsiveStore();
   const { anonymous, toggleAnonymous, setAnonymous } = useAnonymousStore();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const handleClose = () => {
-    setAnonymous(false); // 모달 닫을 때 상태 초기화
+    setAnonymous(false);
+    setError(null);
     onClose();
   };
 
-  const handleSubmit = () => {
-    // 필요 시 이곳에서 anonymous 상태도 활용 가능
-    console.log('익명 여부:', anonymous);
-    onCreateConcern(); // 서버 요청 함수에 anonymous 상태 전달해도 됨
+  const handleSubmit = async () => {
+    if (loading) return; // 중복 방지
+    if (!title.trim() || !content.trim() || !selectedCategory.trim()) {
+      setError('제목, 내용, 카테고리를 모두 입력해주세요.');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await axios.post(
+      `http://moonrabbit-api.kro.kr/api/boards/save`,
+      {
+        title,
+        content,
+        category: selectedCategory,
+        anonymous,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+    console.log('게시글 생성 성공:', response.data);
+
+      // 요청 성공 시
+      onCreateConcern(); // 필요시 추가 작업
+      handleClose(); // 모달 닫기 및 상태 초기화
+    } catch (err) {
+      setError('게시글 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
-      <div className={`bg-white rounded-xl shadow-lg p-8 ${
-        res === 'pc' 
-          ? `${MODAL_STYLES.width} ${MODAL_STYLES.height}` 
-          : 'w-[90%] h-[80vh]'
-      } relative flex flex-col`}>
-
+      <div
+        className={`bg-white rounded-xl shadow-lg p-8 ${
+          res === 'pc' ? `${MODAL_STYLES.width} ${MODAL_STYLES.height}` : 'w-[90%] h-[80vh]'
+        } relative flex flex-col`}
+      >
         <button onClick={handleClose} className="absolute top-3 right-6 text-4xl z-10">
           &times;
         </button>
@@ -66,8 +100,12 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
           <div className={`flex items-center justify-center ${MODAL_STYLES.logoSpacing}`}>
             <img src="/images/MoonRabbitSleep.png" alt="Moon Rabbit Logo" className="h-24 w-auto mr-4" />
             <div className="font-mainFont">
-              <p className="text-xl text-gray-800"><span style={{ color: 'var(--color-lightCaramel)' }}>달</span>토끼</p>
-              <p className="text-sm text-gray-600"><span style={{ color: 'var(--color-lightCaramel)' }}>Moon</span>Rabbit</p>
+              <p className="text-xl text-gray-800">
+                <span style={{ color: 'var(--color-lightCaramel)' }}>달</span>토끼
+              </p>
+              <p className="text-sm text-gray-600">
+                <span style={{ color: 'var(--color-lightCaramel)' }}>Moon</span>Rabbit
+              </p>
             </div>
           </div>
 
@@ -75,16 +113,16 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
           <div className="flex justify-start mb-4">
             <button
               onClick={toggleAnonymous}
-              className={`px-4 py-2 rounded-lg text-sm font-mainFont transition-colors duration-200 shadow-sm bg-gray-200 ${
-                anonymous
-                  ? 'bg-mainColor text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              className={`px-4 py-2 rounded-lg text-sm font-mainFont transition-colors duration-200 shadow-sm ${
+                anonymous ? 'bg-mainColor text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               }`}
             >
               {anonymous ? '익명 작성 중' : '익명으로 작성하기'}
             </button>
           </div>
 
+          {/* 에러 메시지 */}
+          {error && <p className="text-red-500 mb-4 font-mainFont">{error}</p>}
 
           {/* 고민제목 */}
           <div className="mb-6">
@@ -105,11 +143,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
           <div className={MODAL_STYLES.sectionSpacing}>
             <label className="flex text-lg font-mainFont">태그</label>
             <div className="mt-2 justify-end">
-              <CategoryBar
-                selectedCategory={selectedCategory}
-                onCategoryChange={onCategoryChange}
-                disableCentering={true}
-              />
+              <CategoryBar selectedCategory={selectedCategory} onCategoryChange={onCategoryChange} disableCentering={true} />
             </div>
           </div>
 
@@ -132,9 +166,12 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
         <div className="flex justify-center mt-4">
           <button
             onClick={handleSubmit}
-            className="bg-[var(--color-mainColor)] text-[var(--color-white)] px-3 py-1 rounded-lg text-lg font-mainFont shadow-md hover:bg-red-600 transition-colors"
+            disabled={loading}
+            className={`px-3 py-1 rounded-lg text-lg font-mainFont shadow-md transition-colors ${
+              loading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[var(--color-mainColor)] text-white hover:bg-red-600'
+            }`}
           >
-            등록
+            {loading ? '등록 중...' : '등록'}
           </button>
         </div>
       </div>
