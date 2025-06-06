@@ -7,6 +7,7 @@ import { useResponsiveStore } from "../stores/useResponsiveStore"
 import LogoImg from "../assets/images/moonRabbitSleep2.png"
 import GoogleLoginImg from "../assets/images/GoogleLogin.svg"
 import kakaoLoginImg from "../assets/images/KakaoLogin.png"
+import axios from "axios"
 
 
 export const LogoPanel = () => {
@@ -25,8 +26,27 @@ export const LoginForm = () => {
   const { email, password, setEmail, setPassword } = useAuthStore()
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
-  const handleLogin = () => {
+
+  const navigate = useNavigate()
+
+  const handleLogin = async() => {
+    try {
+      const response = await axios.post('http://moonrabbit-api.kro.kr/api/users/login', {
+        email,
+        password,
+      })
+      console.log('응답 데이터:', response.data)
+      // 토큰 localStorage 저장
+      const { accessToken, refreshToken } = response.data
+      localStorage.setItem('accessToken', accessToken)
+      localStorage.setItem('refreshToken', refreshToken)
+
+      navigate('/')
+    } catch (error) {
+      console.error('에러:', error)
+    }
   }
+
   return (
     <div className={clsx('flex flex-col justify-center p-15 bg-white', isMobile ? 'w-full' : 'w-4/7')}>
       <LoginFormHeader />
@@ -56,26 +76,66 @@ export const LoginForm = () => {
 }
 
 export const SignupForm = () => {
+
+  const setIsLogin = useAuthFormStore((state) => state.setIsLogin)
+  
   const { 
     email, 
-    phoneNo, 
-    verificationNo, 
+    phoneNum, 
+    verification, 
     password, 
-    confirmPassword, 
+    passwordConfirm, 
     setEmail,
-    setPhoneNo,
-    setVerificationNo,
+    setPhoneNum,
+    setVerification,
     setPassword,
-    setConfirmPassword, 
+    setPasswordConfirm, 
   } = useUserStore()
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
-  const handleSignup = () => {
-    
-  }
-  const handleVerifyNo =() => {
+  const handleSignup = async () => {
+    // 유효성 검사
+    if (!email || !phoneNum || !verification || !password || !passwordConfirm) {
+      alert('모든 정보를 입력해주세요.')
+      return
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      alert('올바른 이메일 형식을 입력해주세요.')
+      return
+    }
+    if (password !== passwordConfirm) {
+      alert('비밀번호가 일치하지 않습니다.')
+      return
+    }
 
+    // API 요청
+    try {
+      const response = await axios.post('http://moonrabbit-api.kro.kr/api/users/register', {
+        email,
+        password,
+        passwordConfirm,
+        phoneNum,
+        verification,
+      })
+      //console.log('응답 데이터:', response.data)
+      alert('회원가입이 완료되었습니다!')
+      setIsLogin(true)
+    } catch (error) {
+      console.error('에러:', error)
+    }
+  }
+
+  const handleVerification = async() => {
+    try {
+      const response = await axios.post('http://moonrabbit-api.kro.kr/api/sms/send', {
+        phoneNum
+      })
+      console.log('응답 데이터:', response.data)
+    } catch (error) {
+      console.error('에러:', error)
+    }
   }
 
   return (
@@ -92,17 +152,17 @@ export const SignupForm = () => {
       <LoginInputField
         type='string'
         placeholder='전화번호'
-        value={phoneNo}
-        onChange={(e: any) => setVerificationNo(e.target.value)}
+        value={phoneNum}
+        onChange={(e: any) => setPhoneNum(e.target.value)}
       />
       <div className='flex gap-2'>
         <LoginInputField
           type='string'
           placeholder='인증번호 확인'
-          value={verificationNo}
-          onChange={(e: any) => setPhoneNo(e.target.value)}
+          value={verification}
+          onChange={(e: any) => setVerification(e.target.value)}
         />
-        <LoginButton onClick={handleVerifyNo} className='max-h-[42px] rounded-[5px] w-fit px-3 py-2 whitespace-nowrap'>
+        <LoginButton onClick={handleVerification} className='max-h-[42px] rounded-[5px] w-fit px-3 py-2 whitespace-nowrap'>
           인증번호 전송
         </LoginButton>
       </div>
@@ -115,8 +175,8 @@ export const SignupForm = () => {
       <LoginInputField
         type='password'
         placeholder='비밀번호 확인'
-        value={confirmPassword}
-        onChange={(e: any) => setConfirmPassword(e.target.value)}
+        value={passwordConfirm}
+        onChange={(e: any) => setPasswordConfirm(e.target.value)}
         className='mb-8'
       />
 
