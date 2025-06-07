@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import axios from 'axios';
 
 export interface Comment {
   id: number;
@@ -111,9 +112,8 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
     if (!token) return
 
     try {
-      await fetch(`http://moonrabbit-api.kro.kr/api/answer/delete/${commentId}`, {
-        method: 'DELETE',
-        headers: {
+      await axios.delete(`http://moonrabbit-api.kro.kr/api/answer/delete/${commentId}`, {
+          headers: {
           'Authorization': `Bearer ${token}`,
         },
       })
