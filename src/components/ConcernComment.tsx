@@ -1,13 +1,35 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
 import { useCommentStore } from '../stores/useCommentStore'
 import { CommentInput } from './CommentInput'
 import { CommentItem } from './CommentItem'
 import Comment from "../assets/images/Comment.svg";
 
 export const ConcernComment: React.FC = () => {
-  const { comments } = useCommentStore()
-  const getTotalCommentCount = (list: typeof comments): number =>
-    list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies), 0)
+  const { pageNumber } = useParams<{ pageNumber: string }>()
+  const boardId = pageNumber
+  const { comments, setComments } = useCommentStore()
+
+  useEffect(() => {
+    const getComments = async () => {
+      try {
+        const response = await axios.get(`http://moonrabbit-api.kro.kr/api/answer/board/${boardId}`)
+        const answers = await response.data
+        console.log(answers)
+      setComments(answers)
+      } catch (error) {
+        console.error('댓글 조회 실패', error)
+      }
+    }
+    getComments()
+  }, [])
+
+  const getTotalCommentCount = (list: Comment[] = []): number =>
+    list.reduce(
+    (acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []),
+    0
+  )
   const totalCommentCount = getTotalCommentCount(comments)
 
   return (
