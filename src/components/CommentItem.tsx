@@ -33,7 +33,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, depth = 0 }) 
             {replyTargetId === comment.id ? '닫기' : '답글쓰기'}
           </div>
         }
-        {currentUser === comment.author && (
+        {currentUser !== comment.author && (
           <div
             className='mr-4 text-mainColor cursor-pointer'
             onClick={() => deleteComment(comment.id)}

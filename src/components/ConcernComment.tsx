@@ -32,7 +32,7 @@ export const ConcernComment: React.FC = () => {
         const data = await response.data
         const answers = await Promise.all(
         data.answers.map(async (ans: any, index: number) => {
-          const author = await getUserInfo(ans.userId)
+          //const author = await getUserInfo(ans.userId)
           return {
             id: index + 1,
             author: '임시닉넴',
