@@ -47,6 +47,17 @@ export const LoginForm = () => {
     }
   }
 
+  const handleSNSLogin = (isGoogle: boolean) => async () => {
+    try {
+      const provider = isGoogle ? 'google' : 'kakao';
+      window.location.href = `http://moonrabbit-api.kro.kr/oauth2/authorization/${provider}`
+      navigate('/')
+    } catch (error) {
+      console.error('소셜 로그인 오류:', error)
+      alert('소셜 로그인에 실패했습니다.')
+    }
+  }
+
   return (
     <div className={clsx('flex flex-col justify-center p-15 bg-white', isMobile ? 'w-full' : 'w-4/7')}>
       <LoginFormHeader />
@@ -68,8 +79,8 @@ export const LoginForm = () => {
         로그인 (Login)
       </LoginButton>
       <div className={clsx('flex gap-2', isMobile ? 'flex-col' : 'lg:gap-4 px-0 flex-col lg:flex-row lg:px-4')}>
-        <SocialLogin SNSLoginImg={GoogleLoginImg} />
-        <SocialLogin SNSLoginImg={kakaoLoginImg} />
+        <SocialLogin onClick={handleSNSLogin(true)} SNSLoginImg={GoogleLoginImg} />
+        <SocialLogin onClick={handleSNSLogin(false)} SNSLoginImg={kakaoLoginImg} />
       </div>
     </div>
   )
@@ -110,7 +121,6 @@ export const SignupForm = () => {
       return
     }
 
-    // API 요청
     try {
       const response = await axios.post('http://moonrabbit-api.kro.kr/api/users/register', {
         email,
@@ -219,7 +229,11 @@ export const LoginButton = ({ children, onClick, className }: LoginButtonProps) 
   </button>
 )
 
-export const SocialLogin = ({ SNSLoginImg }) => {
+interface SocialLoginProps {
+  SNSLoginImg: string;
+  onClick: () => void;
+}
+export const SocialLogin = ({ SNSLoginImg, onClick }: SocialLoginProps) => {
   const isGoogle = SNSLoginImg === GoogleLoginImg
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
@@ -230,7 +244,8 @@ export const SocialLogin = ({ SNSLoginImg }) => {
       isGoogle ? 
       (isMobile ? 'p-[2px] bg-[#F2F2F2] h-[50px]' : 'flex-1 bg-[#F2F2F2] p-1 min-h-[50px] max-h-[50px]') : 
       (isMobile ? 'bg-[#FEE500] h-[50px]' : 'flex-1 bg-[#FEE500] max-h-[50px]')
-      )}>
+      )}
+    onClick={onClick}>
     <img src={SNSLoginImg} className='h-full object-contain'/>
   </div>
   )
