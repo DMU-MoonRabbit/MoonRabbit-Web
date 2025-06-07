@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import CategoryBar from '../components/CategoryBar';
 import ConcernCard from '../components/ConcernCard';
 import CreateConcernButton from '../components/CreateConcernButton';
@@ -146,6 +147,7 @@ const NightSkyPage: React.FC = () => {
   } = useConcernStore();
 
   const { res } = useResponsiveStore();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchConcerns();
@@ -168,6 +170,10 @@ const NightSkyPage: React.FC = () => {
   // 모바일 뷰에서는 3개의 카드만 표시
   const displayConcerns = res === 'mo' ? filteredConcerns.slice(0, 3) : filteredConcerns;
 
+  const handleCardClick = (id: number) => {
+    navigate(`/night-sky/${id}`);
+  };
+
   return (
     <div className="w-full min-h-screen relative overflow-hidden">
       {/* 배경 이미지 div */}
@@ -189,7 +195,8 @@ const NightSkyPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {displayConcerns.map((concern, index) => (
             <ConcernCard
-              key={index}
+              key={concern.id}
+              id={concern.id}
               profileImage={concern.profileImage}
               title={concern.title}
               content={concern.content}
@@ -197,6 +204,7 @@ const NightSkyPage: React.FC = () => {
               recentComment={concern.recentComment}
               date={concern.date}
               backgroundImage={concern.backgroundImage}
+              onClick={handleCardClick}
             />
           ))}
         </div>

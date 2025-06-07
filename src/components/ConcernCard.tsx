@@ -3,6 +3,7 @@ import { useResponsiveStore } from '../stores/useResponsiveStore';
 import clsx from 'clsx';
 
 interface ConcernCardProps {
+  id: number;
   profileImage: string;
   title: string;
   category: string;
@@ -13,16 +14,19 @@ interface ConcernCardProps {
   };
   date?: string;
   backgroundImage?: string;
+  onClick?: (id: number) => void;
 }
 
 const ConcernCard: React.FC<ConcernCardProps> = ({
+  id,
   profileImage,
   title,
   category,
   content,
   recentComment,
   date,
-  backgroundImage
+  backgroundImage,
+  onClick
 }) => {
   const res = useResponsiveStore((state) => state.res);
   const isMobile = res === 'mo';
@@ -36,7 +40,9 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
       style={{
         backgroundImage: `url(${backgroundImage || '/images/ConcernBackground.png'})`,
         boxShadow: 'inset 0 0 0 2px #473C2C',
+        cursor: onClick ? 'pointer' : 'default',
       }}
+      onClick={() => onClick && onClick(id)}
     >
       <div className={clsx('relative z-10 w-full h-full px-[0.3125rem]')}>
         {/* 프로필 이미지 */}

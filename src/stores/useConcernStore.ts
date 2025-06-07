@@ -9,6 +9,7 @@ interface Answer {
 }
 
 interface Board {
+  boardId: number;
   userId: number;
   title: string;
   content: string;
@@ -54,7 +55,7 @@ interface ConcernStore {
 
 const transformBoardToConcern = (board: Board): Concern => {
   return {
-    id: board.userId,
+    id: board.boardId,
     profileImage: 'images/MoonRabbitLogo.png',
     title: board.title,
     category: board.category,
@@ -108,7 +109,7 @@ export const useConcernStore = create<ConcernStore>((set, get) => ({
   fetchConcerns: async () => {
     try {
       const response = await axios.get('http://moonrabbit-api.kro.kr/api/boards/list');
-      const boards: Board[] = response.data;
+      const boards: Board[] = response.data.content;
       const concerns = boards.map(transformBoardToConcern);
       
       set({ 
