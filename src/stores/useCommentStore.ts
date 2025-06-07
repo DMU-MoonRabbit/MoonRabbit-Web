@@ -3,10 +3,14 @@ import axios from 'axios';
 
 export interface Comment {
   id: number;
-  profileImage: string;
-  author: string;
+  profileImg: string;
+  nickname: string;
+  userId: number;
+  parentId: number;
   content: string;
   createdAt: string;
+  likeCount: number;
+  reportCount: number;
   like: boolean;
   replies: Comment[];
 }

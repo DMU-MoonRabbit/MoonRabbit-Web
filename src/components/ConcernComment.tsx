@@ -11,40 +11,12 @@ export const ConcernComment: React.FC = () => {
   const boardId = pageNumber
   const { comments, setComments } = useCommentStore()
 
-  // 유저 정보  get
-  const getUserInfo = async (userId: number) => {
-    try {
-      const response = await axios.get(`http://moonrabbit-api.kro.kr/api/users/${userId}`)
-      const authorData = await response.data
-      return {
-        nickname: authorData.nickname,
-        profileImage: authorData.profileImageUrl,
-      }
-    } catch (err) {
-      console.error('댓글 작성자 조회 실패:', err)
-    }
-  }
-
   useEffect(() => {
     const getComments = async () => {
       try {
-        const response = await axios.get(`http://moonrabbit-api.kro.kr/api/boards/list/${boardId}`)
-        const data = await response.data
-        const answers = await Promise.all(
-        data.answers.map(async (ans: any, index: number) => {
-          //const author = await getUserInfo(ans.userId)
-          return {
-            id: index + 1,
-            author: '임시닉넴',
-            profileImage: '',
-            content: ans.content,
-            createdAt: ans.createdAt,
-            like: false, 
-            replies: [], 
-          }
-        })
-      )
-
+        const response = await axios.get(`http://moonrabbit-api.kro.kr/api/answer/board/${boardId}`)
+        const answers = await response.data
+        console.log(answers)
       setComments(answers)
       } catch (error) {
         console.error('댓글 조회 실패', error)
