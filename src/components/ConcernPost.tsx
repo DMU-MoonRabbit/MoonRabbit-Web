@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect} from 'react';
 import { useConcernDetailStore } from '../stores/useConcernDetailStore';
 import { useCommentStore } from '../stores/useCommentStore';
 import { useConcernStore } from '../stores/useConcernStore';
 import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 import Comment from "../assets/images/Comment.svg";
 import Report from '../assets/images/Report.svg';
 import Like from "../assets/images/Like.svg";
@@ -35,17 +36,14 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
   const navigate = useNavigate()
   const { pageNumber } = useParams()
   const currentId = Number(pageNumber)
-
   const { concerns } = useConcernStore()
   const currentIndex = concerns.findIndex(c => c.id === currentId)
-
   const goToPrev = () => {
     if (currentIndex > 0) {
       const prevId = concerns[currentIndex - 1].id
       navigate(`/night-sky/${prevId}`)
     }
   }
-
   const goToNext = () => {
     if (currentIndex < concerns.length - 1) {
       const nextId = concerns[currentIndex + 1].id
@@ -82,10 +80,11 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
 }
 
 export const ConcernAnswer: React.FC = () => {
+  const { aiAnswer } = useConcernStore()
   return(
     <div className='text-darkWalnut font-mainFont bg-mainWhite h-auto w-4/5 rounded-[40px] p-[50px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]'>
       <p className='text-[30px] mb-[20px]'>달토끼 답변</p>
-      <p className='whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight'>🐰･･･달토끼가 답변을 작성 중이에요. 조금만 기다려주세요･･･✏️</p>
+      <p className='whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight'>{aiAnswer}</p>
     </div>
   )
 }

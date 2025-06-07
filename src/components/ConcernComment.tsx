@@ -9,7 +9,7 @@ import Comment from "../assets/images/Comment.svg";
 export const ConcernComment: React.FC = () => {
   const { pageNumber } = useParams<{ pageNumber: string }>()
   const boardId = pageNumber
-  const { comments, setComments, latestCommentId } = useCommentStore()
+  const { comments, setComments } = useCommentStore()
 
   useEffect(() => {
     const getComments = async () => {
