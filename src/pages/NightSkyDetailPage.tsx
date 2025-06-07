@@ -39,7 +39,7 @@ const NightSkyDetailPage: React.FC = () => {
   }
   
   return (
-    <div className="flex flex-col items-center justify-center w-full max-w-4xl mx-auto px-4 py-8">
+    <div className="flex flex-col items-center justify-center w-full">
       <ConcernContent 
         title={boardDetail.title}
         content={boardDetail.content}
