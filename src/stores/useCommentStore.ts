@@ -1,18 +1,18 @@
 import { create } from 'zustand'
-import axios from 'axios';
+import axios from 'axios'
 
 export interface Comment {
-  id: number;
-  profileImg: string;
-  nickname: string;
-  userId: number;
-  parentId: number;
-  content: string;
-  createdAt: string;
-  likeCount: number;
-  reportCount: number;
-  like: boolean;
-  replies: Comment[];
+  id: number
+  profileImg: string
+  nickname: string
+  userId: number
+  parentId: number
+  content: string
+  createdAt: string
+  likeCount: number
+  reportCount: number
+  like: boolean // 나중에 삭제
+  replies: Comment[]
 }
 
 interface CommentStore {
@@ -28,9 +28,9 @@ interface CommentStore {
   replyContents: { [id: number]: string }
   setReplyContent: (id: number, content: string) => void
   toggleCommentLike: (id: number) => void
-  currentUser: string;
-  setCurrentUser: (user: string) => void;
-  deleteComment: (commentId: number) => void;
+  currentUser: number | null
+  setCurrentUser: (user: number | null) => void
+  deleteComment: (commentId: number) => void
 }
 
 function toggleLikeRecursive(comments: Comment[], id: number): Comment[] {
@@ -48,34 +48,63 @@ function insertReplyRecursive(comments: Comment[], parentId: number, reply: Comm
     if (comment.id === parentId) {
       return {
         ...comment,
-        replies: [reply, ...comment.replies]
+        replies: [...(comment.replies ?? []), reply]
       }
     }
     return {
       ...comment,
-      replies: insertReplyRecursive(comment.replies, parentId, reply)
+      replies: insertReplyRecursive(comment.replies ?? [], parentId, reply)
     }
   })
 }
 
 function removeCommentRecursive(comments: Comment[], id: number): Comment[] {
+  if (!Array.isArray(comments)) return []
   return comments
     .filter(comment => comment.id !== id)
     .map(comment => ({
       ...comment,
-      replies: removeCommentRecursive(comment.replies, id)
+      replies: removeCommentRecursive(comment.replies ?? [], id)
     }))
+}
+
+// 댓글과 답글 구조 설정
+function buildCommentTree(flatComments: Comment[]): Comment[] {
+  const commentMap: { [id: number]: Comment & { replies: Comment[] } } = {}
+  const rootComments: Comment[] = []
+
+  flatComments.forEach(comment => {
+    commentMap[comment.id] = { ...comment, replies: [] }
+  })
+
+  flatComments.forEach(comment => {
+    if (comment.parentId === 0 || comment.parentId === null) {
+      rootComments.push(commentMap[comment.id])
+    } else {
+      const parent = commentMap[comment.parentId]
+      if (parent) {
+        parent.replies.push(commentMap[comment.id])
+      } else {
+        rootComments.push(commentMap[comment.id])
+      }
+    }
+  })
+
+  return rootComments
 }
 
 export const useCommentStore = create<CommentStore>((set, get) => ({
   comments: [],
-  setComments: (comments) => set({ comments }),
+  setComments: (comments) => {
+    const tree = buildCommentTree(comments)
+    set({ comments: tree })
+  },
 
   addComment: (newComment, parentId = null) => {
     const updated = [...get().comments]
 
     if (parentId === null) {
-      set({ comments: [newComment, ...updated] })
+      set({ comments: [...updated, newComment] })
     } else {
       const updatedComments = insertReplyRecursive(updated, parentId, newComment)
       set({ comments: updatedComments })
@@ -108,8 +137,8 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
     set((state) => ({
       comments: toggleLikeRecursive(state.comments, id),
   })),
-  currentUser: '',
-  setCurrentUser: (user) => set({ currentUser: user }),
+  currentUser: null,
+  setCurrentUser: (userId) => set({ currentUser: userId }),
 
   deleteComment: async (commentId: number) => {
     const token = localStorage.getItem('accessToken')
@@ -123,6 +152,7 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
       })
       const updatedComments = removeCommentRecursive(get().comments, commentId)
       set({ comments: updatedComments })
+      alert('삭제되었습니다!')
     } catch (err) {
       console.error('댓글 삭제 실패', err)
     }

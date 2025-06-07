@@ -13,7 +13,7 @@ interface CommentItemProps {
 export const CommentItem: React.FC<CommentItemProps> = ({ comment, depth = 0 }) => {
   const { toggleCommentLike, replyTargetId, setReplyTargetId, deleteComment, currentUser } = useCommentStore()
   const showReplyInput = replyTargetId === comment.id
-
+  
   return (
     <div className="mt-12">
       <div className="flex items-center">
@@ -33,17 +33,18 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, depth = 0 }) 
             {replyTargetId === comment.id ? '닫기' : '답글쓰기'}
           </div>
         }
-        {currentUser !== comment.nickname && (
+        {currentUser !== comment.userId && (
           <div
             className='mr-4 text-mainColor cursor-pointer'
             onClick={() => deleteComment(comment.id)}
           >
-            삭제
+            삭제하기
           </div>
         )}
-        <div onClick={() => toggleCommentLike(comment.id)}>
+        <div onClick={() => toggleCommentLike(comment.id)} className='mr-2'>
           <img src={comment.like ? Liked : Like} alt="좋아요아이콘" className='cursor-pointer' />
         </div>
+        <div>{comment.likeCount}</div>
       </div>
       {/* 답글Input */}
       {showReplyInput && 
