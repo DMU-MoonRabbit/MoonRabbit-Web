@@ -38,8 +38,8 @@ export const ConcernComment: React.FC = () => {
   //           profileImage: author.profileImage,
   //           content: ans.content,
   //           date: ans.createdAt.split('T')[0].replace(/-/g, '.'),
-  //           like: false, // 따로 작업
-  //           replies: [], // 얘는 어케하지
+  //           like: false, 
+  //           replies: [], 
   //         }
   //       })
   //     )

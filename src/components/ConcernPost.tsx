@@ -1,6 +1,8 @@
 import React from 'react';
 import { useConcernDetailStore } from '../stores/useConcernDetailStore';
 import { useCommentStore } from '../stores/useCommentStore';
+import { useConcernStore } from '../stores/useConcernStore';
+import { useNavigate, useParams } from 'react-router-dom';
 import Comment from "../assets/images/Comment.svg";
 import Report from '../assets/images/Report.svg';
 import Like from "../assets/images/Like.svg";
@@ -29,10 +31,32 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
     0
   )
   const totalCommentCount = getTotalCommentCount(comments)
+
+  const navigate = useNavigate()
+  const { pageNumber } = useParams()
+  const currentId = Number(pageNumber)
+
+  const { concerns } = useConcernStore()
+  const currentIndex = concerns.findIndex(c => c.id === currentId)
+
+  const goToPrev = () => {
+    if (currentIndex > 0) {
+      const prevId = concerns[currentIndex - 1].id
+      navigate(`/night-sky/${prevId}`)
+    }
+  }
+
+  const goToNext = () => {
+    if (currentIndex < concerns.length - 1) {
+      const nextId = concerns[currentIndex + 1].id
+      navigate(`/night-sky/${nextId}`)
+    }
+  }
+
   
   return (
     <div className='flex items-center justify-center w-full'>
-      <img src={PrevArrow} alt='이전 고민' />
+      <img src={PrevArrow} alt='이전 고민' onClick={goToPrev} className='cursor-pointer' />
       <div className='text-darkWalnut font-mainFont mx-2 bg-mainWhite h-auto w-4/5 rounded-[40px] p-[50px] pb-[32px] my-24 shadow-[0_2px_4px_rgba(0,0,0,0.25)]'>
         <p className='text-[30px]'>{title}</p>
         <div className='flex items-center my-[20px]'>
@@ -52,7 +76,7 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
           <p>{date}</p>
         </div>
       </div>
-      <img src={NextArrow} alt='다음 고민' />
+      <img src={NextArrow} alt='다음 고민' onClick={goToNext} className='cursor-pointer' />
     </div>
   )
 }
