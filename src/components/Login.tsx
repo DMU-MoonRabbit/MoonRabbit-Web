@@ -47,10 +47,9 @@ export const LoginForm = () => {
     }
   }
 
-  const handleSNSLogin = (isGoogle: boolean) => async () => {
+  const handleSNSLogin = (platform: string) => async () => {
     try {
-      const provider = isGoogle ? 'google' : 'kakao';
-      window.location.href = `http://moonrabbit-api.kro.kr/oauth2/authorization/${provider}`
+      window.location.href = `http://moonrabbit-api.kro.kr/api/users/${platform}`
       navigate('/')
     } catch (error) {
       console.error('소셜 로그인 오류:', error)
@@ -79,8 +78,8 @@ export const LoginForm = () => {
         로그인 (Login)
       </LoginButton>
       <div className={clsx('flex gap-2', isMobile ? 'flex-col' : 'lg:gap-4 px-0 flex-col lg:flex-row lg:px-4')}>
-        <SocialLogin onClick={handleSNSLogin(true)} SNSLoginImg={GoogleLoginImg} />
-        <SocialLogin onClick={handleSNSLogin(false)} SNSLoginImg={kakaoLoginImg} />
+        <SocialLogin onClick={handleSNSLogin('google')} SNSLoginImg={GoogleLoginImg} />
+        <SocialLogin onClick={handleSNSLogin('kakao')} SNSLoginImg={kakaoLoginImg} />
       </div>
     </div>
   )
