@@ -48,17 +48,19 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
   };
 
   const handleSubmit = async () => {
-    if (loading) return; // 중복 방지
-    if (!title.trim() || !content.trim() || !selectedCategory.trim()) {
-      setError('제목, 내용, 카테고리를 모두 입력해주세요.');
-      return;
-    }
+  if (loading) return;
+  if (!title.trim() || !content.trim() || !selectedCategory.trim()) {
+    setError('제목, 내용, 카테고리를 모두 입력해주세요.');
+    return;
+  }
 
-    setLoading(true);
-    setError(null);
+  setLoading(true);
+  setError(null);
 
-    try {
-      const response = await axios.post(
+  try {
+    const token = localStorage.getItem('accessToken'); // 또는 sessionStorage.getItem('accessToken');
+
+    const response = await axios.post(
       `http://moonrabbit-api.kro.kr/api/boards/save`,
       {
         title,
@@ -68,21 +70,23 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
       },
       {
         withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       }
     );
 
     console.log('게시글 생성 성공:', response.data);
-
-      // 요청 성공 시
-      onCreateConcern(); // 필요시 추가 작업
-      handleClose(); // 모달 닫기 및 상태 초기화
-    } catch (err) {
-      setError('게시글 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    onCreateConcern();
+    handleClose();
+  } catch (err) {
+    setError('게시글 생성 중 오류가 발생했습니다. 다시 시도해주세요.');
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
