@@ -11,7 +11,7 @@ interface CommentItemProps {
 }
 
 export const CommentItem: React.FC<CommentItemProps> = ({ comment, depth = 0 }) => {
-  const { toggleCommentLike, replyTargetId, setReplyTargetId } = useCommentStore()
+  const { toggleCommentLike, replyTargetId, setReplyTargetId, deleteComment, currentUser } = useCommentStore()
   const showReplyInput = replyTargetId === comment.id
 
   return (
@@ -22,7 +22,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, depth = 0 }) 
       </div>
       <p className="whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight my-4">{comment.content}</p>
       <div className="flex text-[16px]">
-        <p className='mr-4'>{comment.date}</p>
+        <p className='mr-4'>{comment.createdAt.split('T')[0].replace(/-/g, '.')}</p>
         {depth === 0 && 
           <div
             className='mr-4 cursor-pointer'
@@ -33,6 +33,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, depth = 0 }) 
             {replyTargetId === comment.id ? '닫기' : '답글쓰기'}
           </div>
         }
+        {currentUser === comment.author && (
+          <div
+            className='mr-4 text-mainColor cursor-pointer'
+            onClick={() => deleteComment(comment.id)}
+          >
+            삭제
+          </div>
+        )}
         <div onClick={() => toggleCommentLike(comment.id)}>
           <img src={comment.like ? Liked : Like} alt="좋아요아이콘" className='cursor-pointer' />
         </div>
@@ -44,10 +52,10 @@ export const CommentItem: React.FC<CommentItemProps> = ({ comment, depth = 0 }) 
         </div>
       }
       {/* 답글 렌더링 */}
-      {comment.replies.length > 0 && (
+      {comment.replies?.length > 0 && (
         <div className='ml-12 mt-2'>
           {comment.replies.map(reply => (
-            <CommentItem key={reply.id} comment={reply}  depth={depth + 1} />
+            <CommentItem key={reply.id} comment={reply} depth={depth + 1} />
           ))}
         </div>
       )}

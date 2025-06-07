@@ -7,7 +7,6 @@ import Like from "../assets/images/Like.svg";
 import Liked from "../assets/images/Liked.svg";
 import PrevArrow from "../assets/images/PrevArrow.svg"
 import NextArrow from "../assets/images/NextArrow.svg"
-import { useParams } from 'react-router-dom';
 
 interface ConcernContentProps {
   title: string;
@@ -24,8 +23,11 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
 }) => {
   const { concern, toggleConcernLike } = useConcernDetailStore()
   const { comments } = useCommentStore()
-  const getTotalCommentCount = (list: typeof comments): number =>
-    list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies), 0)
+  const getTotalCommentCount = (list: Comment[] = []): number =>
+    list.reduce(
+    (acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []),
+    0
+  )
   const totalCommentCount = getTotalCommentCount(comments)
   
   return (

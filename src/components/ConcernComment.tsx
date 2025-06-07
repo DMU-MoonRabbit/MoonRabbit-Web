@@ -1,13 +1,62 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import axios from 'axios'
 import { useCommentStore } from '../stores/useCommentStore'
 import { CommentInput } from './CommentInput'
 import { CommentItem } from './CommentItem'
 import Comment from "../assets/images/Comment.svg";
 
 export const ConcernComment: React.FC = () => {
-  const { comments } = useCommentStore()
-  const getTotalCommentCount = (list: typeof comments): number =>
-    list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies), 0)
+  const { boardId } = useParams<{ boardId: string }>()
+  const { comments, setComments } = useCommentStore()
+
+  // 유저 정보  get
+  const getUserInfo = async (userId: number) => {
+    try {
+      const response = await axios.get(`http://moonrabbit-api.kro.kr/api/users/${userId}`)
+      const authorData = await response.data
+      return {
+        nickname: authorData.nickname,
+        profileImage: authorData.profileImageUrl,
+      }
+    } catch (err) {
+      console.error('댓글 작성자 조회 실패:', err)
+    }
+  }
+
+  // useEffect(() => {
+  //   const getComments = async () => {
+  //     try {
+  //       const response = await axios.get(`http://moonrabbit-api.kro.kr/api/boards/list/${boardId}`)
+  //       const data = await response.data
+  //       const answers = await Promise.all(
+  //       data.answers.map(async (ans: any, index: number) => {
+  //         const author = await getUserInfo(ans.userId)
+  //         return {
+  //           id: index + 1,
+  //           author: author.nickname,
+  //           profileImage: author.profileImage,
+  //           content: ans.content,
+  //           date: ans.createdAt.split('T')[0].replace(/-/g, '.'),
+  //           like: false, // 따로 작업
+  //           replies: [], // 얘는 어케하지
+  //         }
+  //       })
+  //     )
+
+  //     setComments(answers)
+  //     } catch (error) {
+  //       console.error('댓글 조회 실패', error)
+  //     }
+  //   }
+  //   getComments()
+  // }, [])
+
+  const getTotalCommentCount = (list: Comment[] = []): number =>
+    list.reduce(
+    (acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []),
+    0
+  )
   const totalCommentCount = getTotalCommentCount(comments)
 
   return (

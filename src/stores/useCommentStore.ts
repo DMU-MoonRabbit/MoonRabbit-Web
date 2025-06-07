@@ -5,13 +5,15 @@ export interface Comment {
   profileImage: string;
   author: string;
   content: string;
-  date: string;
+  createdAt: string;
   like: boolean;
   replies: Comment[];
 }
 
 interface CommentStore {
   comments: Comment[]
+  setComments: (comments: Comment[]) => void
+  addComment: (newComment: Comment, parentId?: number | null) => void
   replyTargetId: number | null
   inputValues: Record<string | number, string>
   setReplyTargetId: (id: number | null) => void
@@ -21,6 +23,9 @@ interface CommentStore {
   replyContents: { [id: number]: string }
   setReplyContent: (id: number, content: string) => void
   toggleCommentLike: (id: number) => void
+  currentUser: string;
+  setCurrentUser: (user: string) => void;
+  deleteComment: (commentId: number) => void;
 }
 
 function toggleLikeRecursive(comments: Comment[], id: number): Comment[] {
@@ -33,48 +38,45 @@ function toggleLikeRecursive(comments: Comment[], id: number): Comment[] {
   })
 }
 
-const initialComments: Comment[] = [
-  {
-    id: 1,
-    author: '익명1',
-    profileImage: 'https://i.pravatar.cc/150?img=1',
-    content: '저도 작년에 그랬는데 결국 좋은 결과 있었어요!',
-    date: '2025.06.03',
-    like: true,
-    replies: [
-      {
-        id: 4,
-        author: '익명4',
-        profileImage: 'https://i.pravatar.cc/150?img=1',
-        content: '우와 용기 얻고 갑니다.',
-        date: '2025.06.03',
-        like: false,
-        replies: [],
-      },
-      {
-        id: 5,
-        author: '익명5',
-        profileImage: 'https://i.pravatar.cc/150?img=1',
-        content: '우와 용기 얻고 갑니다.',
-        date: '2025.06.03',
-        like: false,
-        replies: [],
-      },
-    ],
-  },
-  {
-    id: 2,
-    author: '익명2',
-    profileImage: 'https://i.pravatar.cc/150?img=1',
-    content: '너무 자책하지 마세요. 누구나 실수할 수 있어요.',
-    date: '2025.06.04',
-    like: false,
-    replies: [],
-  },
-]
+function insertReplyRecursive(comments: Comment[], parentId: number, reply: Comment): Comment[] {
+  return comments.map(comment => {
+    if (comment.id === parentId) {
+      return {
+        ...comment,
+        replies: [reply, ...comment.replies]
+      }
+    }
+    return {
+      ...comment,
+      replies: insertReplyRecursive(comment.replies, parentId, reply)
+    }
+  })
+}
+
+function removeCommentRecursive(comments: Comment[], id: number): Comment[] {
+  return comments
+    .filter(comment => comment.id !== id)
+    .map(comment => ({
+      ...comment,
+      replies: removeCommentRecursive(comment.replies, id)
+    }))
+}
 
 export const useCommentStore = create<CommentStore>((set, get) => ({
-  comments: initialComments,
+  comments: [],
+  setComments: (comments) => set({ comments }),
+
+  addComment: (newComment, parentId = null) => {
+    const updated = [...get().comments]
+
+    if (parentId === null) {
+      set({ comments: [newComment, ...updated] })
+    } else {
+      const updatedComments = insertReplyRecursive(updated, parentId, newComment)
+      set({ comments: updatedComments })
+    }
+  },
+
   replyTargetId: null,
   inputValues: {},
 
@@ -101,4 +103,24 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
     set((state) => ({
       comments: toggleLikeRecursive(state.comments, id),
   })),
+  currentUser: '',
+  setCurrentUser: (user) => set({ currentUser: user }),
+
+  deleteComment: async (commentId: number) => {
+    const token = localStorage.getItem('accessToken')
+    if (!token) return
+
+    try {
+      await fetch(`http://moonrabbit-api.kro.kr/api/answer/delete/${commentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+      const updatedComments = removeCommentRecursive(get().comments, commentId)
+      set({ comments: updatedComments })
+    } catch (err) {
+      console.error('댓글 삭제 실패', err)
+    }
+  }
 }))
