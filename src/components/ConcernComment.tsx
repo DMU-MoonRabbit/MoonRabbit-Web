@@ -7,7 +7,8 @@ import { CommentItem } from './CommentItem'
 import Comment from "../assets/images/Comment.svg";
 
 export const ConcernComment: React.FC = () => {
-  const { boardId } = useParams<{ boardId: string }>()
+  const { pageNumber } = useParams<{ pageNumber: string }>()
+  const boardId = pageNumber
   const { comments, setComments } = useCommentStore()
 
   // 유저 정보  get
@@ -24,33 +25,33 @@ export const ConcernComment: React.FC = () => {
     }
   }
 
-  // useEffect(() => {
-  //   const getComments = async () => {
-  //     try {
-  //       const response = await axios.get(`http://moonrabbit-api.kro.kr/api/boards/list/${boardId}`)
-  //       const data = await response.data
-  //       const answers = await Promise.all(
-  //       data.answers.map(async (ans: any, index: number) => {
-  //         const author = await getUserInfo(ans.userId)
-  //         return {
-  //           id: index + 1,
-  //           author: author.nickname,
-  //           profileImage: author.profileImage,
-  //           content: ans.content,
-  //           date: ans.createdAt.split('T')[0].replace(/-/g, '.'),
-  //           like: false, 
-  //           replies: [], 
-  //         }
-  //       })
-  //     )
+  useEffect(() => {
+    const getComments = async () => {
+      try {
+        const response = await axios.get(`http://moonrabbit-api.kro.kr/api/boards/list/${boardId}`)
+        const data = await response.data
+        const answers = await Promise.all(
+        data.answers.map(async (ans: any, index: number) => {
+          const author = await getUserInfo(ans.userId)
+          return {
+            id: index + 1,
+            author: '임시닉넴',
+            profileImage: '',
+            content: ans.content,
+            createdAt: ans.createdAt,
+            like: false, 
+            replies: [], 
+          }
+        })
+      )
 
-  //     setComments(answers)
-  //     } catch (error) {
-  //       console.error('댓글 조회 실패', error)
-  //     }
-  //   }
-  //   getComments()
-  // }, [])
+      setComments(answers)
+      } catch (error) {
+        console.error('댓글 조회 실패', error)
+      }
+    }
+    getComments()
+  }, [])
 
   const getTotalCommentCount = (list: Comment[] = []): number =>
     list.reduce(

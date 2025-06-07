@@ -81,26 +81,11 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
   )
 }
 
-interface Answer {
-  userId: number;
-  boardId: number;
-  content: string;
-  createdAt: string;
-}
-
-interface ConcernAnswerProps {
-  answers: Answer[];
-}
-
-export const ConcernAnswer: React.FC<ConcernAnswerProps> = ({ answers }) => {
+export const ConcernAnswer: React.FC = () => {
   return(
     <div className='text-darkWalnut font-mainFont bg-mainWhite h-auto w-4/5 rounded-[40px] p-[50px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]'>
       <p className='text-[30px] mb-[20px]'>달토끼 답변</p>
-      {answers.length > 0 ? (
-        <p className='whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight'>{answers[0].content}</p>
-      ) : (
-        <p className='whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight'>아직 답변이 없어요. 첫 답변을 남겨보세요!</p>
-      )}
+      <p className='whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight'>🐰･･･달토끼가 답변을 작성 중이에요. 조금만 기다려주세요･･･✏️</p>
     </div>
   )
 }
