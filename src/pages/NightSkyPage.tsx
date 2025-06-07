@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import CategoryBar from '../components/CategoryBar';
 import ConcernCard from '../components/ConcernCard';
 import CreateConcernButton from '../components/CreateConcernButton';
@@ -141,10 +141,15 @@ const NightSkyPage: React.FC = () => {
     setNewConcernTitle,
     setNewConcernContent,
     setNewConcernCategory,
-    resetForm
+    resetForm,
+    fetchConcerns
   } = useConcernStore();
 
   const { res } = useResponsiveStore();
+
+  useEffect(() => {
+    fetchConcerns();
+  }, [fetchConcerns]);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
