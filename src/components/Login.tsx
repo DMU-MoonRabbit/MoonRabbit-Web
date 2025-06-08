@@ -50,7 +50,6 @@ export const LoginForm = () => {
   const handleSNSLogin = (platform: string) => async () => {
     try {
       window.location.href = `http://moonrabbit-api.kro.kr/api/users/${platform}`
-      navigate('/')
     } catch (error) {
       console.error('소셜 로그인 오류:', error)
       alert('소셜 로그인에 실패했습니다.')

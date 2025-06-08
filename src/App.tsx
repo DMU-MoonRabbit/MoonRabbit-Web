@@ -7,6 +7,7 @@ import LoginSignupPage from './pages/LoginSignupPage'
 import NightSkyPage from './pages/NightSkyPage'
 import NightSkyDetailPage from './pages/NightSkyDetailPage'
 import Footer from './components/Footer'
+import LoginLoadingPage from './pages/LoginLoadingPage'
 
 function App() {
   const res = useResponsiveStore((state) => state.res)
@@ -28,6 +29,7 @@ function App() {
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path='/login' element={<LoginSignupPage />} />
+          <Route path='/loading' element={<LoginLoadingPage />} />
           <Route path='/night-sky' element={<NightSkyPage />} />
           <Route path='/night-sky/:pageNumber' element={<NightSkyDetailPage />} />
         </Routes>
