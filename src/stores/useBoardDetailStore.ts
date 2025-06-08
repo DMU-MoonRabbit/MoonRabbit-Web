@@ -14,6 +14,7 @@ interface BoardDetail {
   content: string
   category: string
   answers: Answer[]
+  aiAnswer?: string
 }
 
 interface BoardDetailStore {
@@ -21,6 +22,7 @@ interface BoardDetailStore {
   isLoading: boolean
   error: string | null
   fetchBoardDetail: (id: number) => Promise<void>
+  fetchAiAnswer: (boardId: number, category: string) => Promise<void>
 }
 
 export const useBoardDetailStore = create<BoardDetailStore>((set) => ({
@@ -44,6 +46,24 @@ export const useBoardDetailStore = create<BoardDetailStore>((set) => ({
         isLoading: false,
       })
       console.error('Failed to fetch board detail:', error)
+    }
+  },
+
+  fetchAiAnswer: async (boardId: number, category: string) => {
+    try {
+      const response = await axios.get(
+        `http://moonrabbit-api.kro.kr/api/board/${boardId}/assistant`,
+      )
+      set((state) => ({
+        boardDetail: state.boardDetail
+          ? { ...state.boardDetail, aiAnswer: response.data.reply }
+          : null,
+      }))
+    } catch (error) {
+      console.error('AI 답변 조회 실패:', error)
+      set((state) => ({
+        error: 'AI 답변을 불러오는데 실패했습니다.',
+      }))
     }
   },
 }))

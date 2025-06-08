@@ -3,7 +3,7 @@ import { useConcernDetailStore } from '../stores/useConcernDetailStore'
 import { useCommentStore } from '../stores/useCommentStore'
 import { useConcernStore } from '../stores/useConcernStore'
 import { useNavigate, useParams } from 'react-router-dom'
-import axios from 'axios'
+import { useBoardDetailStore } from '../stores/useBoardDetailStore'
 import Comment from '../assets/images/Comment.svg'
 import Report from '../assets/images/Report.svg'
 import Like from '../assets/images/Like.svg'
@@ -24,7 +24,7 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
 }) => {
   const { concern, toggleConcernLike } = useConcernDetailStore()
   const { comments } = useCommentStore()
-  const { setAiAnswer } = useConcernStore()
+  const { boardDetail, fetchAiAnswer } = useBoardDetailStore()
   const getTotalCommentCount = (list: Comment[] = []): number =>
     list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []), 0)
   const totalCommentCount = getTotalCommentCount(comments)
@@ -49,18 +49,10 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
   }
 
   useEffect(() => {
-    const getAiAnswer = async () => {
-      try {
-        const response = await axios.get(
-          `http://moonrabbit-api.kro.kr/api/board/${boardId}/assistant`,
-        )
-        setAiAnswer(response.data.reply)
-      } catch (error) {
-        console.error('AI 답변변 조회 실패', error)
-      }
+    if (boardId && boardDetail?.category) {
+      fetchAiAnswer(Number(boardId), boardDetail.category)
     }
-    getAiAnswer()
-  }, [boardId, setAiAnswer])
+  }, [boardId, boardDetail?.category, fetchAiAnswer])
 
   return (
     <div className="flex items-center justify-center w-full">
@@ -115,12 +107,12 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
 }
 
 export const ConcernAnswer: React.FC = () => {
-  const { aiAnswer } = useConcernStore()
+  const { boardDetail } = useBoardDetailStore()
   return (
     <div className="text-darkWalnut font-mainFont bg-mainWhite h-auto w-4/5 rounded-[40px] p-[50px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
       <p className="text-[30px] mb-[20px]">달토끼 답변</p>
       <p className="whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight">
-        {aiAnswer}
+        {boardDetail?.aiAnswer || 'AI 답변을 불러오는 중입니다...'}
       </p>
     </div>
   )

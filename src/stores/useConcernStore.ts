@@ -43,9 +43,6 @@ interface ConcernStore {
   newConcernContent: string
   newConcernCategory: string
 
-  //AI 답변
-  aiAnswer: string
-
   // 상태
   setSelectedCategory: (category: string) => void
   setIsModalOpen: (isOpen: boolean) => void
@@ -54,7 +51,6 @@ interface ConcernStore {
   setNewConcernCategory: (category: string) => void
   resetForm: () => void
   fetchConcerns: () => Promise<void>
-  setAiAnswer: (aiAns: string) => void
 }
 
 const transformBoardToConcern = (board: Board): Concern => {
@@ -89,7 +85,6 @@ export const useConcernStore = create<ConcernStore>((set, get) => ({
   newConcernTitle: '',
   newConcernContent: '',
   newConcernCategory: '학교',
-  aiAnswer: '',
 
   setSelectedCategory: (category) => {
     const { concerns } = get()
@@ -132,5 +127,4 @@ export const useConcernStore = create<ConcernStore>((set, get) => ({
       console.error('Failed to fetch concerns:', error)
     }
   },
-  setAiAnswer: (aiAns) => set({ aiAnswer: aiAns }),
 }))
