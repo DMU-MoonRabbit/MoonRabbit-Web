@@ -1,9 +1,9 @@
-import React from 'react';
-import clsx from 'clsx';
-import { useResponsiveStore } from '../stores/useResponsiveStore';
+import React from 'react'
+import clsx from 'clsx'
+import { useResponsiveStore } from '../stores/useResponsiveStore'
 
 const Logo: React.FC = () => {
-  const res = useResponsiveStore((state) => state.res);
+  const res = useResponsiveStore((state) => state.res)
 
   return (
     <div
@@ -28,7 +28,7 @@ const Logo: React.FC = () => {
         <h1
           className={clsx(
             'font-mainFont text-center',
-            res === 'pc' ? 'text-5xl' : 'text-3xl'
+            res === 'pc' ? 'text-5xl' : 'text-3xl',
           )}
           style={{
             textAlign: 'center',
@@ -41,7 +41,7 @@ const Logo: React.FC = () => {
         <p
           className={clsx(
             'mt-2 font-mainFont text-center',
-            res === 'pc' ? 'text-lg' : 'text-base'
+            res === 'pc' ? 'text-lg' : 'text-base',
           )}
           style={{
             textAlign: 'center',
@@ -53,7 +53,7 @@ const Logo: React.FC = () => {
         </p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Logo;
+export default Logo

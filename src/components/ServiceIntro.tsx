@@ -1,9 +1,9 @@
-import React from 'react';
-import clsx from 'clsx';
-import { useResponsiveStore } from '../stores/useResponsiveStore';
+import React from 'react'
+import clsx from 'clsx'
+import { useResponsiveStore } from '../stores/useResponsiveStore'
 
 const ServiceIntro: React.FC = () => {
-  const res = useResponsiveStore((state) => state.res);
+  const res = useResponsiveStore((state) => state.res)
 
   return (
     <section className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
@@ -46,7 +46,7 @@ const ServiceIntro: React.FC = () => {
             달토끼가 조용히 듣고, 따뜻하게 위로할게요.
           </span>
         </p>
-        
+
         {/* 이미지 */}
         <img
           src="/images/MoonRabbitWakeUp.png"
@@ -55,7 +55,7 @@ const ServiceIntro: React.FC = () => {
         />
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default ServiceIntro;
+export default ServiceIntro

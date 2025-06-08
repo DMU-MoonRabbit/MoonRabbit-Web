@@ -1,4 +1,4 @@
-import { create } from "zustand"
+import { create } from 'zustand'
 
 interface UserState {
   email: string
@@ -14,11 +14,11 @@ interface UserState {
 }
 
 const useAuthStore = create<UserState>((set) => ({
-  email: "",
-  phoneNum: "",
-  verification: "",
-  password: "",
-  passwordConfirm: "",
+  email: '',
+  phoneNum: '',
+  verification: '',
+  password: '',
+  passwordConfirm: '',
   setEmail: (email) => set({ email }),
   setPhoneNum: (phoneNum) => set({ phoneNum }),
   setVerification: (verification) => set({ verification }),

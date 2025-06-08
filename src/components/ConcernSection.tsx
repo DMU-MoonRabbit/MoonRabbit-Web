@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
-import ConcernCard from './ConcernCard';
-import CategoryBar from './CategoryBar';
-import { useResponsiveStore } from '../stores/useResponsiveStore';
+import React, { useState } from 'react'
+import clsx from 'clsx'
+import ConcernCard from './ConcernCard'
+import CategoryBar from './CategoryBar'
+import { useResponsiveStore } from '../stores/useResponsiveStore'
 
 const ConcernSection: React.FC = () => {
-  const res = useResponsiveStore((state) => state.res);
-  const columns = res === 'pc' ? 3 : 1;
-  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const res = useResponsiveStore((state) => state.res)
+  const columns = res === 'pc' ? 3 : 1
+  const [selectedCategory, setSelectedCategory] = useState('전체')
 
   const concerns = [
     {
@@ -37,7 +37,8 @@ const ConcernSection: React.FC = () => {
       profileImage: 'images/MoonRabbitLogo.png',
       title: '가족 관계가 어려워요',
       category: '가족',
-      content: '부모님과 자주 다투게 되고 있어요. 어떻게 대화해야 할지 모르겠어요.',
+      content:
+        '부모님과 자주 다투게 되고 있어요. 어떻게 대화해야 할지 모르겠어요.',
       recentComment: {
         author: '달토끼',
         text: '서로의 입장을 이해하려 노력해보세요.',
@@ -59,7 +60,8 @@ const ConcernSection: React.FC = () => {
       profileImage: 'images/MoonRabbitLogo.png',
       title: '스트레스가 너무 심해요',
       category: '정신건강',
-      content: '일과 공부로 인한 스트레스가 너무 심해요. 어떻게 해소해야 할까요?',
+      content:
+        '일과 공부로 인한 스트레스가 너무 심해요. 어떻게 해소해야 할까요?',
       recentComment: {
         author: '달토끼',
         text: '충분한 휴식과 운동으로 스트레스를 해소해보세요.',
@@ -109,15 +111,15 @@ const ConcernSection: React.FC = () => {
         text: '현재 할 수 있는 것부터 시작해보세요. 당신의 노력이 미래를 밝게 할 거예요.',
       },
     },
-  ];
+  ]
 
   const filteredConcerns =
     selectedCategory === '전체'
       ? concerns
-      : concerns.filter((concern) => concern.category === selectedCategory);
+      : concerns.filter((concern) => concern.category === selectedCategory)
 
   const displayedConcerns =
-    res === 'pc' ? filteredConcerns : filteredConcerns.slice(0, 3);
+    res === 'pc' ? filteredConcerns : filteredConcerns.slice(0, 3)
 
   return (
     <section className="w-full max-w-[1920px] mx-auto px-[47px]">
@@ -128,15 +130,15 @@ const ConcernSection: React.FC = () => {
         벌써 2,193개의 고민들이 밤하늘을 수놓고 있어요.
       </p>
       <div className="mb-8">
-      <CategoryBar
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-      />
+        <CategoryBar
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+        />
       </div>
       <div
         className={clsx(
           'grid gap-6 mx-auto max-w-[1800px]',
-          columns === 3 ? 'grid-cols-3' : 'grid-cols-1'
+          columns === 3 ? 'grid-cols-3' : 'grid-cols-1',
         )}
       >
         {displayedConcerns.map((concern) => (
@@ -151,7 +153,7 @@ const ConcernSection: React.FC = () => {
         ))}
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default ConcernSection;
+export default ConcernSection

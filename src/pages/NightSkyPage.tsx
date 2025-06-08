@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import CategoryBar from '../components/CategoryBar';
-import ConcernCard from '../components/ConcernCard';
-import CreateConcernButton from '../components/CreateConcernButton';
-import CreateConcernModal from '../components/CreateConcernModal';
-import { useConcernStore } from '../stores/useConcernStore';
-import { useResponsiveStore } from '../stores/useResponsiveStore';
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import CategoryBar from '../components/CategoryBar'
+import ConcernCard from '../components/ConcernCard'
+import CreateConcernButton from '../components/CreateConcernButton'
+import CreateConcernModal from '../components/CreateConcernModal'
+import { useConcernStore } from '../stores/useConcernStore'
+import { useResponsiveStore } from '../stores/useResponsiveStore'
 
 // 임시 데이터 (ConcernCard prop에 맞게 수정)
 const concerns = [
@@ -40,7 +40,8 @@ const concerns = [
     profileImage: 'images/MoonRabbitLogo.png',
     title: '가족 관계가 어려워요',
     category: '가족',
-    content: '부모님과 자주 다투게 되고 있어요. 어떻게 대화해야 할지 모르겠어요.',
+    content:
+      '부모님과 자주 다투게 되고 있어요. 어떻게 대화해야 할지 모르겠어요.',
     recentComment: {
       author: '달토끼',
       text: '서로의 입장을 이해하려 노력해보세요.',
@@ -126,10 +127,10 @@ const concerns = [
     date: '2024-07-22',
     backgroundImage: '/images/ConcernBackground.png',
   },
-];
+]
 
 const NightSkyPage: React.FC = () => {
-  //고민 관련 상태관리 
+  //고민 관련 상태관리
   const {
     selectedCategory, //현재 선택된 카테고리
     filteredConcerns, // 필터링 된 고민 목록
@@ -143,36 +144,37 @@ const NightSkyPage: React.FC = () => {
     setNewConcernContent,
     setNewConcernCategory,
     resetForm,
-    fetchConcerns
-  } = useConcernStore();
+    fetchConcerns,
+  } = useConcernStore()
 
-  const { res } = useResponsiveStore();
-  const navigate = useNavigate();
+  const { res } = useResponsiveStore()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    fetchConcerns();
-  }, [fetchConcerns]);
+    fetchConcerns()
+  }, [fetchConcerns])
 
   const handleOpenModal = () => {
-    setIsModalOpen(true);
-  };
+    setIsModalOpen(true)
+  }
 
   const handleCloseModal = () => {
-    setIsModalOpen(false);
-    resetForm();
-  };
+    setIsModalOpen(false)
+    resetForm()
+  }
 
   const handleCreateConcern = () => {
     // TODO: 고민 생성 로직 추가
-    handleCloseModal();
-  };
+    handleCloseModal()
+  }
 
   // 모바일 뷰에서는 3개의 카드만 표시
-  const displayConcerns = res === 'mo' ? filteredConcerns.slice(0, 3) : filteredConcerns;
+  const displayConcerns =
+    res === 'mo' ? filteredConcerns.slice(0, 3) : filteredConcerns
 
   const handleCardClick = (id: number) => {
-    navigate(`/night-sky/${id}`);
-  };
+    navigate(`/night-sky/${id}`)
+  }
 
   return (
     <div className="w-full min-h-screen relative overflow-hidden">
@@ -224,7 +226,7 @@ const NightSkyPage: React.FC = () => {
         />
       )}
     </div>
-  );
-};
+  )
+}
 
-export default NightSkyPage;
+export default NightSkyPage

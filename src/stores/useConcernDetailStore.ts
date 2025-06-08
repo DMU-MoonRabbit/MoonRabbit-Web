@@ -1,20 +1,20 @@
 import { create } from 'zustand'
 
 interface ConcernArticle {
-  id: number;
-  title: string;
-  profileImage: string;
-  nickname: string;
-  content: string;
-  date: string;
-  answer: string;
-  like: boolean;
+  id: number
+  title: string
+  profileImage: string
+  nickname: string
+  content: string
+  date: string
+  answer: string
+  like: boolean
 }
 
 interface ConcernState {
-  concern?: ConcernArticle;
-  setConcern: (concern: ConcernArticle) => void;
-  toggleConcernLike: () => void;
+  concern?: ConcernArticle
+  setConcern: (concern: ConcernArticle) => void
+  toggleConcernLike: () => void
 }
 
 // 임시 데이터
@@ -39,21 +39,18 @@ Susoendisse faxlilisis epsom et libere semper, non xonsextetir nisi geestas.`,
   like: false,
 }
 
-
-
-
 export const useConcernDetailStore = create<ConcernState>((set) => ({
   concern: initialConcern,
   setConcern: (concern) => set(() => ({ concern })),
 
   toggleConcernLike: () =>
     set((state) => {
-      if (!state.concern) return {};
+      if (!state.concern) return {}
       return {
         concern: {
           ...state.concern,
           like: !state.concern.like,
         },
-      };
-  }),
+      }
+    }),
 }))

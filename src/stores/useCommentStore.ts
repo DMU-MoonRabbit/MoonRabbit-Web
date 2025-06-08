@@ -43,17 +43,21 @@ function toggleLikeRecursive(comments: Comment[], id: number): Comment[] {
   })
 }
 
-function insertReplyRecursive(comments: Comment[], parentId: number, reply: Comment): Comment[] {
-  return comments.map(comment => {
+function insertReplyRecursive(
+  comments: Comment[],
+  parentId: number,
+  reply: Comment,
+): Comment[] {
+  return comments.map((comment) => {
     if (comment.id === parentId) {
       return {
         ...comment,
-        replies: [...(comment.replies ?? []), reply]
+        replies: [...(comment.replies ?? []), reply],
       }
     }
     return {
       ...comment,
-      replies: insertReplyRecursive(comment.replies ?? [], parentId, reply)
+      replies: insertReplyRecursive(comment.replies ?? [], parentId, reply),
     }
   })
 }
@@ -61,10 +65,10 @@ function insertReplyRecursive(comments: Comment[], parentId: number, reply: Comm
 function removeCommentRecursive(comments: Comment[], id: number): Comment[] {
   if (!Array.isArray(comments)) return []
   return comments
-    .filter(comment => comment.id !== id)
-    .map(comment => ({
+    .filter((comment) => comment.id !== id)
+    .map((comment) => ({
       ...comment,
-      replies: removeCommentRecursive(comment.replies ?? [], id)
+      replies: removeCommentRecursive(comment.replies ?? [], id),
     }))
 }
 
@@ -73,11 +77,11 @@ function buildCommentTree(flatComments: Comment[]): Comment[] {
   const commentMap: { [id: number]: Comment & { replies: Comment[] } } = {}
   const rootComments: Comment[] = []
 
-  flatComments.forEach(comment => {
+  flatComments.forEach((comment) => {
     commentMap[comment.id] = { ...comment, replies: [] }
   })
 
-  flatComments.forEach(comment => {
+  flatComments.forEach((comment) => {
     if (comment.parentId === 0 || comment.parentId === null) {
       rootComments.push(commentMap[comment.id])
     } else {
@@ -106,7 +110,11 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
     if (parentId === null) {
       set({ comments: [...updated, newComment] })
     } else {
-      const updatedComments = insertReplyRecursive(updated, parentId, newComment)
+      const updatedComments = insertReplyRecursive(
+        updated,
+        parentId,
+        newComment,
+      )
       set({ comments: updatedComments })
     }
   },
@@ -117,8 +125,8 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
   setReplyTargetId: (id) => set({ replyTargetId: id }),
 
   setInputValue: (key, value) =>
-    set(state => ({
-      inputValues: { ...state.inputValues, [key]: value }
+    set((state) => ({
+      inputValues: { ...state.inputValues, [key]: value },
     })),
 
   commentContent: '',
@@ -136,7 +144,7 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
   toggleCommentLike: (id) =>
     set((state) => ({
       comments: toggleLikeRecursive(state.comments, id),
-  })),
+    })),
   currentUser: null,
   setCurrentUser: (userId) => set({ currentUser: userId }),
 
@@ -145,16 +153,19 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
     if (!token) return
 
     try {
-      await axios.delete(`http://moonrabbit-api.kro.kr/api/answer/delete/${commentId}`, {
+      await axios.delete(
+        `http://moonrabbit-api.kro.kr/api/answer/delete/${commentId}`,
+        {
           headers: {
-          'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
+          },
         },
-      })
+      )
       const updatedComments = removeCommentRecursive(get().comments, commentId)
       set({ comments: updatedComments })
       alert('삭제되었습니다!')
     } catch (err) {
       console.error('댓글 삭제 실패', err)
     }
-  }
+  },
 }))

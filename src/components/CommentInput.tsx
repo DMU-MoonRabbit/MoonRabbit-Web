@@ -7,23 +7,20 @@ interface CommentInputProps {
   parentId?: number | null
 }
 
-export const CommentInput: React.FC<CommentInputProps> = ({ parentId = null }) => {
+export const CommentInput: React.FC<CommentInputProps> = ({
+  parentId = null,
+}) => {
   const { pageNumber } = useParams<{ pageNumber: string }>() // 추후 App.ts에서 boardId로 수정
   const boardId = pageNumber
-  const {
-    commentContent,
-    setCommentContent,
-    replyContents,
-    setReplyContent,
-  } = useCommentStore()
+  const { commentContent, setCommentContent, replyContents, setReplyContent } =
+    useCommentStore()
 
-  const value = parentId !== null ? replyContents[parentId] || '' : commentContent
+  const value =
+    parentId !== null ? replyContents[parentId] || '' : commentContent
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value
-    parentId !== null
-      ? setReplyContent(parentId, val)
-      : setCommentContent(val)
+    parentId !== null ? setReplyContent(parentId, val) : setCommentContent(val)
   }
 
   const handleSubmit = async () => {
@@ -34,7 +31,8 @@ export const CommentInput: React.FC<CommentInputProps> = ({ parentId = null }) =
     if (!content) return
 
     try {
-      const response = await axios.post(`http://moonrabbit-api.kro.kr/api/answer/save?boardId=${boardId}`,
+      const response = await axios.post(
+        `http://moonrabbit-api.kro.kr/api/answer/save?boardId=${boardId}`,
         {
           content,
           parentId: parentId ?? null,
@@ -44,7 +42,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({ parentId = null }) =
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       )
 
       const newComment = response.data
@@ -52,9 +50,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({ parentId = null }) =
       console.log(newComment)
 
       // 입력창 초기화
-      parentId !== null
-        ? setReplyContent(parentId, '')
-        : setCommentContent('')
+      parentId !== null ? setReplyContent(parentId, '') : setCommentContent('')
     } catch (err) {
       console.error('댓글 등록 실패', err)
     }
@@ -68,8 +64,8 @@ export const CommentInput: React.FC<CommentInputProps> = ({ parentId = null }) =
         value={value}
         onChange={onChange}
       />
-      <div 
-        className='cursor-pointer flex justify-self-end bg-mainColor text-mainWhite w-fit p-[4px] px-[10px] rounded-[10px] text-[16px] mt-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]'
+      <div
+        className="cursor-pointer flex justify-self-end bg-mainColor text-mainWhite w-fit p-[4px] px-[10px] rounded-[10px] text-[16px] mt-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]"
         onClick={handleSubmit}
       >
         등록

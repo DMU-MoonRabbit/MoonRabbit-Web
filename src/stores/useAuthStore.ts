@@ -1,4 +1,4 @@
-import { create } from "zustand"
+import { create } from 'zustand'
 
 interface AuthState {
   email: string
@@ -7,15 +7,15 @@ interface AuthState {
   setPassword: (password: string) => void
 }
 export const useAuthStore = create<AuthState>((set) => ({
-  email: "",
-  password: "",
+  email: '',
+  password: '',
   setEmail: (email) => set({ email }),
   setPassword: (password) => set({ password }),
 }))
 
 interface AuthFormState {
-  isLogin: boolean;
-  setIsLogin: (isLogin: boolean) => void;
+  isLogin: boolean
+  setIsLogin: (isLogin: boolean) => void
 }
 export const useAuthFormStore = create<AuthFormState>((set) => ({
   isLogin: true,

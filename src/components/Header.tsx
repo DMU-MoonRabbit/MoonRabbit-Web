@@ -22,7 +22,9 @@ const Header = () => {
   return (
     <div className="bg-darkWalnut text-darkBeige h-14 flex items-center justify-between px-6 md:px-8 shadow-md relative">
       <div className="flex items-center space-x-6">
-        <Link to="/" className="text-xl">⋆˚.•✩‧₊⋆</Link>
+        <Link to="/" className="text-xl">
+          ⋆˚.•✩‧₊⋆
+        </Link>
 
         {/* PC용 네비게이션(왼쪽) */}
         {!isMobile && (
@@ -57,12 +59,24 @@ const Header = () => {
       {/* Mobile 드롭다운 메뉴 */}
       {isOpen && isMobile && (
         <div className="absolute top-14 left-0 w-full bg-darkWalnut flex flex-col items-start px-6 py-4 space-y-4 font-mainFont text-base z-50 shadow-lg">
-          <Link to="/night-sky" onClick={() => setIsOpen(false)}>밤하늘</Link>
-          <Link to="/question" onClick={() => setIsOpen(false)}>오늘의 질문</Link>
-          <Link to="/stars" onClick={() => setIsOpen(false)}>별자리</Link>
-          <Link to="/shop" onClick={() => setIsOpen(false)}>상점</Link>
-          <Link to="/login" onClick={() => setIsOpen(false)}>로그인 / 회원가입</Link>
-          <Link to="/settings" onClick={() => setIsOpen(false)}>설정</Link>
+          <Link to="/night-sky" onClick={() => setIsOpen(false)}>
+            밤하늘
+          </Link>
+          <Link to="/question" onClick={() => setIsOpen(false)}>
+            오늘의 질문
+          </Link>
+          <Link to="/stars" onClick={() => setIsOpen(false)}>
+            별자리
+          </Link>
+          <Link to="/shop" onClick={() => setIsOpen(false)}>
+            상점
+          </Link>
+          <Link to="/login" onClick={() => setIsOpen(false)}>
+            로그인 / 회원가입
+          </Link>
+          <Link to="/settings" onClick={() => setIsOpen(false)}>
+            설정
+          </Link>
         </div>
       )}
     </div>

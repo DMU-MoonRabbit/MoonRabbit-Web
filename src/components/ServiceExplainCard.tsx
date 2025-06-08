@@ -1,9 +1,9 @@
-import React from 'react';
+import React from 'react'
 
 interface ServiceExplainCardProps {
-  title: string;
-  subtitle: string;
-  backgroundImage: string;
+  title: string
+  subtitle: string
+  backgroundImage: string
 }
 
 const ServiceExplainCard: React.FC<ServiceExplainCardProps> = ({
@@ -18,7 +18,7 @@ const ServiceExplainCard: React.FC<ServiceExplainCardProps> = ({
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url('${backgroundImage}')` }}
       />
-      
+
       {/* 배경 색 */}
       <div className="absolute inset-0 bg-mainBlack bg-opacity-50 rounded-[20px]" />
 
@@ -33,7 +33,7 @@ const ServiceExplainCard: React.FC<ServiceExplainCardProps> = ({
         </p>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ServiceExplainCard;
+export default ServiceExplainCard
