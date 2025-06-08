@@ -4,7 +4,6 @@ import axios from 'axios';
 import CategoryBar from './CategoryBar';
 import { useResponsiveStore } from '../stores/useResponsiveStore';
 import { useAnonymousStore } from '../stores/useAnonymousStore';
-import { useConcernStore } from '../stores/useConcernStore';
 
 const MODAL_STYLES = {
   width: 'w-[1200px]',
@@ -26,12 +25,12 @@ interface CreateConcernModalProps {
 }
 
 const categoryMap: Record<string, string> = {
-  '가족': 'family',
-  '연애': 'love',
-  '진로': 'career',
-  '정신건강': 'mental',
-  '사회생활': 'society',
-  '대인관계': 'personal',
+  '가족': 'FAMILY',
+  '연애': 'LOVE',
+  '진로': 'CAREER',
+  '정신건강': 'MENTAL',
+  '사회생활': 'SOCIETY',
+  '대인관계': 'PERSONAL',
 }
 
 const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
@@ -50,7 +49,6 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate()
-  const { setAiAnswer } = useConcernStore();
 
   if (!isOpen) return null;
 
@@ -72,14 +70,6 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
 
   try {
     const token = localStorage.getItem('accessToken'); // 또는 sessionStorage.getItem('accessToken');
-    const category = categoryMap[selectedCategory]
-    const assistantRes = await axios.post(
-      `http://moonrabbit-api.kro.kr/assistant/${category}`,
-      {
-        content
-      }
-    )
-    setAiAnswer(assistantRes.data)
 
     const response = await axios.post(
       `http://moonrabbit-api.kro.kr/api/boards/save`,
@@ -98,8 +88,18 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
       }
     );
 
+    const category = categoryMap[selectedCategory]
+    const boardId = response.data.boardId
+    const assistantRes = await axios.post(
+      `http://moonrabbit-api.kro.kr/api/board/${boardId}/assistant/${category}`,
+      {
+        message: content
+      }
+    )
+
+    console.log('AI답변:', assistantRes.data)
     console.log('게시글 생성 성공:', response.data);
-    onCreateConcern();
+    onCreateConcern(); 
     handleClose();
     navigate('/night-sky/'+response.data.boardId)
   } catch (err) {

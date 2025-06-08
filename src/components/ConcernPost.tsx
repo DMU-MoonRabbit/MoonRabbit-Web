@@ -26,6 +26,7 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
 }) => {
   const { concern, toggleConcernLike } = useConcernDetailStore()
   const { comments } = useCommentStore()
+  const { setAiAnswer } = useConcernStore()
   const getTotalCommentCount = (list: Comment[] = []): number =>
     list.reduce(
     (acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []),
@@ -35,6 +36,7 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
 
   const navigate = useNavigate()
   const { pageNumber } = useParams()
+  const boardId = pageNumber
   const currentId = Number(pageNumber)
   const { concerns } = useConcernStore()
   const currentIndex = concerns.findIndex(c => c.id === currentId)
@@ -50,6 +52,18 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
       navigate(`/night-sky/${nextId}`)
     }
   }
+
+  useEffect(() => {
+    const getAiAnswer  = async () => {
+      try {
+        const response = await axios.get(`http://moonrabbit-api.kro.kr/api/board/${boardId}/assistant`)
+        setAiAnswer(response.data.reply)
+      } catch (error) {
+        console.error('AI 답변변 조회 실패', error)
+      }
+    }
+    getAiAnswer()
+  }, [])
 
   
   return (
