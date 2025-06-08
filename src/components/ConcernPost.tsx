@@ -14,14 +14,12 @@ import NextArrow from '../assets/images/NextArrow.svg'
 interface ConcernContentProps {
   title: string
   content: string
-  category: string
   date: string
 }
 
 export const ConcernContent: React.FC<ConcernContentProps> = ({
   title,
   content,
-  category,
   date,
 }) => {
   const { concern, toggleConcernLike } = useConcernDetailStore()
@@ -62,7 +60,7 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
       }
     }
     getAiAnswer()
-  }, [])
+  }, [boardId, setAiAnswer])
 
   return (
     <div className="flex items-center justify-center w-full">

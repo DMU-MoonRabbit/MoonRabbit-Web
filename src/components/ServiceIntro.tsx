@@ -1,10 +1,6 @@
 import React from 'react'
-import clsx from 'clsx'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
 
 const ServiceIntro: React.FC = () => {
-  const res = useResponsiveStore((state) => state.res)
-
   return (
     <section className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
       <h2 className="text-xl sm:text-2xl md:text-3xl text-center text-mainColor font-mainFont mt-20 mb-6">

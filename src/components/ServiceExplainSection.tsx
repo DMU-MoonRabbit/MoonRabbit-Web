@@ -1,10 +1,7 @@
 import React from 'react'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
 import ServiceExplainCard from './ServiceExplainCard'
 
 const ServiceExplainSection: React.FC = () => {
-  const res = useResponsiveStore((state) => state.res)
-
   return (
     <section className="relative w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
       {/* 제목 */}

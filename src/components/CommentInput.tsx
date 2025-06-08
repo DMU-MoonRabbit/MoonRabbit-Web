@@ -20,7 +20,11 @@ export const CommentInput: React.FC<CommentInputProps> = ({
 
   const onChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const val = e.target.value
-    parentId !== null ? setReplyContent(parentId, val) : setCommentContent(val)
+    if (parentId !== null) {
+      setReplyContent(parentId, val)
+    } else {
+      setCommentContent(val)
+    }
   }
 
   const handleSubmit = async () => {
@@ -50,7 +54,11 @@ export const CommentInput: React.FC<CommentInputProps> = ({
       console.log(newComment)
 
       // 입력창 초기화
-      parentId !== null ? setReplyContent(parentId, '') : setCommentContent('')
+      if (parentId !== null) {
+        setReplyContent(parentId, '')
+      } else {
+        setCommentContent('')
+      }
     } catch (err) {
       console.error('댓글 등록 실패', err)
     }

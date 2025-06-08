@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const TalkSection: React.FC = () => {
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    // TODO: 필요한 초기화 로직 추가
+  }, [navigate])
+
   return (
     <section className="w-full max-w-[1400px] mt-16 mb-16 px-4">
       <h2
@@ -32,6 +39,7 @@ const TalkSection: React.FC = () => {
             backgroundColor: 'var(--color-darkWalnut)',
             color: 'var(--color-darkBeige)',
           }}
+          onClick={() => navigate('/night-sky')}
         >
           고민상담하러가기
         </button>

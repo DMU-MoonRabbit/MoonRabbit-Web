@@ -25,7 +25,7 @@ export const ConcernComment: React.FC = () => {
       }
     }
     getComments()
-  }, [])
+  }, [boardId, setComments])
 
   const getTotalCommentCount = (list: Comment[] = []): number =>
     list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []), 0)

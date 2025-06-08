@@ -15,7 +15,7 @@ const LoginLoadingPage: React.FC = () => {
     } else {
       console.error('토큰 없음')
     }
-  }, [])
+  }, [navigate])
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">

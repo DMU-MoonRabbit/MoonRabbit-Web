@@ -11,7 +11,6 @@ import Footer from './components/Footer'
 import LoginLoadingPage from './pages/LoginLoadingPage'
 
 function App() {
-  const res = useResponsiveStore((state) => state.res)
   const setRes = useResponsiveStore((state) => state.setRes)
   const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn)
 
