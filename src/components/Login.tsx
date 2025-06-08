@@ -36,6 +36,7 @@ export const LogoPanel = () => {
 
 export const LoginForm = () => {
   const { email, password, setEmail, setPassword } = useAuthStore()
+  const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn)
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
@@ -56,6 +57,8 @@ export const LoginForm = () => {
       localStorage.setItem('accessToken', accessToken)
       localStorage.setItem('refreshToken', refreshToken)
 
+      // 로그인 상태 변경
+      setIsLoggedIn(true)
       navigate('/')
     } catch (error) {
       console.error('에러:', error)

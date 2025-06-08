@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
+import { useAuthStore } from '../stores/useAuthStore'
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { res, setRes } = useResponsiveStore()
+  const { isLoggedIn } = useAuthStore()
 
   const isMobile = res === 'mo'
 
@@ -40,7 +42,11 @@ const Header = () => {
       {/* PC용 네비게이션(오른쪽) */}
       {!isMobile && (
         <div className="flex items-center space-x-10 font-mainFont text-base">
-          <Link to="/login">로그인 / 회원가입</Link>
+          {isLoggedIn ? (
+            <Link to="/mypage">마이페이지</Link>
+          ) : (
+            <Link to="/login">로그인 / 회원가입</Link>
+          )}
           <Link to="/settings">설정</Link>
         </div>
       )}
@@ -71,9 +77,15 @@ const Header = () => {
           <Link to="/shop" onClick={() => setIsOpen(false)}>
             상점
           </Link>
-          <Link to="/login" onClick={() => setIsOpen(false)}>
-            로그인 / 회원가입
-          </Link>
+          {isLoggedIn ? (
+            <Link to="/mypage" onClick={() => setIsOpen(false)}>
+              마이페이지
+            </Link>
+          ) : (
+            <Link to="/login" onClick={() => setIsOpen(false)}>
+              로그인 / 회원가입
+            </Link>
+          )}
           <Link to="/settings" onClick={() => setIsOpen(false)}>
             설정
           </Link>
