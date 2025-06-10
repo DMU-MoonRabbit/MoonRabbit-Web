@@ -28,8 +28,6 @@ interface CommentStore {
   replyContents: { [id: number]: string }
   setReplyContent: (id: number, content: string) => void
   toggleCommentLike: (id: number) => void
-  currentUser: number | null
-  setCurrentUser: (user: number | null) => void
   deleteComment: (commentId: number) => void
 }
 
@@ -145,8 +143,6 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
     set((state) => ({
       comments: toggleLikeRecursive(state.comments, id),
     })),
-  currentUser: null,
-  setCurrentUser: (userId) => set({ currentUser: userId }),
 
   deleteComment: async (commentId: number) => {
     const token = localStorage.getItem('accessToken')

@@ -1,9 +1,12 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Comment } from '../stores/useCommentStore'
 import { useCommentStore } from '../stores/useCommentStore'
 import { CommentInput } from './CommentInput'
+import { useAuthStore } from '../stores/useAuthStore'
 import Like from '../assets/images/Like.svg'
 import Liked from '../assets/images/Liked.svg'
+import useUserStore from '../stores/useUserStore'
+import axios from 'axios'
 
 interface CommentItemProps {
   comment: Comment
@@ -19,9 +22,31 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     replyTargetId,
     setReplyTargetId,
     deleteComment,
-    currentUser,
   } = useCommentStore()
+  const { userId, setUserId } = useUserStore()
+  const { isLoggedIn } = useAuthStore()
   const showReplyInput = replyTargetId === comment.id
+
+  useEffect(() => {
+    if( isLoggedIn ) {
+      const token = localStorage.getItem('accessToken')
+      const getUserId = async () => {
+      try {
+        const response = await axios.get(
+          `https://moonrabbit-api.kro.kr/api/users/profile`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        setUserId(response.data.id)
+      } catch (error) {
+        console.error('유저아이디 실패', error)
+      }
+    }
+    getUserId()
+    }
+  },[])
 
   return (
     <div className="mt-12">
@@ -49,7 +74,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             {replyTargetId === comment.id ? '닫기' : '답글쓰기'}
           </div>
         )}
-        {currentUser !== comment.userId && (
+        {userId === comment.userId && (
           <div
             className="mr-4 text-mainColor cursor-pointer"
             onClick={() => deleteComment(comment.id)}
