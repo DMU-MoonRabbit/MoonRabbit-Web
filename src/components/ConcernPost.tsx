@@ -14,20 +14,8 @@ import axios from 'axios'
 import { CommentInput } from './CommentInput'
 import { CommentItem } from './CommentItem'
 
-interface ConcernContentProps {
-  userId: string
-  title: string
-  content: string
-  createdAt: string
-}
-
-export const ConcernContent: React.FC<ConcernContentProps> = ({
-  userId,
-  title,
-  content,
-  createdAt,
-}) => {
-  const { concern, toggleConcernLike, fetchConcern } = useConcernDetailStore()
+export const ConcernContent: React.FC = () => {
+  const { concern, setConcern, toggleConcernLike } = useConcernDetailStore()
   const { comments } = useCommentStore()
   const { boardDetail, fetchAiAnswer } = useBoardDetailStore()
   const getTotalCommentCount = (list: Comment[] = []): number =>
@@ -61,11 +49,37 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
 
   useEffect(() => {
     if (pageNumber) {
-      fetchConcern(Number(pageNumber))
+      const boardId = Number(pageNumber)
+      const fetchConcern = async() => {
+      try {
+        const response = await axios.get(
+          `https://moonrabbit-api.kro.kr/api/boards/list/${boardId}`, {
+          }
+        )
+        const data = response.data
+        const concern = {
+          id: data.id,
+          title: data.title,
+          profileImg: data.profileImg,
+          nickname: data.nickname,
+          content: data.content,
+          createdAt: data.createdAt,
+          answer: data.answer,
+          like: false
+        }
+        setConcern(concern)
+        console.log
+
+      } catch (error) {
+        console.error('게시글 정보 불러오기 실패', error)
+      }
     }
-  }, [pageNumber, fetchConcern])
+    fetchConcern()
+    }
+  }, [pageNumber])
 
   if (!concern) return <p>로딩 중...</p>
+  const { title, nickname, profileImg, content, createdAt } = concern
 
   return (
     <div className="flex items-center justify-center w-full">
@@ -79,11 +93,11 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
         <p className="text-[30px]">{title}</p>
         <div className="flex items-center my-[20px]">
           <img
-            src="images/MoonRabbitLogo.png"
+            src={profileImg}
             alt="프로필이미지"
             className="w-[30px] h-[30px] rounded-[50%] mr-[12px]"
           />
-          <p className="text-[16px]">달토끼</p>
+          <p className="text-[16px]">{nickname}</p>
         </div>
         <p className="whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight">
           {content}
