@@ -9,6 +9,7 @@ import NightSkyPage from './pages/NightSkyPage'
 import { NightSkyDetailPage } from './pages/NightSkyDetailPage'
 import Footer from './components/Footer'
 import LoginLoadingPage from './pages/LoginLoadingPage'
+import MypagePage from './pages/MypagePage'
 
 function App() {
   const setRes = useResponsiveStore((state) => state.setRes)
@@ -42,6 +43,7 @@ function App() {
             path="/night-sky/:pageNumber"
             element={<NightSkyDetailPage />}
           />
+          <Route path="/mypage" element={<MypagePage />} />
         </Routes>
         <Footer />
       </div>
