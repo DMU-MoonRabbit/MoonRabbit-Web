@@ -15,17 +15,19 @@ import { CommentInput } from './CommentInput'
 import { CommentItem } from './CommentItem'
 
 interface ConcernContentProps {
+  userId: string
   title: string
   content: string
-  date: string
+  createdAt: string
 }
 
 export const ConcernContent: React.FC<ConcernContentProps> = ({
+  userId,
   title,
   content,
-  date,
+  createdAt,
 }) => {
-  const { concern, toggleConcernLike } = useConcernDetailStore()
+  const { concern, toggleConcernLike, fetchConcern } = useConcernDetailStore()
   const { comments } = useCommentStore()
   const { boardDetail, fetchAiAnswer } = useBoardDetailStore()
   const getTotalCommentCount = (list: Comment[] = []): number =>
@@ -56,6 +58,14 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
       fetchAiAnswer(Number(boardId), boardDetail.category)
     }
   }, [boardId, boardDetail?.category, fetchAiAnswer])
+
+  useEffect(() => {
+    if (pageNumber) {
+      fetchConcern(Number(pageNumber))
+    }
+  }, [pageNumber, fetchConcern])
+
+  if (!concern) return <p>로딩 중...</p>
 
   return (
     <div className="flex items-center justify-center w-full">
@@ -96,7 +106,7 @@ export const ConcernContent: React.FC<ConcernContentProps> = ({
               />
             </div>
           </div>
-          <p>{date}</p>
+          <p>{createdAt}</p>
         </div>
       </div>
       <img

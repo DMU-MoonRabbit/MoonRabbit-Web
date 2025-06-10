@@ -1,12 +1,14 @@
 import { create } from 'zustand'
 
 interface UserState {
+  userId: number
   email: string
   nickname: string
   phoneNum: string
   verification: string
   password: string
   passwordConfirm: string
+  setUserId: (userId: number) => void
   setEmail: (email: string) => void
   setNickname: (nickname: string) => void
   setPhoneNum: (phoneNum: string) => void
@@ -16,12 +18,14 @@ interface UserState {
 }
 
 const useUserStore = create<UserState>((set) => ({
+  userId: 0,
   email: '',
   nickname: '',
   phoneNum: '',
   verification: '',
   password: '',
   passwordConfirm: '',
+  setUserId: (userId) => set({ userId }),
   setEmail: (email) => set({ email }),
   setNickname: (nickname) => set({ nickname }),
   setPhoneNum: (phoneNum) => set({ phoneNum }),
