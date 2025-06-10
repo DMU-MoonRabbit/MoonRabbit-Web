@@ -64,6 +64,10 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
       setError('제목, 내용, 카테고리를 모두 입력해주세요.')
       return
     }
+    if (content.trim().length < 20) {
+      setError('고민 내용은 최소 20자 이상이어야 합니다.')
+      return
+    }
 
     setLoading(true)
     setError(null)
@@ -207,7 +211,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
               id="content"
               value={content}
               onChange={(e) => onContentChange(e.target.value)}
-              placeholder="고민을 자유롭게 작성해주세요"
+              placeholder="고민을 자유롭게 작성해주세요."
               className="w-full px-4 py-3 text-[16px] border-2 border-lightBeige rounded-lg focus:outline-none focus:border-mainColor transition-colors duration-200 placeholder:text-mainGray min-h-[200px] resize-none"
             />
           </div>
