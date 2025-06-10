@@ -3,11 +3,14 @@ import { Link } from 'react-router-dom'
 import { Menu, X } from 'lucide-react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import { useAuthStore } from '../stores/useAuthStore'
+import useUserStore from '../stores/useUserStore'
+import axios from 'axios'
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false)
   const { res, setRes } = useResponsiveStore()
   const { isLoggedIn } = useAuthStore()
+  const { nickname, setNickname } = useUserStore()
 
   const isMobile = res === 'mo'
 
@@ -20,6 +23,28 @@ const Header = () => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [setRes])
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const fetchNickname = async () => {
+        const token = localStorage.getItem('accessToken')
+        try {
+          const response = await axios.get(
+            `https://moonrabbit-api.kro.kr/api/users/profile`, 
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          )
+          setNickname(response.data.nickname)
+        } catch (error) {
+          console.error('닉네임 조회 실패', error)
+        }
+      }
+      fetchNickname()
+    }
+  }, [isLoggedIn])
 
   return (
     <div className="bg-darkWalnut text-darkBeige h-14 flex items-center justify-between px-6 md:px-8 shadow-md relative">
@@ -43,7 +68,7 @@ const Header = () => {
       {!isMobile && (
         <div className="flex items-center space-x-10 font-mainFont text-base">
           {isLoggedIn ? (
-            <Link to="/mypage">마이페이지</Link>
+            <Link to="/mypage">{nickname}</Link>
           ) : (
             <Link to="/login">로그인 / 회원가입</Link>
           )}
@@ -79,7 +104,7 @@ const Header = () => {
           </Link>
           {isLoggedIn ? (
             <Link to="/mypage" onClick={() => setIsOpen(false)}>
-              마이페이지
+              {nickname}
             </Link>
           ) : (
             <Link to="/login" onClick={() => setIsOpen(false)}>
