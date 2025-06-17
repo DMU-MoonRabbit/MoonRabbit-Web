@@ -15,6 +15,7 @@ const NightSkyPage: React.FC = () => {
     newConcernTitle, //새로 작성할 고민 제목
     newConcernContent, //고민 내용
     newConcernCategory, //고민 카테고리리
+    pageInfo,
     setSelectedCategory,
     setIsModalOpen,
     setNewConcernTitle,
@@ -22,13 +23,14 @@ const NightSkyPage: React.FC = () => {
     setNewConcernCategory,
     resetForm,
     fetchConcerns,
+    setPage,
   } = useConcernStore()
 
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetchConcerns()
-  }, [fetchConcerns])
+    fetchConcerns(pageInfo.number)
+  }, [fetchConcerns, pageInfo.number])
 
   const handleOpenModal = () => {
     setIsModalOpen(true)
@@ -46,6 +48,12 @@ const NightSkyPage: React.FC = () => {
 
   const handleCardClick = (id: number) => {
     navigate(`/night-sky/${id}`)
+  }
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 0 && newPage < pageInfo.totalPages) {
+      setPage(newPage)
+    }
   }
 
   return (
@@ -82,6 +90,37 @@ const NightSkyPage: React.FC = () => {
             />
           ))}
         </div>
+
+        {/* 페이징 UI */}
+        {!pageInfo.empty && (
+          <div className="flex justify-center items-center mt-8 gap-2">
+            <button
+              onClick={() => handlePageChange(pageInfo.number - 1)}
+              disabled={pageInfo.first}
+              className={`px-4 py-2 rounded-lg ${
+                pageInfo.first
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-mainColor text-white hover:bg-opacity-90'
+              }`}
+            >
+              이전
+            </button>
+            <span className="mx-4">
+              {pageInfo.number + 1} / {pageInfo.totalPages}
+            </span>
+            <button
+              onClick={() => handlePageChange(pageInfo.number + 1)}
+              disabled={pageInfo.last}
+              className={`px-4 py-2 rounded-lg ${
+                pageInfo.last
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-mainColor text-white hover:bg-opacity-90'
+              }`}
+            >
+              다음
+            </button>
+          </div>
+        )}
       </div>
 
       {isModalOpen && (
