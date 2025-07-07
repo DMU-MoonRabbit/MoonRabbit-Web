@@ -1,3 +1,4 @@
+// 이 store는 useUnifiedConcernStore로 통합되었습니다. 새로운 고민 관련 상태/메서드는 useUnifiedConcernStore를 사용하세요.
 import { create } from 'zustand'
 import axios from 'axios'
 
