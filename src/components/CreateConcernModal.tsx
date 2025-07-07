@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { ENDPOINTS } from '../api/endpoints'
 import CategoryBar from './CategoryBar'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import { useAnonymousStore } from '../stores/useAnonymousStore'
@@ -76,7 +77,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
       const token = localStorage.getItem('accessToken') // 또는 sessionStorage.getItem('accessToken');
 
       const response = await axios.post(
-        `https://moonrabbit-api.kro.kr/api/boards/save`,
+        ENDPOINTS.CONCERN_CREATE,
         {
           title,
           content,
@@ -95,7 +96,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
       const category = categoryMap[selectedCategory]
       const boardId = response.data.boardId
       const assistantRes = await axios.post(
-        `https://moonrabbit-api.kro.kr/api/board/${boardId}/assistant/${category}`,
+        ENDPOINTS.ASSISTANT_ANSWER(boardId, category),
         {
           message: content,
         },

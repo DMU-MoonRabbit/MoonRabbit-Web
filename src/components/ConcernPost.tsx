@@ -10,6 +10,7 @@ import Liked from '../assets/images/Liked.svg'
 import PrevArrow from '../assets/images/PrevArrow.svg'
 import NextArrow from '../assets/images/NextArrow.svg'
 import axios from 'axios'
+import { ENDPOINTS } from '../api/endpoints'
 import { CommentInput } from './CommentInput'
 import { CommentItem } from './CommentItem'
 
@@ -51,8 +52,7 @@ export const ConcernContent: React.FC = () => {
       const fetchConcern = async() => {
       try {
         const response = await axios.get(
-          `https://moonrabbit-api.kro.kr/api/boards/list/${boardId}`, {
-          }
+          ENDPOINTS.CONCERN_DETAIL(boardId),
         )
         const data = response.data
         const concern = {
@@ -153,7 +153,7 @@ export const ConcernPost: React.FC = () => {
     const getComments = async () => {
       try {
         const response = await axios.get(
-          `https://moonrabbit-api.kro.kr/api/answer/board/${boardId}`,
+          ENDPOINTS.COMMENT_LIST(Number(boardId)),
         )
         const answers = await response.data
         console.log(answers)

@@ -2,6 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import { useCommentStore } from '../stores/useCommentStore'
 import { useParams } from 'react-router-dom'
+import { ENDPOINTS } from '../api/endpoints'
 
 interface CommentInputProps {
   parentId?: number | null
@@ -62,7 +63,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
         : { content, parentId }
 
       console.log('요청 데이터:', {
-        url: `https://moonrabbit-api.kro.kr/api/answer/save?boardId=${boardId}`,
+        url: ENDPOINTS.COMMENT_CREATE(Number(boardId)),
         ...requestBody,
         headers: {
           'Content-Type': 'application/json',
@@ -71,7 +72,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
       })
 
       const response = await axios.post(
-        `https://moonrabbit-api.kro.kr/api/answer/save?boardId=${boardId}`,
+        ENDPOINTS.COMMENT_CREATE(Number(boardId)),
         requestBody,
         {
           headers: {

@@ -8,6 +8,7 @@ import LogoImg from '../assets/images/MoonRabbitSleep2.png'
 import GoogleLoginImg from '../assets/images/GoogleLogin.svg'
 import kakaoLoginImg from '../assets/images/KakaoLogin.png'
 import axios from 'axios'
+import { ENDPOINTS } from '../api/endpoints'
 
 export const LogoPanel = () => {
   const res = useResponsiveStore((state) => state.res)
@@ -45,7 +46,7 @@ export const LoginForm = () => {
   const handleLogin = async () => {
     try {
       const response = await axios.post(
-        'https://moonrabbit-api.kro.kr/api/users/login',
+        ENDPOINTS.LOGIN,
         {
           email,
           password,
@@ -154,7 +155,7 @@ export const SignupForm = () => {
 
     try {
       const response = await axios.post(
-        'https://moonrabbit-api.kro.kr/api/users/register',
+        ENDPOINTS.SIGNUP,
         {
           email,
           password,
@@ -174,7 +175,7 @@ export const SignupForm = () => {
   const handleVerification = async () => {
     try {
       const response = await axios.post(
-        'https://moonrabbit-api.kro.kr/api/sms/send',
+        ENDPOINTS.VERIFY,
         {
           phoneNum,
         },
