@@ -48,7 +48,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     }
     getUserId()
     }
-  },[])
+  }, [comment.id, isLoggedIn, setUserId])
 
   return (
     <div className="mt-12">

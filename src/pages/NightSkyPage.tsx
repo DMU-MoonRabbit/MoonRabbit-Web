@@ -75,7 +75,7 @@ const NightSkyPage: React.FC = () => {
           <CreateConcernButton onClick={handleOpenModal} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {filteredConcerns.map((concern, index) => (
+          {filteredConcerns.map((concern) => (
             <ConcernCard
               key={concern.id}
               id={concern.id}
