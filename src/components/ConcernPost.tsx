@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
-import { useConcernDetailStore } from '../stores/useConcernDetailStore'
+import { useUnifiedConcernStore } from '../stores/useUnifiedConcernStore'
 import { useCommentStore, Comment } from '../stores/useCommentStore'
-import { useConcernStore } from '../stores/useConcernStore'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useBoardDetailStore } from '../stores/useBoardDetailStore'
 import CommentIcon from '../assets/images/Comment.svg'
@@ -15,7 +14,7 @@ import { CommentInput } from './CommentInput'
 import { CommentItem } from './CommentItem'
 
 export const ConcernContent: React.FC = () => {
-  const { concern, setConcern, toggleConcernLike } = useConcernDetailStore()
+  const { concern, setConcern, toggleConcernLike, concerns } = useUnifiedConcernStore()
   const { comments } = useCommentStore()
   const { boardDetail, fetchAiAnswer } = useBoardDetailStore()
   const getTotalCommentCount = (list: Comment[] = []): number =>
@@ -26,7 +25,6 @@ export const ConcernContent: React.FC = () => {
   const { pageNumber } = useParams()
   const boardId = pageNumber
   const currentId = Number(pageNumber)
-  const { concerns } = useConcernStore()
   const currentIndex = concerns.findIndex((c) => c.id === currentId)
   const goToPrev = () => {
     if (currentIndex > 0) {
