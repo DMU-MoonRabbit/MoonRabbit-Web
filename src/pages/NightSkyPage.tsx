@@ -4,7 +4,7 @@ import CategoryBar from '../components/CategoryBar'
 import ConcernCard from '../components/ConcernCard'
 import CreateConcernButton from '../components/CreateConcernButton'
 import CreateConcernModal from '../components/CreateConcernModal'
-import { useConcernStore } from '../stores/useConcernStore'
+import { useUnifiedConcernStore } from '../stores/useUnifiedConcernStore'
 
 const NightSkyPage: React.FC = () => {
   //고민 관련 상태관리
@@ -24,7 +24,7 @@ const NightSkyPage: React.FC = () => {
     resetForm,
     fetchConcerns,
     setPage,
-  } = useConcernStore()
+  } = useUnifiedConcernStore()
 
   const navigate = useNavigate()
 
@@ -75,7 +75,7 @@ const NightSkyPage: React.FC = () => {
           <CreateConcernButton onClick={handleOpenModal} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {filteredConcerns.map((concern, index) => (
+          {filteredConcerns.map((concern) => (
             <ConcernCard
               key={concern.id}
               id={concern.id}

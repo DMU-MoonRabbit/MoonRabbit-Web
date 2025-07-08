@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import axios from 'axios'
 
+// 기존 ConcernStore Concern, Board, PageInfo 타입 등 복사
 interface Answer {
   id: number
   content: string
@@ -49,20 +50,28 @@ interface PageInfo {
   empty: boolean
 }
 
-interface ConcernStore {
-  // 고민 데이터
+// Concern 상세 타입
+export interface ConcernArticle {
+  id: number
+  title: string
+  profileImg: string
+  nickname: string
+  content: string
+  createdAt: string
+  answer: string
+  like: boolean
+}
+
+interface UnifiedConcernStore {
+  // 목록/카테고리/작성/페이징
   concerns: Concern[]
   selectedCategory: string
   filteredConcerns: Concern[]
   pageInfo: PageInfo
-
-  // 모달 상태
   isModalOpen: boolean
   newConcernTitle: string
   newConcernContent: string
   newConcernCategory: string
-
-  // 상태
   setSelectedCategory: (category: string) => void
   setIsModalOpen: (isOpen: boolean) => void
   setNewConcernTitle: (title: string) => void
@@ -71,6 +80,11 @@ interface ConcernStore {
   resetForm: () => void
   fetchConcerns: (page?: number) => Promise<void>
   setPage: (page: number) => void
+
+  // 상세/상호작용
+  concern?: ConcernArticle
+  setConcern: (concern: ConcernArticle) => void
+  toggleConcernLike: () => void
 }
 
 const transformBoardToConcern = (board: Board): Concern => {
@@ -97,7 +111,8 @@ const transformBoardToConcern = (board: Board): Concern => {
   }
 }
 
-export const useConcernStore = create<ConcernStore>((set, get) => ({
+export const useUnifiedConcernStore = create<UnifiedConcernStore>((set, get) => ({
+  // 목록/카테고리/작성/페이징
   concerns: [],
   selectedCategory: '전체',
   filteredConcerns: [],
@@ -179,4 +194,18 @@ export const useConcernStore = create<ConcernStore>((set, get) => ({
       console.error('Failed to fetch concerns:', error)
     }
   },
-}))
+
+  // 상세/상호작용
+  concern: undefined,
+  setConcern: (concern) => set(() => ({ concern })),
+  toggleConcernLike: () =>
+    set((state) => {
+      if (!state.concern) return {}
+      return {
+        concern: {
+          ...state.concern,
+          like: !state.concern.like,
+        },
+      }
+    }),
+})) 

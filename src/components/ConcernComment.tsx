@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import axios from 'axios'
+import { ENDPOINTS } from '../api/endpoints'
 import { useCommentStore, Comment } from '../stores/useCommentStore'
 import { CommentInput } from './CommentInput'
 import { CommentItem } from './CommentItem'
@@ -15,7 +16,7 @@ export const ConcernComment: React.FC = () => {
     const getComments = async () => {
       try {
         const response = await axios.get(
-          `https://moonrabbit-api.kro.kr/api/answer/board/${boardId}`,
+          ENDPOINTS.COMMENT_LIST(boardId),
         )
         const answers = await response.data
         console.log(answers)

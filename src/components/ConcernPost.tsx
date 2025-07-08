@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react'
-import { useConcernDetailStore } from '../stores/useConcernDetailStore'
+import { useUnifiedConcernStore } from '../stores/useUnifiedConcernStore'
 import { useCommentStore, Comment } from '../stores/useCommentStore'
-import { useConcernStore } from '../stores/useConcernStore'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useBoardDetailStore } from '../stores/useBoardDetailStore'
 import CommentIcon from '../assets/images/Comment.svg'
 import Report from '../assets/images/Report.svg'
@@ -11,23 +10,23 @@ import Liked from '../assets/images/Liked.svg'
 import PrevArrow from '../assets/images/PrevArrow.svg'
 import NextArrow from '../assets/images/NextArrow.svg'
 import axios from 'axios'
+import { ENDPOINTS } from '../api/endpoints'
 import { CommentInput } from './CommentInput'
 import { CommentItem } from './CommentItem'
 
 export const ConcernContent: React.FC = () => {
-  const { concern, setConcern, toggleConcernLike } = useConcernDetailStore()
+  const { concern, setConcern, toggleConcernLike, concerns } = useUnifiedConcernStore()
   const { comments } = useCommentStore()
-  const { boardDetail, fetchAiAnswer } = useBoardDetailStore()
+  const { fetchAiAnswer } = useBoardDetailStore()
   const getTotalCommentCount = (list: Comment[] = []): number =>
     list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []), 0)
   const totalCommentCount = getTotalCommentCount(comments)
 
-  const navigate = useNavigate()
   const { pageNumber } = useParams()
   const boardId = pageNumber
   const currentId = Number(pageNumber)
-  const { concerns } = useConcernStore()
   const currentIndex = concerns.findIndex((c) => c.id === currentId)
+  const navigate = useNavigate()
   const goToPrev = () => {
     if (currentIndex > 0) {
       const prevId = concerns[currentIndex - 1].id
@@ -42,10 +41,10 @@ export const ConcernContent: React.FC = () => {
   }
 
   useEffect(() => {
-    if (boardId && boardDetail?.category) {
-      fetchAiAnswer(Number(boardId), boardDetail.category)
+    if (boardId) {
+      fetchAiAnswer(Number(boardId))
     }
-  }, [boardId, boardDetail?.category, fetchAiAnswer])
+  }, [boardId, fetchAiAnswer])
 
   useEffect(() => {
     if (pageNumber) {
@@ -53,8 +52,7 @@ export const ConcernContent: React.FC = () => {
       const fetchConcern = async() => {
       try {
         const response = await axios.get(
-          `https://moonrabbit-api.kro.kr/api/boards/list/${boardId}`, {
-          }
+          ENDPOINTS.CONCERN_DETAIL(boardId),
         )
         const data = response.data
         const concern = {
@@ -68,15 +66,13 @@ export const ConcernContent: React.FC = () => {
           like: false
         }
         setConcern(concern)
-        console.log
-
       } catch (error) {
         console.error('게시글 정보 불러오기 실패', error)
       }
     }
     fetchConcern()
     }
-  }, [pageNumber])
+  }, [pageNumber, setConcern])
 
   if (!concern) return <p>로딩 중...</p>
   const { title, nickname, profileImg, content, createdAt } = concern
@@ -148,14 +144,13 @@ export const ConcernAnswer: React.FC = () => {
 export const ConcernPost: React.FC = () => {
   const { pageNumber } = useParams<{ pageNumber: string }>()
   const boardId = pageNumber
-  const navigate = useNavigate()
   const { comments, setComments } = useCommentStore()
 
   useEffect(() => {
     const getComments = async () => {
       try {
         const response = await axios.get(
-          `https://moonrabbit-api.kro.kr/api/answer/board/${boardId}`,
+          ENDPOINTS.COMMENT_LIST(Number(boardId)),
         )
         const answers = await response.data
         console.log(answers)

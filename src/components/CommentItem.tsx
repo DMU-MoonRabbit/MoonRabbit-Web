@@ -7,6 +7,7 @@ import Like from '../assets/images/Like.svg'
 import Liked from '../assets/images/Liked.svg'
 import useUserStore from '../stores/useUserStore'
 import axios from 'axios'
+import { ENDPOINTS } from '../api/endpoints'
 
 interface CommentItemProps {
   comment: Comment
@@ -33,7 +34,8 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       const getUserId = async () => {
       try {
         const response = await axios.get(
-          `https://moonrabbit-api.kro.kr/api/users/profile`, {
+          ENDPOINTS.COMMENT_LIST(comment.id),
+          {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -46,7 +48,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     }
     getUserId()
     }
-  },[])
+  }, [comment.id, isLoggedIn, setUserId])
 
   return (
     <div className="mt-12">

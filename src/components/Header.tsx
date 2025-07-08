@@ -44,7 +44,7 @@ const Header = () => {
       }
       fetchNickname()
     }
-  }, [isLoggedIn])
+  }, [isLoggedIn, setNickname])
 
   return (
     <div className="bg-darkWalnut text-darkBeige h-14 flex items-center justify-between px-6 md:px-8 shadow-md relative">

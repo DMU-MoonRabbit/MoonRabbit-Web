@@ -8,6 +8,7 @@ import LogoImg from '../assets/images/MoonRabbitSleep2.png'
 import GoogleLoginImg from '../assets/images/GoogleLogin.svg'
 import kakaoLoginImg from '../assets/images/KakaoLogin.png'
 import axios from 'axios'
+import { ENDPOINTS } from '../api/endpoints'
 
 export const LogoPanel = () => {
   const res = useResponsiveStore((state) => state.res)
@@ -44,19 +45,13 @@ export const LoginForm = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(
-        'https://moonrabbit-api.kro.kr/api/users/login',
+      await axios.post(
+        ENDPOINTS.LOGIN,
         {
           email,
           password,
         },
       )
-      console.log('응답 데이터:', response.data)
-      // 토큰 localStorage 저장
-      const { accessToken, refreshToken } = response.data
-      localStorage.setItem('accessToken', accessToken)
-      localStorage.setItem('refreshToken', refreshToken)
-
       // 로그인 상태 변경
       setIsLoggedIn(true)
       navigate('/')
@@ -87,13 +82,13 @@ export const LoginForm = () => {
         type="email"
         placeholder="이메일 (e-mail)"
         value={email}
-        onChange={(e: any) => setEmail(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
       />
       <LoginInputField
         type="password"
         placeholder="비밀번호 (Password)"
         value={password}
-        onChange={(e: any) => setPassword(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
       />
       <div className="text-sm ml-[16px] mb-10">아이디 / 비밀번호 찾기</div>
       <LoginButton onClick={handleLogin} className="mb-4 rounded-[10px]">
@@ -153,8 +148,8 @@ export const SignupForm = () => {
     }
 
     try {
-      const response = await axios.post(
-        'https://moonrabbit-api.kro.kr/api/users/register',
+      await axios.post(
+        ENDPOINTS.SIGNUP,
         {
           email,
           password,
@@ -163,7 +158,6 @@ export const SignupForm = () => {
           verification,
         },
       )
-      //console.log('응답 데이터:', response.data)
       alert('회원가입이 완료되었습니다!')
       setIsLogin(true)
     } catch (error) {
@@ -172,17 +166,12 @@ export const SignupForm = () => {
   }
 
   const handleVerification = async () => {
-    try {
-      const response = await axios.post(
-        'https://moonrabbit-api.kro.kr/api/sms/send',
-        {
-          phoneNum,
-        },
-      )
-      console.log('응답 데이터:', response.data)
-    } catch (error) {
-      console.error('에러:', error)
-    }
+    await axios.post(
+      ENDPOINTS.VERIFY,
+      {
+        phoneNum,
+      },
+    )
   }
 
   return (
@@ -198,21 +187,21 @@ export const SignupForm = () => {
         type="email"
         placeholder="이메일"
         value={email}
-        onChange={(e: any) => setEmail(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
         className="mt-2"
       />
       <LoginInputField
         type="string"
         placeholder="전화번호"
         value={phoneNum}
-        onChange={(e: any) => setPhoneNum(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNum(e.target.value)}
       />
       <div className="flex gap-2">
         <LoginInputField
           type="string"
           placeholder="인증번호 확인"
           value={verification}
-          onChange={(e: any) => setVerification(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVerification(e.target.value)}
         />
         <LoginButton
           onClick={handleVerification}
@@ -225,13 +214,13 @@ export const SignupForm = () => {
         type="password"
         placeholder="비밀번호"
         value={password}
-        onChange={(e: any) => setPassword(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
       />
       <LoginInputField
         type="password"
         placeholder="비밀번호 확인"
         value={passwordConfirm}
-        onChange={(e: any) => setPasswordConfirm(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordConfirm(e.target.value)}
         className="mb-8"
       />
 
