@@ -17,7 +17,7 @@ import { CommentItem } from './CommentItem'
 export const ConcernContent: React.FC = () => {
   const { concern, setConcern, toggleConcernLike, concerns } = useUnifiedConcernStore()
   const { comments } = useCommentStore()
-  const { boardDetail, fetchAiAnswer } = useBoardDetailStore()
+  const { fetchAiAnswer } = useBoardDetailStore()
   const getTotalCommentCount = (list: Comment[] = []): number =>
     list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []), 0)
   const totalCommentCount = getTotalCommentCount(comments)
