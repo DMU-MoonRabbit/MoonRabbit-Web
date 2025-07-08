@@ -9,11 +9,16 @@ import CommentIcon from '../assets/images/Comment.svg'
 
 export const ConcernComment: React.FC = () => {
   const { pageNumber } = useParams<{ pageNumber: string }>()
-  const boardId = pageNumber
+  const boardId = pageNumber ? parseInt(pageNumber, 10) : undefined
   const { comments, setComments } = useCommentStore()
 
   useEffect(() => {
     const getComments = async () => {
+      if (!boardId) {
+        console.error('boardId is undefined')
+        return
+      }
+      
       try {
         const response = await axios.get(
           ENDPOINTS.COMMENT_LIST(boardId),
