@@ -3,6 +3,7 @@ import LogoImg from '../assets/images/MoonRabbitSleep2.png'
 import StarSvg from '../assets/images/starBackground.svg'
 import { LikeButton } from '../components/LikeButton'
 import { PlayButton } from '../components/PlayButton'
+import { useResponsiveStore } from '../stores/useResponsiveStore'
 import axios from 'axios'
 import { ENDPOINTS } from '../api/endpoints'
 
@@ -16,9 +17,12 @@ interface Playlist {
 }
 
 const ConstellationPage: React.FC = () => {
+  const { res } = useResponsiveStore()
+  const isMobile = res === 'mo'
+  
   const [playlists, setPlaylists] = useState<Playlist[]>([])
   const [loading, setLoading] = useState(true)
-  const [playlistStates, setPlaylistStates] = useState<{[key: number]: {isPlaying: boolean, isLiked: boolean}}>({})
+  const [playlistStates, setPlaylistStates] = useState<{[key: number]: {isPlaying: boolean, isLiked: boolean, showVideo: boolean}}>({})
   const [playingVideoId, setPlayingVideoId] = useState<string | null>(null)
 
   // YouTube URL에서 videoId 추출
@@ -47,9 +51,9 @@ const ConstellationPage: React.FC = () => {
         setPlaylists(response.data)
         
         // 플레이리스트 상태 초기화
-        const initialState: {[key: number]: {isPlaying: boolean, isLiked: boolean}} = {}
+        const initialState: {[key: number]: {isPlaying: boolean, isLiked: boolean, showVideo: boolean}} = {}
         response.data.forEach((playlist: Playlist, index: number) => {
-          initialState[index] = { isPlaying: false, isLiked: false }
+          initialState[index] = { isPlaying: false, isLiked: false, showVideo: false }
         })
         setPlaylistStates(initialState)
       } catch (error) {
@@ -67,20 +71,37 @@ const ConstellationPage: React.FC = () => {
     if (!playlist) return
 
     const videoId = getVideoId(playlist.videoUrl)
-    
-    setPlaylistStates(prev => ({
-      ...prev,
-      [index]: {
-        ...prev[index],
-        isPlaying: !prev[index].isPlaying
-      }
-    }))
+    if (!videoId) return
 
-    // 다른 비디오가 재생 중이면 정지
-    if (playingVideoId && playingVideoId !== videoId) {
-      setPlayingVideoId(null)
+    const currentState = playlistStates[index]
+    const isShowingVideo = currentState?.showVideo || false
+
+    if (!isShowingVideo) {
+      // 첫 클릭: 비디오 표시하고 자동재생
+      setPlaylistStates(prev => {
+        const newState: {[key: number]: {isPlaying: boolean, isLiked: boolean, showVideo: boolean}} = {}
+        Object.keys(prev).forEach((key) => {
+          const i = Number(key)
+          newState[i] = {
+            isPlaying: i === index,
+            isLiked: prev[i]?.isLiked ?? false,
+            showVideo: i === index
+          }
+        })
+        return newState
+      })
+      setPlayingVideoId(videoId)
     } else {
-      setPlayingVideoId(playlistStates[index].isPlaying ? null : videoId)
+      // 재클릭: 비디오 숨기기 (중지)
+      setPlaylistStates(prev => ({
+        ...prev,
+        [index]: { 
+          ...prev[index], 
+          isPlaying: false,
+          showVideo: false
+        }
+      }))
+      setPlayingVideoId(null)
     }
   }
 
@@ -99,27 +120,31 @@ const ConstellationPage: React.FC = () => {
       {/* 배경 별들 */}
       <div className="absolute inset-0 pointer-events-none">
         {/* 데스크톱용 별들 */}
-        <div className="hidden lg:block">
-          <img src={StarSvg} alt="별" className="absolute top-20 right-32 w-8 h-8 opacity-80" />
-          <img src={StarSvg} alt="별" className="absolute top-32 right-24 w-6 h-6 opacity-70 rotate-12" />
-          <img src={StarSvg} alt="별" className="absolute top-40 right-40 w-5 h-5 opacity-60 rotate-45" />
-          <img src={StarSvg} alt="별" className="absolute top-60 left-20 w-10 h-10 opacity-75 rotate-30" />
-          <img src={StarSvg} alt="별" className="absolute top-80 left-32 w-7 h-7 opacity-65 rotate-60" />
-          <img src={StarSvg} alt="별" className="absolute top-96 right-16 w-9 h-9 opacity-80 rotate-15" />
-          <img src={StarSvg} alt="별" className="absolute bottom-40 left-16 w-8 h-8 opacity-70 rotate-45" />
-          <img src={StarSvg} alt="별" className="absolute bottom-60 right-20 w-6 h-6 opacity-60 rotate-75" />
-          <img src={StarSvg} alt="별" className="absolute bottom-80 left-40 w-12 h-12 opacity-85 rotate-25" />
-        </div>
+        {!isMobile && (
+          <div>
+            <img src={StarSvg} alt="별" className="absolute top-20 right-32 w-8 h-8 opacity-80" />
+            <img src={StarSvg} alt="별" className="absolute top-32 right-24 w-6 h-6 opacity-70 rotate-12" />
+            <img src={StarSvg} alt="별" className="absolute top-40 right-40 w-5 h-5 opacity-60 rotate-45" />
+            <img src={StarSvg} alt="별" className="absolute top-60 left-20 w-10 h-10 opacity-75 rotate-30" />
+            <img src={StarSvg} alt="별" className="absolute top-80 left-32 w-7 h-7 opacity-65 rotate-60" />
+            <img src={StarSvg} alt="별" className="absolute top-96 right-16 w-9 h-9 opacity-80 rotate-15" />
+            <img src={StarSvg} alt="별" className="absolute bottom-40 left-16 w-8 h-8 opacity-70 rotate-45" />
+            <img src={StarSvg} alt="별" className="absolute bottom-60 right-20 w-6 h-6 opacity-60 rotate-75" />
+            <img src={StarSvg} alt="별" className="absolute bottom-80 left-40 w-12 h-12 opacity-85 rotate-25" />
+          </div>
+        )}
         
         {/* 모바일용 별들 */}
-        <div className="block lg:hidden">
-          <img src={StarSvg} alt="별" className="absolute top-16 right-4 w-6 h-6 opacity-80" />
-          <img src={StarSvg} alt="별" className="absolute top-24 right-8 w-5 h-5 opacity-70 rotate-30" />
-          <img src={StarSvg} alt="별" className="absolute top-32 left-4 w-4 h-4 opacity-60 rotate-60" />
-          <img src={StarSvg} alt="별" className="absolute top-40 left-8 w-5 h-5 opacity-75 rotate-45" />
-          <img src={StarSvg} alt="별" className="absolute bottom-40 right-4 w-4 h-4 opacity-65 rotate-15" />
-          <img src={StarSvg} alt="별" className="absolute bottom-60 left-4 w-6 h-6 opacity-80 rotate-75" />
-        </div>
+        {isMobile && (
+          <div>
+            <img src={StarSvg} alt="별" className="absolute top-16 right-4 w-6 h-6 opacity-80" />
+            <img src={StarSvg} alt="별" className="absolute top-24 right-8 w-5 h-5 opacity-70 rotate-30" />
+            <img src={StarSvg} alt="별" className="absolute top-32 left-4 w-4 h-4 opacity-60 rotate-60" />
+            <img src={StarSvg} alt="별" className="absolute top-40 left-8 w-5 h-5 opacity-75 rotate-45" />
+            <img src={StarSvg} alt="별" className="absolute bottom-40 right-4 w-4 h-4 opacity-65 rotate-15" />
+            <img src={StarSvg} alt="별" className="absolute bottom-60 left-4 w-6 h-6 opacity-80 rotate-75" />
+          </div>
+        )}
       </div>
 
       {/* 메인 컨텐츠 */}
@@ -156,12 +181,13 @@ const ConstellationPage: React.FC = () => {
           ) : (
             <>
               {/* 모바일 레이아웃 */}
-              <div className="block lg:hidden space-y-8">
+              {isMobile && (
+                <div className="space-y-8">
                 {playlists.map((playlist, index) => (
                   <div key={playlist.id}>
                     {/* 유튜브 영상 */}
                     <div className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
-                      {playlistStates[index]?.isPlaying && playingVideoId === getVideoId(playlist.videoUrl) ? (
+                      {playlistStates[index]?.showVideo ? (
                         <iframe
                           src={getEmbedUrl(playlist.videoUrl)}
                           title={playlist.title}
@@ -217,10 +243,12 @@ const ConstellationPage: React.FC = () => {
                     </div>
                   </div>
                 ))}
-              </div>
+                </div>
+              )}
 
               {/* 데스크톱 레이아웃 */}
-              <div className="hidden lg:block">
+              {!isMobile && (
+                <div>
                 {/* 유튜브 영상 섹션 */}
                 <div className="mb-8">
                   <h2 className="text-3xl font-mainFont text-darkWalnut text-center mb-8">
@@ -232,7 +260,7 @@ const ConstellationPage: React.FC = () => {
                         key={playlist.id}
                         className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video hover:shadow-lg transition-shadow duration-300 relative overflow-hidden"
                       >
-                        {playlistStates[index]?.isPlaying && playingVideoId === getVideoId(playlist.videoUrl) ? (
+                        {playlistStates[index]?.showVideo ? (
                           <iframe
                             src={getEmbedUrl(playlist.videoUrl)}
                             title={playlist.title}
@@ -296,7 +324,8 @@ const ConstellationPage: React.FC = () => {
                     </div>
                   ))}
                 </div>
-              </div>
+                </div>
+              )}
             </>
           )}
         </div>

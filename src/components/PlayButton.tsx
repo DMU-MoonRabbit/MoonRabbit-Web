@@ -1,6 +1,6 @@
 import React from 'react'
 import PlaySvg from '../assets/images/play.svg'
-import PauseSvg from '../assets/images/pause.svg'
+import StopSvg from '../assets/images/stop.svg'
 
 interface PlayButtonProps {
   isPlaying: boolean
@@ -25,7 +25,7 @@ export const PlayButton: React.FC<PlayButtonProps> = ({
       className={`${sizeClasses[size]} hover:scale-105 transition-transform duration-200`}
     >
       <img
-        src={isPlaying ? PauseSvg : PlaySvg}
+        src={isPlaying ? StopSvg : PlaySvg}
         alt={isPlaying ? '정지' : '재생'}
         className={`${sizeClasses[size]} cursor-pointer`}
       />
