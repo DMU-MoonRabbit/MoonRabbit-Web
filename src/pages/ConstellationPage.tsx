@@ -1,15 +1,46 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import LogoImg from '../assets/images/MoonRabbitSleep2.png'
 import StarSvg from '../assets/images/starBackground.svg'
 import { LikeButton } from '../components/LikeButton'
 import { PlayButton } from '../components/PlayButton'
+import axios from 'axios'
+import { ENDPOINTS } from '../api/endpoints'
+
+interface Playlist {
+  id: number
+  title: string
+  videoUrl: string
+  videoId: string
+  thumbnailUrl: string
+  createdAt: string
+}
 
 const ConstellationPage: React.FC = () => {
-  const [playlistStates, setPlaylistStates] = useState<{[key: number]: {isPlaying: boolean, isLiked: boolean}}>({
-    0: { isPlaying: false, isLiked: false },
-    1: { isPlaying: false, isLiked: false },
-    2: { isPlaying: false, isLiked: false }
-  })
+  const [playlists, setPlaylists] = useState<Playlist[]>([])
+  const [loading, setLoading] = useState(true)
+  const [playlistStates, setPlaylistStates] = useState<{[key: number]: {isPlaying: boolean, isLiked: boolean}}>({})
+
+  useEffect(() => {
+    const fetchPlaylists = async () => {
+      try {
+        const response = await axios.get(ENDPOINTS.PLAYLIST_LIST)
+        setPlaylists(response.data)
+        
+        // 플레이리스트 상태 초기화
+        const initialState: {[key: number]: {isPlaying: boolean, isLiked: boolean}} = {}
+        response.data.forEach((playlist: Playlist, index: number) => {
+          initialState[index] = { isPlaying: false, isLiked: false }
+        })
+        setPlaylistStates(initialState)
+      } catch (error) {
+        console.error('플레이리스트 조회 실패:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchPlaylists()
+  }, [])
 
   const togglePlay = (index: number) => {
     setPlaylistStates(prev => ({
@@ -86,115 +117,128 @@ const ConstellationPage: React.FC = () => {
 
         {/* 모바일: 번갈아가는 레이아웃, 데스크톱: 기존 그리드 레이아웃 */}
         <div className="mb-8 relative z-10">
-          {/* 모바일 레이아웃 */}
-          <div className="block lg:hidden space-y-6">
-            {[
-              { type: 'video', title: '유튜브 영상 1' },
-              { type: 'card', title: '자존감 충전 필요할 때', index: 0 },
-              { type: 'video', title: '유튜브 영상 2' },
-              { type: 'card', title: '우울할 때', index: 1 },
-              { type: 'video', title: '유튜브 영상 3' },
-              { type: 'card', title: '스트레스 받을 때', index: 2 }
-            ].map((item, idx) => (
-              <div key={idx}>
-                {item.type === 'video' ? (
-                  <div className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video flex items-center justify-center hover:shadow-lg transition-shadow duration-300">
-                    <span className="text-mainBlack text-lg font-normal font-mainFont">
-                      {item.title}
-                    </span>
-                  </div>
-                ) : (
-                  <div className="bg-mainWhite rounded-lg shadow-md border-3 border-mainColor p-4 hover:shadow-lg transition-shadow duration-300">
-                    <div className="flex items-center space-x-4">
-                      <img 
-                        className="w-16 h-16 rounded-md shadow-sm flex-shrink-0" 
-                        src="https://placehold.co/120x120" 
-                        alt={`${item.title} 이미지`}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-mainBlack text-lg font-normal font-mainFont mb-3">
-                          {item.title}
-                        </h3>
-                        <div className="flex items-center space-x-2">
-                          <PlayButton
-                            isPlaying={playlistStates[item.index].isPlaying}
-                            onToggle={() => togglePlay(item.index)}
-                            size="sm"
-                          />
-                          <LikeButton
-                            isLiked={playlistStates[item.index].isLiked}
-                            onToggle={() => toggleLike(item.index)}
-                            size="sm"
-                          />
+          {loading ? (
+            <div className="text-center py-8">
+              <span className="text-darkWalnut text-lg font-mainFont">플레이리스트를 불러오는 중...</span>
+            </div>
+          ) : (
+            <>
+              {/* 모바일 레이아웃 */}
+              <div className="block lg:hidden space-y-6">
+                {playlists.map((playlist, index) => (
+                  <div key={playlist.id}>
+                    {/* 유튜브 영상 */}
+                    <div className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video flex items-center justify-center hover:shadow-lg transition-shadow duration-300">
+                      {playlist.thumbnailUrl ? (
+                        <img 
+                          src={playlist.thumbnailUrl} 
+                          alt={playlist.title}
+                          className="w-full h-full object-cover rounded-lg"
+                        />
+                      ) : (
+                        <span className="text-mainBlack text-lg font-normal font-mainFont">
+                          {playlist.title}
+                        </span>
+                      )}
+                    </div>
+                    
+                    {/* 플레이리스트 카드 */}
+                    <div className="bg-mainWhite rounded-lg shadow-md border-3 border-mainColor p-4 hover:shadow-lg transition-shadow duration-300">
+                      <div className="flex items-center space-x-4">
+                        <img 
+                          className="w-16 h-16 rounded-md shadow-sm flex-shrink-0" 
+                          src={playlist.thumbnailUrl || "https://placehold.co/120x120"} 
+                          alt={`${playlist.title} 이미지`}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-mainBlack text-lg font-normal font-mainFont mb-3">
+                            {playlist.title}
+                          </h3>
+                          <div className="flex items-center space-x-2">
+                            <PlayButton
+                              isPlaying={playlistStates[index]?.isPlaying || false}
+                              onToggle={() => togglePlay(index)}
+                              size="sm"
+                            />
+                            <LikeButton
+                              isLiked={playlistStates[index]?.isLiked || false}
+                              onToggle={() => toggleLike(index)}
+                              size="sm"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* 데스크톱 레이아웃 */}
-          <div className="hidden lg:block">
-            {/* 유튜브 영상 섹션 */}
-            <div className="mb-8">
-              <h2 className="text-3xl font-mainFont text-darkWalnut text-center mb-8">
-                추천 영상
-              </h2>
-              <div className="grid grid-cols-3 gap-6">
-                {[1, 2, 3].map((item) => (
-                  <div 
-                    key={item}
-                    className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video flex items-center justify-center hover:shadow-lg transition-shadow duration-300"
-                  >
-                    <span className="text-mainBlack text-xl font-normal font-mainFont">
-                      유튜브 영상 {item}
-                    </span>
-                  </div>
                 ))}
               </div>
-            </div>
 
-            {/* 카드 섹션 */}
-            <div className="grid grid-cols-3 gap-6">
-              {[
-                { title: "자존감 충전 필요할 때" },
-                { title: "우울할 때" },
-                { title: "스트레스 받을 때" }
-              ].map((card, index) => (
-                <div 
-                  key={index}
-                  className="bg-mainWhite rounded-lg shadow-md border-3 border-mainColor p-6 hover:shadow-lg transition-shadow duration-300"
-                >
-                  <div className="flex items-center space-x-4">
-                    <img 
-                      className="w-20 h-20 rounded-md shadow-sm flex-shrink-0" 
-                      src="https://placehold.co/120x120" 
-                      alt={`${card.title} 이미지`}
-                    />
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-mainBlack text-xl font-normal font-mainFont mb-3">
-                        {card.title}
-                      </h3>
-                      <div className="flex items-center space-x-3">
-                        <PlayButton
-                          isPlaying={playlistStates[index].isPlaying}
-                          onToggle={() => togglePlay(index)}
-                          size="sm"
-                        />
-                        <LikeButton
-                          isLiked={playlistStates[index].isLiked}
-                          onToggle={() => toggleLike(index)}
-                          size="sm"
-                        />
+              {/* 데스크톱 레이아웃 */}
+              <div className="hidden lg:block">
+                {/* 유튜브 영상 섹션 */}
+                <div className="mb-8">
+                  <h2 className="text-3xl font-mainFont text-darkWalnut text-center mb-8">
+                    추천 영상
+                  </h2>
+                  <div className="grid grid-cols-3 gap-6">
+                    {playlists.map((playlist) => (
+                      <div 
+                        key={playlist.id}
+                        className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video flex items-center justify-center hover:shadow-lg transition-shadow duration-300"
+                      >
+                        {playlist.thumbnailUrl ? (
+                          <img 
+                            src={playlist.thumbnailUrl} 
+                            alt={playlist.title}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
+                        ) : (
+                          <span className="text-mainBlack text-xl font-normal font-mainFont">
+                            {playlist.title}
+                          </span>
+                        )}
                       </div>
-                    </div>
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+
+                {/* 카드 섹션 */}
+                <div className="grid grid-cols-3 gap-6">
+                  {playlists.map((playlist, index) => (
+                    <div 
+                      key={playlist.id}
+                      className="bg-mainWhite rounded-lg shadow-md border-3 border-mainColor p-6 hover:shadow-lg transition-shadow duration-300"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <img 
+                          className="w-20 h-20 rounded-md shadow-sm flex-shrink-0" 
+                          src={playlist.thumbnailUrl || "https://placehold.co/120x120"} 
+                          alt={`${playlist.title} 이미지`}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-mainBlack text-xl font-normal font-mainFont mb-3">
+                            {playlist.title}
+                          </h3>
+                          <div className="flex items-center space-x-3">
+                            <PlayButton
+                              isPlaying={playlistStates[index]?.isPlaying || false}
+                              onToggle={() => togglePlay(index)}
+                              size="sm"
+                            />
+                            <LikeButton
+                              isLiked={playlistStates[index]?.isLiked || false}
+                              onToggle={() => toggleLike(index)}
+                              size="sm"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
