@@ -15,7 +15,7 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
   className = "" 
 }) => {
   return (
-    <div className={`bg-mainWhite rounded-lg border-3 border-mainColor aspect-video hover:shadow-lg transition-shadow duration-300 relative overflow-hidden ${className}`}>
+    <div className={`bg-mainWhite rounded-lg aspect-video hover:shadow-lg transition-shadow duration-300 relative overflow-hidden ${className}`}>
       {showVideo ? (
         <iframe
           src={getEmbedUrl(playlist.videoUrl)}
