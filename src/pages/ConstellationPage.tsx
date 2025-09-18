@@ -1,178 +1,31 @@
-import React, { useState, useEffect } from 'react'
-import LogoImg from '../assets/images/MoonRabbitSleep2.png'
-import StarSvg from '../assets/images/starBackground.svg'
-import { LikeButton } from '../components/LikeButton'
-import { PlayButton } from '../components/PlayButton'
+import React from 'react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
-import axios from 'axios'
-import { ENDPOINTS } from '../api/endpoints'
-
-interface Playlist {
-  id: number
-  title: string
-  videoUrl: string
-  videoId: string
-  thumbnailUrl: string
-  createdAt: string
-}
+import { usePlaylist } from '../hooks/usePlaylist'
+import { getEmbedUrl } from '../utils/youtube'
+import StarBackground from '../components/StarBackground'
+import PageHeader from '../components/PageHeader'
+import MobileLayout from '../components/MobileLayout'
+import DesktopLayout from '../components/DesktopLayout'
 
 const ConstellationPage: React.FC = () => {
   const { res } = useResponsiveStore()
   const isMobile = res === 'mo'
   
-  const [playlists, setPlaylists] = useState<Playlist[]>([])
-  const [loading, setLoading] = useState(true)
-  const [playlistStates, setPlaylistStates] = useState<{[key: number]: {isPlaying: boolean, isLiked: boolean, showVideo: boolean}}>({})
-  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null)
-
-  // YouTube URL에서 videoId 추출
-  const getVideoId = (url: string): string | null => {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
-    const match = url.match(regExp)
-    return (match && match[2].length === 11) ? match[2] : null
-  }
-
-  // YouTube 임베드 URL 생성
-  const getEmbedUrl = (url: string): string => {
-    const videoId = getVideoId(url)
-    if (!videoId) return ''
-    
-    // URL에서 시간 파라미터 추출 (t=30s 형태)
-    const timeMatch = url.match(/[?&]t=(\d+)s?/)
-    const startTime = timeMatch ? timeMatch[1] : '0'
-    
-    return `https://www.youtube.com/embed/${videoId}?start=${startTime}&autoplay=1&rel=0`
-  }
-
-  useEffect(() => {
-    const fetchPlaylists = async () => {
-      try {
-        const response = await axios.get(ENDPOINTS.PLAYLIST_LIST)
-        setPlaylists(response.data)
-        
-        // 플레이리스트 상태 초기화
-        const initialState: {[key: number]: {isPlaying: boolean, isLiked: boolean, showVideo: boolean}} = {}
-        response.data.forEach((playlist: Playlist, index: number) => {
-          initialState[index] = { isPlaying: false, isLiked: false, showVideo: false }
-        })
-        setPlaylistStates(initialState)
-      } catch (error) {
-        console.error('플레이리스트 조회 실패:', error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchPlaylists()
-  }, [])
-
-  const togglePlay = (index: number) => {
-    const playlist = playlists[index]
-    if (!playlist) return
-
-    const videoId = getVideoId(playlist.videoUrl)
-    if (!videoId) return
-
-    const currentState = playlistStates[index]
-    const isShowingVideo = currentState?.showVideo || false
-
-    if (!isShowingVideo) {
-      // 첫 클릭: 비디오 표시하고 자동재생
-      setPlaylistStates(prev => {
-        const newState: {[key: number]: {isPlaying: boolean, isLiked: boolean, showVideo: boolean}} = {}
-        Object.keys(prev).forEach((key) => {
-          const i = Number(key)
-          newState[i] = {
-            isPlaying: i === index,
-            isLiked: prev[i]?.isLiked ?? false,
-            showVideo: i === index
-          }
-        })
-        return newState
-      })
-      setPlayingVideoId(videoId)
-    } else {
-      // 재클릭: 비디오 숨기기 (중지)
-      setPlaylistStates(prev => ({
-        ...prev,
-        [index]: { 
-          ...prev[index], 
-          isPlaying: false,
-          showVideo: false
-        }
-      }))
-      setPlayingVideoId(null)
-    }
-  }
-
-  const toggleLike = (index: number) => {
-    setPlaylistStates(prev => ({
-      ...prev,
-      [index]: {
-        ...prev[index],
-        isLiked: !prev[index].isLiked
-      }
-    }))
-  }
+  const { 
+    playlists, 
+    loading, 
+    playlistStates, 
+    togglePlay, 
+    toggleLike 
+  } = usePlaylist()
 
   return (
     <div className="min-h-screen bg-lightBeige relative overflow-hidden">
-      {/* 배경 별들 */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* 데스크톱용 별들 */}
-        {!isMobile && (
-          <div>
-            <img src={StarSvg} alt="별" className="absolute top-20 right-32 w-8 h-8 opacity-80" />
-            <img src={StarSvg} alt="별" className="absolute top-32 right-24 w-6 h-6 opacity-70 rotate-12" />
-            <img src={StarSvg} alt="별" className="absolute top-40 right-40 w-5 h-5 opacity-60 rotate-45" />
-            <img src={StarSvg} alt="별" className="absolute top-60 left-20 w-10 h-10 opacity-75 rotate-30" />
-            <img src={StarSvg} alt="별" className="absolute top-80 left-32 w-7 h-7 opacity-65 rotate-60" />
-            <img src={StarSvg} alt="별" className="absolute top-96 right-16 w-9 h-9 opacity-80 rotate-15" />
-            <img src={StarSvg} alt="별" className="absolute bottom-40 left-16 w-8 h-8 opacity-70 rotate-45" />
-            <img src={StarSvg} alt="별" className="absolute bottom-60 right-20 w-6 h-6 opacity-60 rotate-75" />
-            <img src={StarSvg} alt="별" className="absolute bottom-80 left-40 w-12 h-12 opacity-85 rotate-25" />
-          </div>
-        )}
-        
-        {/* 모바일용 별들 */}
-        {isMobile && (
-          <div>
-            <img src={StarSvg} alt="별" className="absolute top-16 right-4 w-6 h-6 opacity-80" />
-            <img src={StarSvg} alt="별" className="absolute top-24 right-8 w-5 h-5 opacity-70 rotate-30" />
-            <img src={StarSvg} alt="별" className="absolute top-32 left-4 w-4 h-4 opacity-60 rotate-60" />
-            <img src={StarSvg} alt="별" className="absolute top-40 left-8 w-5 h-5 opacity-75 rotate-45" />
-            <img src={StarSvg} alt="별" className="absolute bottom-40 right-4 w-4 h-4 opacity-65 rotate-15" />
-            <img src={StarSvg} alt="별" className="absolute bottom-60 left-4 w-6 h-6 opacity-80 rotate-75" />
-          </div>
-        )}
-      </div>
+      <StarBackground isMobile={isMobile} />
 
-      {/* 메인 컨텐츠 */}
       <div className="container mx-auto px-4 py-8 lg:py-16">
-        {/* 헤더 섹션 */}
-        <div className="text-center mb-8 lg:mb-16">
-          {/* 메인 이미지 */}
-          <div className="mb-6 lg:mb-8">
-            <img 
-              className="w-48 h-40 lg:w-72 lg:h-64 mx-auto object-contain" 
-              src={LogoImg} 
-              alt="달토끼 로고"
-            />
-          </div>
-          
-          {/* 메인 타이틀 */}
-          <div className="mb-4 lg:mb-6">
-            <span className="text-lightCaramel text-3xl lg:text-5xl font-normal font-mainFont">달</span>
-            <span className="text-darkWalnut text-3xl lg:text-5xl font-normal font-mainFont">토끼</span>
-          </div>
-          
-          {/* 서브 타이틀 */}
-          <div className="text-darkWalnut text-lg lg:text-xl xl:text-2xl font-normal font-mainFont max-w-4xl mx-auto leading-relaxed">
-            고민을 말하기도, 상담도 부담스럽다면 노래는 어때요?
-          </div>
-        </div>
+        <PageHeader />
 
-        {/* 모바일: 번갈아가는 레이아웃, 데스크톱: 기존 그리드 레이아웃 */}
         <div className="mb-8 relative z-10">
           {loading ? (
             <div className="text-center py-8">
@@ -180,151 +33,24 @@ const ConstellationPage: React.FC = () => {
             </div>
           ) : (
             <>
-              {/* 모바일 레이아웃 */}
               {isMobile && (
-                <div className="space-y-8">
-                {playlists.map((playlist, index) => (
-                  <div key={playlist.id}>
-                    {/* 유튜브 영상 */}
-                    <div className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
-                      {playlistStates[index]?.showVideo ? (
-                        <iframe
-                          src={getEmbedUrl(playlist.videoUrl)}
-                          title={playlist.title}
-                          className="w-full h-full rounded-lg"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                        />
-                      ) : (
-                        <div className="w-full h-full relative">
-                          {playlist.thumbnailUrl ? (
-                            <img 
-                              src={playlist.thumbnailUrl} 
-                              alt={playlist.title}
-                              className="w-full h-full object-cover rounded-lg"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
-                              <span className="text-mainBlack text-lg font-normal font-mainFont">
-                                {playlist.title}
-                              </span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* 플레이리스트 카드 */}
-                    <div className="bg-mainWhite rounded-lg shadow-md border-3 border-mainColor p-4 hover:shadow-lg transition-shadow duration-300 mt-2">
-                      <div className="flex items-center space-x-4">
-                        <img 
-                          className="w-16 h-16 rounded-md shadow-sm flex-shrink-0" 
-                          src={playlist.thumbnailUrl || "https://placehold.co/120x120"} 
-                          alt={`${playlist.title} 이미지`}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-mainBlack text-lg font-normal font-mainFont mb-3">
-                            {playlist.title}
-                          </h3>
-                          <div className="flex items-center space-x-2">
-                            <PlayButton
-                              isPlaying={playlistStates[index]?.isPlaying || false}
-                              onToggle={() => togglePlay(index)}
-                              size="sm"
-                            />
-                            <LikeButton
-                              isLiked={playlistStates[index]?.isLiked || false}
-                              onToggle={() => toggleLike(index)}
-                              size="sm"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-                </div>
+                <MobileLayout
+                  playlists={playlists}
+                  playlistStates={playlistStates}
+                  getEmbedUrl={getEmbedUrl}
+                  onTogglePlay={togglePlay}
+                  onToggleLike={toggleLike}
+                />
               )}
 
-              {/* 데스크톱 레이아웃 */}
               {!isMobile && (
-                <div>
-                {/* 유튜브 영상 섹션 */}
-                <div className="mb-8">
-                  <h2 className="text-3xl font-mainFont text-darkWalnut text-center mb-8">
-                    추천 영상
-                  </h2>
-                  <div className="grid grid-cols-3 gap-6">
-                    {playlists.map((playlist, index) => (
-                      <div 
-                        key={playlist.id}
-                        className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video hover:shadow-lg transition-shadow duration-300 relative overflow-hidden"
-                      >
-                        {playlistStates[index]?.showVideo ? (
-                          <iframe
-                            src={getEmbedUrl(playlist.videoUrl)}
-                            title={playlist.title}
-                            className="w-full h-full rounded-lg"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                          />
-                        ) : (
-                          <div className="w-full h-full relative">
-                            {playlist.thumbnailUrl ? (
-                              <img 
-                                src={playlist.thumbnailUrl} 
-                                alt={playlist.title}
-                                className="w-full h-full object-cover rounded-lg"
-                              />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
-                                <span className="text-mainBlack text-xl font-normal font-mainFont">
-                                  {playlist.title}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 카드 섹션 */}
-                <div className="grid grid-cols-3 gap-6">
-                  {playlists.map((playlist, index) => (
-                    <div 
-                      key={playlist.id}
-                      className="bg-mainWhite rounded-lg shadow-md border-3 border-mainColor p-6 hover:shadow-lg transition-shadow duration-300"
-                    >
-                      <div className="flex items-center space-x-4">
-                        <img 
-                          className="w-20 h-20 rounded-md shadow-sm flex-shrink-0" 
-                          src={playlist.thumbnailUrl || "https://placehold.co/120x120"} 
-                          alt={`${playlist.title} 이미지`}
-                        />
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-mainBlack text-xl font-normal font-mainFont mb-3">
-                            {playlist.title}
-                          </h3>
-                          <div className="flex items-center space-x-3">
-                            <PlayButton
-                              isPlaying={playlistStates[index]?.isPlaying || false}
-                              onToggle={() => togglePlay(index)}
-                              size="sm"
-                            />
-                            <LikeButton
-                              isLiked={playlistStates[index]?.isLiked || false}
-                              onToggle={() => toggleLike(index)}
-                              size="sm"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                </div>
+                <DesktopLayout
+                  playlists={playlists}
+                  playlistStates={playlistStates}
+                  getEmbedUrl={getEmbedUrl}
+                  onTogglePlay={togglePlay}
+                  onToggleLike={toggleLike}
+                />
               )}
             </>
           )}
