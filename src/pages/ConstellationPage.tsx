@@ -19,6 +19,26 @@ const ConstellationPage: React.FC = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([])
   const [loading, setLoading] = useState(true)
   const [playlistStates, setPlaylistStates] = useState<{[key: number]: {isPlaying: boolean, isLiked: boolean}}>({})
+  const [playingVideoId, setPlayingVideoId] = useState<string | null>(null)
+
+  // YouTube URL에서 videoId 추출
+  const getVideoId = (url: string): string | null => {
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/
+    const match = url.match(regExp)
+    return (match && match[2].length === 11) ? match[2] : null
+  }
+
+  // YouTube 임베드 URL 생성
+  const getEmbedUrl = (url: string): string => {
+    const videoId = getVideoId(url)
+    if (!videoId) return ''
+    
+    // URL에서 시간 파라미터 추출 (t=30s 형태)
+    const timeMatch = url.match(/[?&]t=(\d+)s?/)
+    const startTime = timeMatch ? timeMatch[1] : '0'
+    
+    return `https://www.youtube.com/embed/${videoId}?start=${startTime}&autoplay=1&rel=0`
+  }
 
   useEffect(() => {
     const fetchPlaylists = async () => {
@@ -43,6 +63,11 @@ const ConstellationPage: React.FC = () => {
   }, [])
 
   const togglePlay = (index: number) => {
+    const playlist = playlists[index]
+    if (!playlist) return
+
+    const videoId = getVideoId(playlist.videoUrl)
+    
     setPlaylistStates(prev => ({
       ...prev,
       [index]: {
@@ -50,6 +75,13 @@ const ConstellationPage: React.FC = () => {
         isPlaying: !prev[index].isPlaying
       }
     }))
+
+    // 다른 비디오가 재생 중이면 정지
+    if (playingVideoId && playingVideoId !== videoId) {
+      setPlayingVideoId(null)
+    } else {
+      setPlayingVideoId(playlistStates[index].isPlaying ? null : videoId)
+    }
   }
 
   const toggleLike = (index: number) => {
@@ -124,26 +156,40 @@ const ConstellationPage: React.FC = () => {
           ) : (
             <>
               {/* 모바일 레이아웃 */}
-              <div className="block lg:hidden space-y-6">
+              <div className="block lg:hidden space-y-8">
                 {playlists.map((playlist, index) => (
                   <div key={playlist.id}>
                     {/* 유튜브 영상 */}
-                    <div className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video flex items-center justify-center hover:shadow-lg transition-shadow duration-300">
-                      {playlist.thumbnailUrl ? (
-                        <img 
-                          src={playlist.thumbnailUrl} 
-                          alt={playlist.title}
-                          className="w-full h-full object-cover rounded-lg"
+                    <div className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video hover:shadow-lg transition-shadow duration-300 relative overflow-hidden">
+                      {playlistStates[index]?.isPlaying && playingVideoId === getVideoId(playlist.videoUrl) ? (
+                        <iframe
+                          src={getEmbedUrl(playlist.videoUrl)}
+                          title={playlist.title}
+                          className="w-full h-full rounded-lg"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
                         />
                       ) : (
-                        <span className="text-mainBlack text-lg font-normal font-mainFont">
-                          {playlist.title}
-                        </span>
+                        <div className="w-full h-full relative">
+                          {playlist.thumbnailUrl ? (
+                            <img 
+                              src={playlist.thumbnailUrl} 
+                              alt={playlist.title}
+                              className="w-full h-full object-cover rounded-lg"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+                              <span className="text-mainBlack text-lg font-normal font-mainFont">
+                                {playlist.title}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
                     
                     {/* 플레이리스트 카드 */}
-                    <div className="bg-mainWhite rounded-lg shadow-md border-3 border-mainColor p-4 hover:shadow-lg transition-shadow duration-300">
+                    <div className="bg-mainWhite rounded-lg shadow-md border-3 border-mainColor p-4 hover:shadow-lg transition-shadow duration-300 mt-2">
                       <div className="flex items-center space-x-4">
                         <img 
                           className="w-16 h-16 rounded-md shadow-sm flex-shrink-0" 
@@ -181,21 +227,35 @@ const ConstellationPage: React.FC = () => {
                     추천 영상
                   </h2>
                   <div className="grid grid-cols-3 gap-6">
-                    {playlists.map((playlist) => (
+                    {playlists.map((playlist, index) => (
                       <div 
                         key={playlist.id}
-                        className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video flex items-center justify-center hover:shadow-lg transition-shadow duration-300"
+                        className="bg-mainWhite rounded-lg border-3 border-mainColor aspect-video hover:shadow-lg transition-shadow duration-300 relative overflow-hidden"
                       >
-                        {playlist.thumbnailUrl ? (
-                          <img 
-                            src={playlist.thumbnailUrl} 
-                            alt={playlist.title}
-                            className="w-full h-full object-cover rounded-lg"
+                        {playlistStates[index]?.isPlaying && playingVideoId === getVideoId(playlist.videoUrl) ? (
+                          <iframe
+                            src={getEmbedUrl(playlist.videoUrl)}
+                            title={playlist.title}
+                            className="w-full h-full rounded-lg"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
                           />
                         ) : (
-                          <span className="text-mainBlack text-xl font-normal font-mainFont">
-                            {playlist.title}
-                          </span>
+                          <div className="w-full h-full relative">
+                            {playlist.thumbnailUrl ? (
+                              <img 
+                                src={playlist.thumbnailUrl} 
+                                alt={playlist.title}
+                                className="w-full h-full object-cover rounded-lg"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+                                <span className="text-mainBlack text-xl font-normal font-mainFont">
+                                  {playlist.title}
+                                </span>
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
                     ))}
