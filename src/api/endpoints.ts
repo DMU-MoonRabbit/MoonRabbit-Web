@@ -22,6 +22,9 @@ export const ENDPOINTS = {
   LOGOUT: `${BASE_URL}/auth/logout`,
   VERIFY: `${BASE_URL}/auth/verify`,
 
+  // 플레이리스트(Playlist)
+  PLAYLIST_LIST: `${BASE_URL}/playlists`,
+
   // 기타 필요시 추가
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,
 };

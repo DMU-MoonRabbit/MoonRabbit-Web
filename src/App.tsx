@@ -7,6 +7,7 @@ import MainPage from './pages/MainPage'
 import LoginSignupPage from './pages/LoginSignupPage'
 import NightSkyPage from './pages/NightSkyPage'
 import { NightSkyDetailPage } from './pages/NightSkyDetailPage'
+import ConstellationPage from './pages/ConstellationPage'
 import Footer from './components/Footer'
 import LoginLoadingPage from './pages/LoginLoadingPage'
 import MypagePage from './pages/MypagePage'
@@ -43,6 +44,7 @@ function App() {
             path="/night-sky/:pageNumber"
             element={<NightSkyDetailPage />}
           />
+          <Route path="/stars" element={<ConstellationPage />} />
           <Route path="/mypage" element={<MypagePage />} />
         </Routes>
         <Footer />
