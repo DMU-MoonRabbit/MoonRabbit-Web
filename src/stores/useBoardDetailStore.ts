@@ -42,6 +42,15 @@ export const useBoardDetailStore = create<BoardDetailStore>((set) => ({
         boardDetail: response.data,
         isLoading: false,
       })
+      // 게시글 정보 로드 후 AI 답변도 함께 로드
+      const aiResponse = await axios.get(
+        `https://moonrabbit-api.kro.kr/api/board/${id}/assistant`,
+      )
+      set((state) => ({
+        boardDetail: state.boardDetail
+          ? { ...state.boardDetail, aiAnswer: aiResponse.data.reply }
+          : null,
+      }))
     } catch (error) {
       set({
         error: '게시글을 불러오는데 실패했습니다.',
@@ -59,7 +68,15 @@ export const useBoardDetailStore = create<BoardDetailStore>((set) => ({
       set((state) => ({
         boardDetail: state.boardDetail
           ? { ...state.boardDetail, aiAnswer: response.data.reply }
-          : null,
+          : { 
+              userId: 0, 
+              title: '', 
+              content: '', 
+              category: '', 
+              answers: [], 
+              aiAnswer: response.data.reply, 
+              createdAt: '' 
+            },
       }))
     } catch (error) {
       console.error('AI 답변 조회 실패:', error)

@@ -40,11 +40,7 @@ export const ConcernContent: React.FC = () => {
     }
   }
 
-  useEffect(() => {
-    if (boardId) {
-      fetchAiAnswer(Number(boardId))
-    }
-  }, [boardId, fetchAiAnswer])
+  // fetchAiAnswer는 fetchBoardDetail에서 자동으로 호출되므로 제거
 
   useEffect(() => {
     if (pageNumber) {
