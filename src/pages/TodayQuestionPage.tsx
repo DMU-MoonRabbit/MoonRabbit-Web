@@ -78,12 +78,12 @@ const TodayQuestionPage: React.FC = () => {
             /* 모바일 레이아웃 */
             <div className="space-y-6">
               {[
-                { type: 'text', content: '질문답변', placeholder: '답변을 입력해주세요...' },
-                { type: 'challenge', content: '노래방가서 말달리자\n연속3번 부르기', placeholder: '도전 후기를 남겨주세요...' },
-                { type: 'text', content: '질문답변', placeholder: '답변을 입력해주세요...' },
-                { type: 'text', content: '질문답변', placeholder: '답변을 입력해주세요...' },
-                { type: 'challenge', content: '노래방가서 말달리자\n연속3번 부르기', placeholder: '도전 후기를 남겨주세요...' },
-                { type: 'text', content: '질문답변', placeholder: '답변을 입력해주세요...' }
+                { type: 'text', content: '카페에서 노트북으로 넷플릭스 봐요 ☕️' },
+                { type: 'challenge', content: '3일 동안 SNS 안 하기 📵' },
+                { type: 'support', content: '나만 힘든 거 아니구나 싶어서 위로가 돼요 🌙' },
+                { type: 'text', content: '런닝하고 샤워하면 고민이 다 날아가더라구요 🏃‍♂️' },
+                { type: 'quote', content: '노래방에서 말달리자 3번 부르기' },
+                { type: 'confession', content: '요즘 너무 외로워서 누군가랑 대화만 해도 좋을 것 같아요 🥲' }
               ].map((item, index) => {
                 const isLiked = likedCards.has(index)
                 return (
@@ -102,7 +102,7 @@ const TodayQuestionPage: React.FC = () => {
                     </div>
                     
                     {/* 하트 좋아요 버튼 */}
-                    <div className="absolute bottom-3 right-3 z-20">
+                    <div className="absolute bottom-1 right-1 z-20">
                       <button
                         onClick={() => handleLikeClick(index)}
                         className="p-2 rounded-full transition-colors duration-200"
@@ -122,15 +122,15 @@ const TodayQuestionPage: React.FC = () => {
             /* 데스크톱 레이아웃 */
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">
               {[
-                { type: 'text', content: '질문답변', placeholder: '답변을 입력해주세요...' },
-                { type: 'challenge', content: '노래방가서 말달리자\n연속3번 부르기', placeholder: '도전 후기를 남겨주세요...' },
-                { type: 'text', content: '질문답변', placeholder: '답변을 입력해주세요...' },
-                { type: 'text', content: '질문답변', placeholder: '답변을 입력해주세요...' },
-                { type: 'challenge', content: '노래방가서 말달리자\n연속3번 부르기', placeholder: '도전 후기를 남겨주세요...' },
-                { type: 'text', content: '질문답변', placeholder: '답변을 입력해주세요...' },
-                { type: 'text', content: '질문답변', placeholder: '답변을 입력해주세요...' },
-                { type: 'challenge', content: '노래방가서 말달리자\n연속3번 부르기', placeholder: '도전 후기를 남겨주세요...' },
-                { type: 'text', content: '질문답변', placeholder: '답변을 입력해주세요...' }
+                { type: 'text', content: '카페에서 노트북으로 넷플릭스 봐요 ☕️' },
+                { type: 'challenge', content: '3일 동안 SNS 안 하기 📵' },
+                { type: 'support', content: '나만 힘든 거 아니구나 싶어서 위로가 돼요 🌙' },
+                { type: 'text', content: '런닝하고 샤워하면 고민이 다 날아가더라구요 🏃‍♂️' },
+                { type: 'quote', content: '노래방에서 말달리자 3번 부르기' },
+                { type: 'confession', content: '요즘 너무 외로워서 누군가랑 대화만 해도 좋을 것 같아요 🥲' },
+                { type: 'challenge', content: '낯선 사람에게 하루에 한 번 미소 짓기 😀' },
+                { type: 'text', content: '음악 들으면서 그림 그리는 시간이 최고예요 🎨' },
+                { type: 'support', content: '모든 게 완벽하지 않아도 괜찮다는 걸 배웠어요 💝' }
               ].map((item, index) => {
                 const isLiked = likedCards.has(index)
                 return (
@@ -149,7 +149,7 @@ const TodayQuestionPage: React.FC = () => {
                     </div>
                     
                     {/* 하트 좋아요 버튼 */}
-                    <div className="absolute bottom-4 right-4 z-20">
+                    <div className="absolute bottom-1 right-1 z-20">
                       <button
                         onClick={() => handleLikeClick(index)}
                         className="p-3 rounded-full transition-colors duration-200"
