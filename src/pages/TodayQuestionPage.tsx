@@ -23,7 +23,7 @@ const TodayQuestionPage: React.FC = () => {
       <StarBackground isMobile={isMobile} />
 
       <div className="container mx-auto px-4 py-8 lg:py-16">
-        <PageHeader />
+        <PageHeader showSubtitle={false} />
         
         {/* 오늘의 질문 */}
         <div className="text-center mb-8 lg:mb-16">
