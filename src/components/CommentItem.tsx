@@ -3,8 +3,8 @@ import { Comment } from '../stores/useCommentStore'
 import { useCommentStore } from '../stores/useCommentStore'
 import { CommentInput } from './CommentInput'
 import { useAuthStore } from '../stores/useAuthStore'
-import Like from '../assets/images/Like.svg'
-import Liked from '../assets/images/Liked.svg'
+import Like from '../assets/images/likeThick.svg'
+import Liked from '../assets/images/likedThick.svg'
 import useUserStore from '../stores/useUserStore'
 import axios from 'axios'
 import { ENDPOINTS } from '../api/endpoints'
@@ -54,8 +54,11 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     <div className="mt-12">
       <div className="flex items-center">
         <img
-          src={comment.profileImg}
+          src={comment.profileImg?.trim() || '/images/MoonRabbitSleep.png'}
           className="w-[50px] h-[50px] rounded-[50%] mr-[8px]"
+          onError={(e) => {
+            e.currentTarget.src = '/images/MoonRabbitSleep.png'
+          }}
         />
         <p className="text-[18px]">{comment.nickname}</p>
       </div>

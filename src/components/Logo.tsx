@@ -9,19 +9,19 @@ const Logo: React.FC = () => {
     <div
       className="flex flex-col items-center justify-center"
       style={{
-        width: res === 'pc' ? '569px' : '80%',
+        width: res === 'pc' ? '500px' : '80%',
         height: res === 'pc' ? '825px' : 'auto',
-        maxWidth: '569px',
+        maxWidth: '500px',
         margin: '0 auto',
       }}
     >
       <img
         src="images/MoonRabbitSleep2.png"
         alt="달토끼 로고"
-        className="w-full h-auto object-contain mt-12"
+        className="w-full h-auto object-contain mt-2"
         style={{
-          maxWidth: '569px',
-          maxHeight: '642px',
+          maxWidth: '500px',
+          maxHeight: '600px',
         }}
       />
       <div className="text-center mt-16 flex flex-col items-center justify-center w-full">

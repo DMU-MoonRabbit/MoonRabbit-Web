@@ -21,7 +21,15 @@ const CreateConcernButton: React.FC<CreateConcernButtonProps> = ({
       }`}
     >
       <PenBox size={res === 'pc' ? 24 : 20} className="mr-2" />
-      <span>밤하늘 그리기</span>
+      <span className={res !== 'pc' ? 'leading-tight' : ''}>
+        {res !== 'pc' ? (
+          <>
+            밤하늘 <br /> 그리기
+          </>
+        ) : (
+          '밤하늘 그리기'
+        )}
+      </span>
     </button>
   )
 }
