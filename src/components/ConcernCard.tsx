@@ -113,7 +113,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
               isMobile ? 'text-xs sm:text-sm' : 'text-base',
             )}
           >
-            {content}
+            {content.length > 30 ? `${content.substring(0, 30)}...` : content}
           </p>
           {date && (
             <span
