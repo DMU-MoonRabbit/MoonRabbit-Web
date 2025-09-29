@@ -25,6 +25,10 @@ export const ENDPOINTS = {
   // 플레이리스트(Playlist)
   PLAYLIST_LIST: `${BASE_URL}/playlists`,
 
+  // 오늘의 질문(Today Question)
+  TODAY_QUESTION: `${BASE_URL}/questions/today`,
+  QUESTION_ANSWER: (questionId: number) => `${BASE_URL}/questions/${questionId}/answer`,
+
   // 기타 필요시 추가
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,
 };
