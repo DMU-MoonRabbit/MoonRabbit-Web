@@ -17,13 +17,11 @@ import { CommentItem } from './CommentItem'
 export const ConcernContent: React.FC = () => {
   const { concern, setConcern, toggleConcernLike, concerns } = useUnifiedConcernStore()
   const { comments } = useCommentStore()
-  const { fetchAiAnswer } = useBoardDetailStore()
   const getTotalCommentCount = (list: Comment[] = []): number =>
     list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []), 0)
   const totalCommentCount = getTotalCommentCount(comments)
 
   const { pageNumber } = useParams()
-  const boardId = pageNumber
   const currentId = Number(pageNumber)
   const currentIndex = concerns.findIndex((c) => c.id === currentId)
   const navigate = useNavigate()

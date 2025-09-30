@@ -27,12 +27,12 @@ export const useQuestionCards = () => {
   const handleLikeClick = (cardIndex: number) => {
     if (likedCards.has(cardIndex)) {
       setLikedCards(prev => {
-        const newSet = new Set([...prev])
+        const newSet = new Set(Array.from(prev))
         newSet.delete(cardIndex)
         return newSet
       })
     } else {
-      setLikedCards(prev => new Set([...prev, cardIndex]))
+      setLikedCards(prev => new Set(Array.from(prev).concat(cardIndex)))
     }
   }
 
