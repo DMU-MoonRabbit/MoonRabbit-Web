@@ -93,8 +93,8 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
               <span
                 key={i}
                 className={clsx(
-                  'inline-block bg-lightBeige text-mainColor font-semibold rounded-full shadow-md transition-transform hover:-translate-y-[1px] flex-shrink-0',
-                  isMobile ? 'text-[0.7rem] sm:text-[0.8rem] px-1.5 sm:px-2 py-0.5 sm:py-1 max-w-[calc(25%-0.25rem)] sm:max-w-[calc(25%-0.375rem)]' : 'text-sm px-3 py-1 max-w-[5.75rem]',
+                  'inline-block bg-lightBeige text-mainColor font-semibold rounded-full shadow-md transition-transform hover:-translate-y-[1px] flex-shrink-0 whitespace-nowrap',
+                  isMobile ? 'text-[0.6rem] sm:text-[0.7rem] px-1 sm:px-1.5 py-0.5 sm:py-1' : 'text-sm px-3 py-1 max-w-[5.75rem]',
                 )}
               >
                 {cat.trim()}
