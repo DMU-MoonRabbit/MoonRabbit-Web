@@ -5,8 +5,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useBoardDetailStore } from '../stores/useBoardDetailStore'
 import CommentIcon from '../assets/images/Comment.svg'
 import Report from '../assets/images/Report.svg'
-import Like from '../assets/images/Like.svg'
-import Liked from '../assets/images/Liked.svg'
+import Like from '../assets/images/likeThick.svg'
+import Liked from '../assets/images/likedThick.svg'
 import PrevArrow from '../assets/images/PrevArrow.svg'
 import NextArrow from '../assets/images/NextArrow.svg'
 import axios from 'axios'
@@ -85,9 +85,12 @@ export const ConcernContent: React.FC = () => {
         <p className="text-[30px]">{title}</p>
         <div className="flex items-center my-[20px]">
           <img
-            src={profileImg}
+            src={profileImg?.trim() || '/images/MoonRabbitSleep.png'}
             alt="프로필이미지"
             className="w-[30px] h-[30px] rounded-[50%] mr-[12px]"
+            onError={(e) => {
+              e.currentTarget.src = '/images/MoonRabbitSleep.png'
+            }}
           />
           <p className="text-[16px]">{nickname}</p>
         </div>

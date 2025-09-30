@@ -34,7 +34,7 @@ const CategoryBar: React.FC<CategoryBarProps> = ({
           key={category}
           onClick={() => onCategoryChange(category)}
           className={clsx(
-            'w-auto h-8 rounded-full font-semibold text-sm shadow-md transition-transform duration-200 ease-in-out transform hover:-translate-y-0.5 text-ellipsis overflow-hidden px-4',
+            'min-w-fit h-8 rounded-full font-semibold text-xs sm:text-sm shadow-md transition-transform duration-200 ease-in-out transform hover:-translate-y-0.5 whitespace-nowrap px-3 sm:px-4',
             selectedCategory === category
               ? 'bg-[var(--color-mainColor)] text-[var(--color-white)]'
               : 'bg-[var(--color-white)] text-[var(--color-mainColor)]',
