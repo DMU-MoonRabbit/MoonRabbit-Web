@@ -78,6 +78,7 @@ export const ConcernContent: React.FC = () => {
         alt="이전 고민"
         onClick={goToPrev}
         className="cursor-pointer"
+        loading="lazy"
       />
       <div className="text-darkWalnut font-mainFont mx-2 bg-mainWhite h-auto w-4/5 rounded-[40px] p-[50px] pb-[32px] my-24 shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
         <p className="text-[30px]">{title}</p>
@@ -86,6 +87,7 @@ export const ConcernContent: React.FC = () => {
             src={profileImg?.trim() || '/images/MoonRabbitSleep.png'}
             alt="프로필이미지"
             className="w-[30px] h-[30px] rounded-[50%] mr-[12px]"
+            loading="lazy"
             onError={(e) => {
               e.currentTarget.src = '/images/MoonRabbitSleep.png'
             }}
@@ -97,7 +99,7 @@ export const ConcernContent: React.FC = () => {
         </p>
         <div className="flex mt-[60px] justify-between">
           <div className="flex items-center">
-            <img src={CommentIcon} alt="댓글아이콘" className="h-[24px]" />
+            <img src={CommentIcon} alt="댓글아이콘" className="h-[24px]" loading="lazy" />
             <p className="mt-[2px] ml-[4px] mr-[20px] text-[20px]">
               {totalCommentCount}
             </p>
@@ -105,11 +107,13 @@ export const ConcernContent: React.FC = () => {
               src={Report}
               alt="신고"
               className="mr-[16px] cursor-pointer h-[25px]"
+              loading="lazy"
             />
             <div onClick={toggleConcernLike}>
               <img
                 src={concern?.like ? Liked : Like}
                 className="cursor-pointer h-[25px]"
+                loading="lazy"
               />
             </div>
           </div>
@@ -121,6 +125,7 @@ export const ConcernContent: React.FC = () => {
         alt="다음 고민"
         onClick={goToNext}
         className="cursor-pointer"
+        loading="lazy"
       />
     </div>
   )

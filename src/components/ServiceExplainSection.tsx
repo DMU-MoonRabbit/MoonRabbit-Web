@@ -15,6 +15,7 @@ const ServiceExplainSection: React.FC = () => {
           src="/images/MoonRabbitStars.png"
           alt="달토끼 별 배경"
           className="w-full h-full object-cover"
+          loading="lazy"
         />
       </div>
 
