@@ -62,6 +62,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
               src={profileImage?.trim() || '/images/MoonRabbitSleep.png'}
               alt="Profile"
               className="w-full h-full object-cover"
+              loading="lazy"
               onError={(e) => {
                 e.currentTarget.src = '/images/MoonRabbitSleep.png'
               }}

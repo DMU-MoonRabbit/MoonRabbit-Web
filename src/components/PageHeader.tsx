@@ -14,6 +14,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ showSubtitle = true, subtitleTe
           className="w-48 h-40 lg:w-72 lg:h-64 mx-auto object-contain" 
           src="/images/MoonRabbitSleep2.png" 
           alt="달토끼 로고"
+          loading="eager"
         />
       </div>
       
