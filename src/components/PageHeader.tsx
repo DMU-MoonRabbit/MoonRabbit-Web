@@ -1,15 +1,20 @@
 import React from 'react'
-import LogoImg from '../assets/images/MoonRabbitSleep2.png'
 
-const PageHeader: React.FC = () => {
+interface PageHeaderProps {
+  showSubtitle?: boolean
+  subtitleText?: string
+}
+
+const PageHeader: React.FC<PageHeaderProps> = ({ showSubtitle = true, subtitleText }) => {
   return (
     <div className="text-center mb-8 lg:mb-16">
       {/* 메인 이미지 */}
       <div className="mb-6 lg:mb-8">
         <img 
           className="w-48 h-40 lg:w-72 lg:h-64 mx-auto object-contain" 
-          src={LogoImg} 
+          src="/images/MoonRabbitSleep2.png" 
           alt="달토끼 로고"
+          loading="eager"
         />
       </div>
       
@@ -20,9 +25,11 @@ const PageHeader: React.FC = () => {
       </div>
       
       {/* 서브 타이틀 */}
-      <div className="text-darkWalnut text-lg lg:text-xl xl:text-2xl font-normal font-mainFont max-w-4xl mx-auto leading-relaxed">
-        고민을 말하기도, 상담도 부담스럽다면 노래는 어때요?
-      </div>
+      {showSubtitle && (
+        <div className="text-darkWalnut text-lg lg:text-xl xl:text-2xl font-normal font-mainFont max-w-4xl mx-auto leading-relaxed">
+          {subtitleText ?? '고민을 말하기도, 상담도 부담스럽다면 노래는 어때요?'}
+        </div>
+      )}
     </div>
   )
 }

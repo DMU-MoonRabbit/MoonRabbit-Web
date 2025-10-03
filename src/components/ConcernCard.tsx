@@ -34,10 +34,10 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
   return (
     <div
       className={clsx(
-        'w-full min-h-[16.25rem] relative overflow-hidden mx-auto flex items-center justify-center bg-cover bg-center transition-transform duration-200 animate-float hover:translate-y-[-2px]',
+        'w-full relative overflow-hidden mx-auto bg-cover bg-center transition-transform duration-200 animate-float hover:translate-y-[-2px]',
         isMobile
-          ? 'max-w-full rounded-xl px-[0.9375rem]'
-          : 'max-w-[35rem] rounded-4xl px-[0.625rem]',
+          ? 'min-h-[10rem] sm:min-h-[12rem] md:min-h-[14rem] max-w-full rounded-xl px-2 sm:px-4'
+          : 'min-h-[16.25rem] max-w-[35rem] rounded-4xl px-[0.625rem]',
       )}
       style={{
         backgroundImage: `url(${backgroundImage || '/images/ConcernBackground.png'})`,
@@ -46,80 +46,85 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
       }}
       onClick={() => onClick && onClick(id)}
     >
-      <div className={clsx('relative z-10 w-full h-full px-[0.3125rem]')}>
-        {/* 프로필 이미지 */}
-        <div
-          className={clsx(
-            'absolute overflow-hidden transition-transform duration-200 bg-lightBackground hover:scale-105',
-            isMobile
-              ? 'w-[3.75rem] h-[3.75rem] rounded-[1.875rem] top-[0.9375rem] left-[1.875rem]'
-              : 'w-[5rem] h-[5rem] rounded-full top-[1.1875rem] left-[1.875rem]',
-          )}
-        >
-          <img
-            src={profileImage}
-            alt="Profile"
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        {/* 제목 */}
-        <h3
-          className={clsx(
-            'absolute font-mainFont bg-lightBeige text-darkWalnut rounded-full whitespace-nowrap overflow-hidden text-ellipsis',
-            isMobile
-              ? 'left-[6.25rem] top-[0.9375rem] text-base px-3 py-[0.25rem] max-w-[calc(100%-9rem)]'
-              : 'left-[7.5rem] top-[1.5rem] text-[1.2rem] px-4 py-[0.375rem] max-w-[23.75rem]',
-          )}
-        >
-          {title}
-        </h3>
-
-        {/* 카테고리 */}
-        <div
-          className={clsx(
-            'absolute flex flex-wrap gap-3',
-            isMobile
-              ? 'top-[3.75rem] left-[6.25rem]'
-              : 'top-[4.25rem] left-[7.5rem]',
-          )}
-        >
-          {category.split(',').map((cat, i) => (
-            <span
-              key={i}
-              className={clsx(
-                'inline-block bg-lightBeige text-mainColor font-semibold rounded-full shadow-md transition-transform hover:-translate-y-[1px]',
-                isMobile ? 'text-[0.8rem] px-2 py-1' : 'text-sm px-3 py-1',
-              )}
-            >
-              {cat.trim()}
-            </span>
-          ))}
-        </div>
-
-        {/* 본문 */}
-        <div
-          className={clsx(
-            'absolute bg-white rounded-xl px-4 py-2 w-[calc(100%-3.75rem)] max-w-[29.375rem]',
-            isMobile
-              ? 'top-[6.25rem] min-h-[3.75rem] px-3 py-2'
-              : 'top-[7.4375rem] h-16 left-[1.875rem]',
-          )}
-        >
-          <p
+      <div className={clsx('relative z-10 w-full h-full flex flex-col px-1 sm:px-2', !isMobile && 'px-[0.3125rem]')}>
+        {/* 상단 영역 - 프로필, 제목, 카테고리 */}
+        <div className="flex-shrink-0">
+          {/* 프로필 이미지 */}
+          <div
             className={clsx(
-              'text-darkWalnut leading-snug line-clamp-2',
-              isMobile ? 'text-sm' : 'text-base',
+              'absolute overflow-hidden transition-transform duration-200 bg-lightBackground hover:scale-105',
+              isMobile
+                ? 'w-12 h-12 sm:w-14 sm:h-14 rounded-full top-3 left-3'
+                : 'w-[5rem] h-[5rem] rounded-full top-[1.1875rem] left-[1.875rem]',
             )}
           >
-            {content}
+            <img
+              src={profileImage?.trim() || '/images/MoonRabbitSleep.png'}
+              alt="Profile"
+              className="w-full h-full object-cover"
+              loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = '/images/MoonRabbitSleep.png'
+              }}
+            />
+          </div>
+
+          {/* 제목 */}
+          <h3
+            className={clsx(
+              'absolute font-mainFont bg-lightBeige text-darkWalnut rounded-full whitespace-nowrap overflow-hidden text-ellipsis',
+              isMobile
+                ? 'left-16 sm:left-20 top-3 text-sm sm:text-base px-2 sm:px-3 py-1 max-w-[calc(100%-5rem)] sm:max-w-[calc(100%-6rem)]'
+                : 'left-[7.5rem] top-[1.5rem] text-[1.2rem] px-4 py-[0.375rem] max-w-[23.75rem]',
+            )}
+          >
+            {title}
+          </h3>
+
+          {/* 카테고리 */}
+          <div
+            className={clsx(
+              'absolute flex flex-wrap gap-1 sm:gap-3',
+              isMobile
+                ? 'top-10 sm:top-12 left-16 sm:left-20 w-[calc(100%-5rem)] sm:w-[calc(100%-6rem)]'
+                : 'top-[4.25rem] left-[7.5rem] w-[23.75rem]',
+            )}
+          >
+            {category.split(',').map((cat, i) => (
+              <span
+                key={i}
+                className={clsx(
+                  'inline-block bg-lightBeige text-mainColor font-semibold rounded-full shadow-md transition-transform hover:-translate-y-[1px] flex-shrink-0 whitespace-nowrap',
+                  isMobile ? 'text-[0.6rem] sm:text-[0.7rem] px-1 sm:px-1.5 py-0.5 sm:py-1' : 'text-sm px-3 py-1 max-w-[5.75rem]',
+                )}
+              >
+                {cat.trim()}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* 중간 영역 - 본문 */}
+        <div className={clsx(
+          'flex bg-white rounded-xl px-2 sm:px-3 py-1 sm:py-2',
+          isMobile
+            ? 'mt-16 sm:mt-20 mx-12 sm:mx-16 mr-3 mb-2 sm:mb-3'
+            : 'mt-28 ml-[1.875rem] mr-[0.9375rem] max-w-[29.375rem] mb-3',
+        )}>
+          <p
+            className={clsx(
+              'text-darkWalnut leading-snug line-clamp-2 h-full flex items-center',
+              isMobile ? 'text-xs sm:text-sm' : 'text-base',
+            )}
+          >
+            {content.length > 30 ? `${content.substring(0, 30)}...` : content}
           </p>
           {date && (
             <span
               className={clsx(
                 'absolute text-darkWalnut opacity-80 transition-opacity duration-200 hover:opacity-100',
                 isMobile
-                  ? 'right-3 bottom-[0.375rem] text-[0.65rem]'
+                  ? 'right-2 bottom-1 text-[0.6rem] sm:text-[0.65rem]'
                   : 'right-4 bottom-2 text-[0.7rem]',
               )}
             >
@@ -128,31 +133,33 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
           )}
         </div>
 
-        {/* 댓글 섹션 */}
-        <div
-          className={clsx(
-            'absolute bg-lightBeige rounded-lg max-w-[29.375rem] w-[calc(100%-3.75rem)] flex items-center',
-            isMobile
-              ? 'bottom-[0.9375rem] min-h-[1.75rem] px-3 py-1 justify-start'
-              : 'bottom-[1.3125rem] px-4 py-2 h-8 left-[1.875rem]',
-          )}
-        >
-          <span
+        {/* 하단 영역 - 댓글 */}
+        <div className="flex-shrink-0">
+          <div
             className={clsx(
-              'text-mainBlack font-semibold whitespace-nowrap overflow-hidden text-ellipsis mr-2',
-              isMobile ? 'text-[0.8rem] mr-[0.375rem]' : 'text-sm',
+              'bg-lightBeige rounded-lg flex items-center px-2 sm:px-3 py-1',
+              isMobile
+                ? 'mx-12 sm:mx-16 mr-3 min-h-[1.5rem]'
+                : 'ml-[1.875rem] mr-[0.9375rem] max-w-[29.375rem]',
             )}
           >
-            {recentComment.author}:
-          </span>
-          <p
-            className={clsx(
-              'text-mainBlack leading-snug m-0 whitespace-nowrap overflow-hidden text-ellipsis',
-              isMobile ? 'text-[0.8rem]' : 'text-sm',
-            )}
-          >
-            {recentComment.text}
-          </p>
+            <span
+              className={clsx(
+                'text-mainBlack font-semibold whitespace-nowrap overflow-hidden text-ellipsis mr-1 sm:mr-2 flex-shrink-0',
+                isMobile ? 'text-[0.7rem] sm:text-[0.8rem]' : 'text-sm',
+              )}
+            >
+              {recentComment.author}:
+            </span>
+            <p
+              className={clsx(
+                'text-mainBlack leading-snug m-0 whitespace-nowrap overflow-hidden text-ellipsis flex-1',
+                isMobile ? 'text-[0.7rem] sm:text-[0.8rem]' : 'text-sm',
+              )}
+            >
+              {recentComment.text}
+            </p>
+          </div>
         </div>
       </div>
     </div>
