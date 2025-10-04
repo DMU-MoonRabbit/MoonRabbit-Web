@@ -84,11 +84,11 @@ const FAQPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-lightBackground">
-      <div className="max-w-4xl mx-auto px-6 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <PageHeader showSubtitle={false} />
         
-        <div className="bg-white rounded-lg shadow-lg p-8 mt-8">
-          <h1 className="text-3xl font-mainFont text-darkWalnut mb-8 text-center">
+        <div className="bg-white rounded-lg shadow-lg p-4 sm:p-8 mt-6 sm:mt-8">
+          <h1 className="text-2xl sm:text-3xl font-mainFont text-darkWalnut mb-6 sm:mb-8 text-center">
             자주 묻는 질문
           </h1>
           
@@ -97,9 +97,9 @@ const FAQPage: React.FC = () => {
               <div key={item.id} className="border border-gray-200 rounded-lg">
                 <button
                   onClick={() => toggleItem(item.id)}
-                  className="w-full px-6 py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 text-left flex justify-between items-center hover:bg-gray-50 transition-colors"
                 >
-                  <span className="font-mainFont text-darkWalnut text-lg">
+                  <span className="font-mainFont text-darkWalnut text-base sm:text-lg leading-relaxed pr-2">
                     Q. {item.question}
                   </span>
                   {openItems.includes(item.id) ? (
@@ -110,9 +110,9 @@ const FAQPage: React.FC = () => {
                 </button>
                 
                 {openItems.includes(item.id) && (
-                  <div className="px-6 pb-4">
+                  <div className="px-4 sm:px-6 pb-4">
                     <div className="border-t border-gray-200 pt-4">
-                      <p className="font-gothicFont text-darkWalnut leading-relaxed">
+                      <p className="font-gothicFont text-darkWalnut leading-relaxed text-sm sm:text-base">
                         {item.answer}
                       </p>
                     </div>
@@ -122,11 +122,11 @@ const FAQPage: React.FC = () => {
             ))}
           </div>
           
-          <div className="mt-12 p-6 bg-lightBeige rounded-lg">
-            <h3 className="font-mainFont text-darkWalnut text-xl mb-4 text-center">
+          <div className="mt-8 sm:mt-12 p-4 sm:p-6 bg-lightBeige rounded-lg">
+            <h3 className="font-mainFont text-darkWalnut text-lg sm:text-xl mb-3 sm:mb-4 text-center">
               더 궁금한 점이 있으신가요?
             </h3>
-            <p className="font-gothicFont text-darkWalnut text-center leading-relaxed">
+            <p className="font-gothicFont text-darkWalnut text-center leading-relaxed text-sm sm:text-base">
               위에서 찾지 못한 답변이 있으시다면 언제든지 문의해주세요.<br />
               빠른 시일 내에 답변드리도록 하겠습니다.
             </p>
