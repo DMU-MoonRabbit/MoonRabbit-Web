@@ -1,5 +1,5 @@
 import React from 'react'
-import { Facebook, Instagram } from 'lucide-react'
+import { Github, Instagram } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 const Footer = () => {
@@ -37,11 +37,11 @@ const Footer = () => {
           {/* 소셜 아이콘 */}
           <div className="flex space-x-4">
             <a
-              href="https://facebook.com"
+              href="https://github.com/DMU-MoonRabbit/MoonRabbit-Web"
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Facebook className="w-5 h-5 hover:text-white transition" />
+              <Github className="w-5 h-5 hover:text-white transition" />
             </a>
             <a
               href="https://instagram.com"
