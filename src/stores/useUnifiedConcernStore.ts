@@ -14,7 +14,7 @@ interface Answer {
   profileImg: string
 }
 
-export interface Board {
+interface Board {
   boardId: number
   userId: number
   title: string
@@ -25,7 +25,7 @@ export interface Board {
   profileImg: string
 }
 
-export interface Concern {
+interface Concern {
   id: number
   profileImage: string
   title: string
@@ -39,7 +39,7 @@ export interface Concern {
   backgroundImage: string
 }
 
-export interface PageInfo {
+interface PageInfo {
   totalPages: number
   totalElements: number
   first: boolean
@@ -87,7 +87,7 @@ interface UnifiedConcernStore {
   toggleConcernLike: () => void
 }
 
-export const transformBoardToConcern = (board: Board): Concern => {
+const transformBoardToConcern = (board: Board): Concern => {
   return {
     id: board.boardId,
     profileImage: board.profileImg || 'images/MoonRabbitLogo.png',

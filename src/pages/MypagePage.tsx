@@ -1,28 +1,22 @@
-import React, { memo, useMemo } from "react"
-import MypageProfile from "../components/MypageProfile"
-import MypageSidebar from "../components/MypageSidebar"
-import MypageCountSection from "../components/MypageCountSection"
-import clsx from "clsx"
-import { useResponsiveStore } from "../stores/useResponsiveStore"
+import React from "react"
+import { useNavigate } from "react-router-dom"
+import { useAuthStore } from "../stores/useAuthStore"
 
-const MypagePage: React.FC = memo(() => {
-  const res = useResponsiveStore((state) => state.res)
-  const isMobile = res === 'mo'
-  
-  const containerClasses = useMemo(() => clsx("flex justify-between", 
-    isMobile ? 
-    "flex-col min-h-[500px]" : "min-h-[700px]"
-  ), [isMobile])
-  
+const MypagePage: React.FC = () => {
+  const navigate = useNavigate()
+  const { setIsLoggedIn } = useAuthStore()
+
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    setIsLoggedIn(false)
+    navigate('/')
+  }
   return (
-    <div className={containerClasses}>
-      <div className="flex flex-col w-full">
-        <MypageProfile />
-        <MypageCountSection />
-      </div>
-      <MypageSidebar />
+    <div className="flex flex-col items-center justify-center min-h-[700px]">
+      <div onClick={handleLogout} className='cursor-pointer px-5 py-3 font-mainFont text-mainWhite bg-mainColor rounded-2xl'>로그아웃</div>
     </div>
   )
-})
+}
 
 export default MypagePage
