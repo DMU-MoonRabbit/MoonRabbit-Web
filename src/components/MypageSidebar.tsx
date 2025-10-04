@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from "react"
+import React, { useMemo, useState, memo, useCallback } from "react"
 import LevelStar from "../assets/images/LevelStar.png"
 import CenteredPopup from "./CenteredPopup"
 import MyBoardContents from "./MyBoardContents"
 import clsx from "clsx"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 
-const MypageSidebar: React.FC = () => {
+const MypageSidebar: React.FC = memo(() => {
   const level = 88
   const [showAllStars, setShowAllStars] = useState(false)
   const [popupOpen, setPopupOpen] = useState<null | 'nightSky' | 'constellation'>(null)
@@ -18,6 +18,12 @@ const MypageSidebar: React.FC = () => {
   
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
+
+  const handleNightSkyClick = useCallback(() => setPopupOpen('nightSky'), [])
+  const handleConstellationClick = useCallback(() => setPopupOpen('constellation'), [])
+  const handleClosePopup = useCallback(() => setPopupOpen(null), [])
+  const handleShowAllStars = useCallback(() => setShowAllStars(true), [])
+  const handleHideStars = useCallback(() => setShowAllStars(false), [])
 
   return (
     <div className={clsx("bg-darkWalnut px-4 flex flex-col justify-center gap-4 border-b-1 border-subBlack",
@@ -49,7 +55,7 @@ const MypageSidebar: React.FC = () => {
         </div>
         {starCount > 5 && !showAllStars && (
           <button
-            onClick={() => setShowAllStars(true)}
+            onClick={handleShowAllStars}
             className={clsx("mt-4 text-white block ml-auto font-gothicFont",
               isMobile ? "text-[12px]" : "text-[1vw]"
             )}
@@ -59,7 +65,7 @@ const MypageSidebar: React.FC = () => {
         )}
         {starCount > 5 && showAllStars && (
           <button
-            onClick={() => setShowAllStars(false)}
+            onClick={handleHideStars}
             className={clsx("mt-4 text-white block ml-auto font-gothicFont",
               isMobile ? "text-[12px]" : "text-[1vw]"
             )}
@@ -68,12 +74,12 @@ const MypageSidebar: React.FC = () => {
           </button>
         )}
       </div>
-      <button onClick={() => setPopupOpen('nightSky')} className={clsx('cursor-pointer flex items-center justify-center rounded-xl bg-mainColor text-white font-mainFont w-full py-2 mr-8',
+      <button onClick={handleNightSkyClick} className={clsx('cursor-pointer flex items-center justify-center rounded-xl bg-mainColor text-white font-mainFont w-full py-2 mr-8',
         isMobile ? "text-[16px]" : "text-[1.5vw]"
       )}>
         내 밤하늘
       </button>
-      <button onClick={() => setPopupOpen('constellation')}className={clsx('cursor-pointer flex items-center justify-center rounded-xl bg-mainColor text-white font-mainFont w-full py-2 mr-8',
+      <button onClick={handleConstellationClick} className={clsx('cursor-pointer flex items-center justify-center rounded-xl bg-mainColor text-white font-mainFont w-full py-2 mr-8',
         isMobile ? "text-[16px]" : "text-[1.5vw]"
       )}>
         내 아이템
@@ -82,13 +88,13 @@ const MypageSidebar: React.FC = () => {
       <CenteredPopup
         title={popupOpen === 'nightSky' ? '내 밤하늘' : '내 아이템'}
         isOpen={popupOpen !== null}
-        onClose={() => setPopupOpen(null)}
+        onClose={handleClosePopup}
       >
         {popupOpen === 'nightSky' ? <MyBoardContents /> : '내 아이템 목록'}
       </CenteredPopup>
 
     </div>
   )
-}
+})
 
 export default MypageSidebar

@@ -1,14 +1,17 @@
-import React from "react"
+import React, { memo, useMemo } from "react"
 import NightSkyBg from "../assets/images/NightSkyBackground.png"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 import clsx from 'clsx'
 
-const MypageCountSection: React.FC = () => {
-
+const MypageCountSection: React.FC = memo(() => {
   const myBoardCount = 23;
   
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
+
+  const backgroundStyle = useMemo(() => ({
+    backgroundImage: `url(${NightSkyBg})`
+  }), [])
 
   return (
     <div className={clsx("bg-black rounded-b-3xl rounded-t-[30px]",
@@ -20,7 +23,7 @@ const MypageCountSection: React.FC = () => {
       )}>
         <div
           className="w-full p-4 sm:p-[2vw] rounded-b-3xl flex flex-col justify-end bg-center bg-cover"
-          style={{ backgroundImage: `url(${NightSkyBg})` }}
+          style={backgroundStyle}
         >
           <p className={clsx("font-gothicFont", isMobile ? "text-[20px]" : "text-[2vw]")}>내가 그린 밤하늘</p>
           <p className={clsx(isMobile ? "text-[28px]" : "text-[4vw]")}>{myBoardCount}</p>
@@ -28,6 +31,6 @@ const MypageCountSection: React.FC = () => {
       </div>
     </div>
   )
-}
+})
 
 export default MypageCountSection

@@ -19,9 +19,10 @@ const CenteredPopup: React.FC<CenteredPopupProps> = ({
   children,
   widthClassName = "w-[80vw] max-w-[1200px]",
 }) => {
-  if (!isOpen) return null
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
+  
+  if (!isOpen) return null
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">

@@ -57,9 +57,10 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
     try {
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
-        console.log('로그인이 필요합니다.');
+        console.warn('로그인이 필요합니다.');
         return;
       }
+      
       const { pageInfo } = get()
       const response = await axios.get(
         `https://moonrabbit-api.kro.kr/api/boards/my?page=${page}&size=${pageInfo.size}`,
@@ -69,25 +70,41 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
           },
         }
       )
-      const boards: Board[] = response.data.content
+      
+      const boards: Board[] = response.data.content || []
       const concerns = boards.map(transformBoardToConcern)
   
       set({
         concerns,
         filteredConcerns: concerns,
         pageInfo: {
-          totalPages: response.data.totalPages,
-          totalElements: response.data.totalElements,
-          first: response.data.first,
-          last: response.data.last,
-          size: response.data.size,
-          number: response.data.number,
-          numberOfElements: response.data.numberOfElements,
-          empty: response.data.empty,
+          totalPages: response.data.totalPages || 0,
+          totalElements: response.data.totalElements || 0,
+          first: response.data.first ?? true,
+          last: response.data.last ?? true,
+          size: response.data.size || pageInfo.size,
+          number: response.data.number || page,
+          numberOfElements: response.data.numberOfElements || 0,
+          empty: response.data.empty ?? true,
         },
       })
     } catch (error) {
-      console.error('Failed to fetch concerns:', error)
+      console.error('마이페이지 고민 목록 조회 실패:', error)
+      // 에러 발생 시 기존 데이터는 유지하고 빈 결과만 설정
+      set({
+        concerns: [],
+        filteredConcerns: [],
+        pageInfo: {
+          totalPages: 0,
+          totalElements: 0,
+          first: true,
+          last: true,
+          size: 2,
+          number: page,
+          numberOfElements: 0,
+          empty: true,
+        },
+      })
     }
   },
 }))

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, memo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMypageStore } from '../stores/useMypageStore'
 import CategoryBar from './CategoryBar'
@@ -6,8 +6,7 @@ import ConcernCard from './ConcernCard'
 import PrevArrow from '../assets/images/PrevArrow.svg'
 import NextArrow from '../assets/images/NextArrow.svg'
 
-const MyBoardContents: React.FC = () => {
-  
+const MyBoardContents: React.FC = memo(() => {
   const {
     selectedCategory,
     filteredConcerns,
@@ -23,15 +22,15 @@ const MyBoardContents: React.FC = () => {
     fetchMyConcerns(pageInfo.number)
   }, [fetchMyConcerns, pageInfo.number])
 
-  const handleCardClick = (id: number) => {
+  const handleCardClick = useCallback((id: number) => {
     navigate(`/night-sky/${id}`)
-  }
+  }, [navigate])
 
-  const handlePageChange = (newPage: number) => {
+  const handlePageChange = useCallback((newPage: number) => {
     if (newPage >= 0 && newPage < pageInfo.totalPages) {
       setPage(newPage)
     }
-  }
+  }, [pageInfo.totalPages, setPage])
 
   return (
     <>
@@ -92,6 +91,6 @@ const MyBoardContents: React.FC = () => {
       )}
     </>
   )  
-}
+})
 
 export default MyBoardContents
