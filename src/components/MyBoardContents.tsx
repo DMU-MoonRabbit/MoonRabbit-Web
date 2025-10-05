@@ -66,13 +66,13 @@ const MyBoardContents: React.FC = memo(() => {
             disabled={pageInfo.first}
             className={`px-4 py-2 rounded-lg ${
               pageInfo.first
-                ? 'cursor-not-allowed'
-                : 'cursor-pointer'
+                ? 'cursor-not-allowed opacity-50'
+                : 'cursor-pointer hover:bg-gray-100'
             }`}
           >
             <ChevronLeft size={16} className="text-darkWalnut" />
           </button>
-          <span className="mx-4 text-black">
+          <span className="mx-4 text-darkWalnut font-mainFont">
             {pageInfo.number + 1} / {pageInfo.totalPages}
           </span>
           <button
@@ -80,8 +80,8 @@ const MyBoardContents: React.FC = memo(() => {
             disabled={pageInfo.last}
             className={`px-4 py-2 rounded-lg ${
               pageInfo.last
-                ? 'cursor-not-allowed'
-                : 'cursor-pointer'
+                ? 'cursor-not-allowed opacity-50'
+                : 'cursor-pointer hover:bg-gray-100'
             }`}
           >
             <ChevronRight size={16} className="text-darkWalnut" />

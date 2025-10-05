@@ -81,12 +81,12 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         pageInfo: {
           totalPages: response.data.totalPages || 0,
           totalElements: response.data.totalCount || boards.length,
-          first: response.data.first ?? true,
-          last: response.data.last ?? true,
+          first: (response.data.pageNumber || page) === 0,
+          last: (response.data.pageNumber || page) >= (response.data.totalPages || 1) - 1,
           size: response.data.pageSize || 2,
           number: response.data.pageNumber || page,
           numberOfElements: response.data.content?.length || boards.length,
-          empty: response.data.empty ?? (boards.length === 0),
+          empty: boards.length === 0,
         },
       })
     } catch (error) {
