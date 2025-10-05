@@ -62,7 +62,6 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         return;
       }
 
-      const { pageInfo } = get()
       const response = await axios.get(
         `https://moonrabbit-api.kro.kr/api/boards/my?page=${page}&size=2`,
         {

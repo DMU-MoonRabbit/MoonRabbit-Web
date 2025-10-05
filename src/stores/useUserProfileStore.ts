@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import axios from 'axios'
 import { ENDPOINTS } from '../api/endpoints'
-import { UserProfile, UserItem, UserInventory, LikedBoard } from '../types/user'
+import { UserProfile, UserInventory, LikedBoard } from '../types/user'
 
 interface UserProfileStore {
   // 상태
