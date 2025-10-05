@@ -1,11 +1,21 @@
-import React, { useMemo, useState, memo, useCallback } from "react"
+import React, { useMemo, useState, memo, useCallback, useEffect } from "react"
 import CenteredPopup from "./CenteredPopup"
 import MyBoardContents from "./MyBoardContents"
+import UserInventory from "./UserInventory"
 import clsx from "clsx"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
+import { useUserProfileStore } from "../stores/useUserProfileStore"
 
 const MypageSidebar: React.FC = memo(() => {
-  const level = 88
+  const { userProfile, fetchUserProfile } = useUserProfileStore()
+  
+  useEffect(() => {
+    if (!userProfile) {
+      fetchUserProfile()
+    }
+  }, [userProfile, fetchUserProfile])
+  
+  const level = userProfile?.level || 1
   const [showAllStars, setShowAllStars] = useState(false)
   const [popupOpen, setPopupOpen] = useState<null | 'nightSky' | 'constellation'>(null)
 
@@ -89,7 +99,11 @@ const MypageSidebar: React.FC = memo(() => {
         isOpen={popupOpen !== null}
         onClose={handleClosePopup}
       >
-        {popupOpen === 'nightSky' ? <MyBoardContents /> : '내 아이템 목록'}
+        {popupOpen === 'nightSky' ? (
+          <MyBoardContents />
+        ) : (
+          <UserInventory userId={userProfile?.userId || 0} />
+        )}
       </CenteredPopup>
 
     </div>

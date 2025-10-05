@@ -1,12 +1,18 @@
-import React, { memo, useCallback, useMemo } from "react"
+import React, { memo, useCallback, useMemo, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "../stores/useAuthStore"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
+import { useUserProfileStore } from "../stores/useUserProfileStore"
 import clsx from 'clsx'
 
 const MypageProfile: React.FC = memo(() => {
   const navigate = useNavigate()
   const { setIsLoggedIn } = useAuthStore()
+  const { userProfile, loading, error, fetchUserProfile } = useUserProfileStore()
+
+  useEffect(() => {
+    fetchUserProfile()
+  }, [fetchUserProfile])
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('accessToken')
@@ -49,14 +55,22 @@ const MypageProfile: React.FC = memo(() => {
         <div className={profilePositionClass}> 
           <div className="flex items-center">
             <img 
-              src="/images/MoonRabbitStars.png" 
+              src={userProfile?.profileImage || "/images/MoonRabbitStars.png"} 
               alt="프로필 이미지" 
               className={profileImageClass}
               style={{ aspectRatio: '1/1' }}
               loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = '/images/MoonRabbitStars.png'
+              }}
             />
             <div className="flex flex-col h-full ml-4">
-              <p className={nameTextClass}>홍대걸코어룩</p>
+              <p className={nameTextClass}>
+                {loading ? '로딩 중...' : userProfile?.nickname || '사용자'}
+              </p>
+              {error && (
+                <p className="text-red-500 text-xs mb-1">{error}</p>
+              )}
               <div 
                 className={logoutButtonClass}
                 onClick={handleLogout}
