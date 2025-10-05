@@ -90,7 +90,7 @@ interface UnifiedConcernStore {
 export const transformBoardToConcern = (board: Board): Concern => {
   return {
     id: board.boardId,
-    profileImage: board.profileImg || 'images/MoonRabbitLogo.png',
+    profileImage: board.profileImg || 'images/MoonRabbitSleep2.png',
     title: board.title,
     category: board.category,
     content: board.content,

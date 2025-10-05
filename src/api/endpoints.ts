@@ -15,6 +15,10 @@ export const ENDPOINTS = {
   // 유저(User)
   USER_INFO: `${BASE_URL}/user/info`,
   USER_UPDATE: `${BASE_URL}/user/update`,
+  USER_PROFILE: `${BASE_URL}/users/profile`,
+  USER_ITEMS: (userId: number) => `${BASE_URL}/user/items/${userId}`,
+  USER_ITEM_EQUIP: (userItemId: number) => `${BASE_URL}/user/items/${userItemId}/equip`,
+  USER_ITEM_UNEQUIP: (userItemId: number) => `${BASE_URL}/user/items/${userItemId}/unequip`,
 
   // 인증(Auth)
   LOGIN: `${BASE_URL}/auth/login`,
@@ -28,6 +32,9 @@ export const ENDPOINTS = {
   // 오늘의 질문(Today Question)
   TODAY_QUESTION: `${BASE_URL}/questions/today`,
   QUESTION_ANSWER: (questionId: number) => `${BASE_URL}/questions/${questionId}/answer`,
+
+  // 좋아요(Likes)
+  BOARD_LIKES_MY: `${BASE_URL}/likes/board-my`,
 
   // 기타 필요시 추가
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,

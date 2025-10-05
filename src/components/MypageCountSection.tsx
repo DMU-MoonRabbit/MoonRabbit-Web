@@ -1,10 +1,17 @@
-import React, { memo, useMemo } from "react"
+import React, { memo, useMemo, useEffect } from "react"
 import NightSkyBg from "../assets/images/NightSkyBackground.png"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
+import { useMypageStore } from "../stores/useMypageStore"
 import clsx from 'clsx'
 
 const MypageCountSection: React.FC = memo(() => {
-  const myBoardCount = 23;
+  const { totalBoardCount, fetchTotalBoardCount } = useMypageStore()
+  
+  useEffect(() => {
+    fetchTotalBoardCount()
+  }, [fetchTotalBoardCount])
+  
+  const myBoardCount = totalBoardCount;
 
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'

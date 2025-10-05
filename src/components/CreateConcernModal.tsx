@@ -137,7 +137,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
             className={`flex items-center justify-center ${MODAL_STYLES.logoSpacing}`}
           >
             <img
-              src="/images/MoonRabbitSleep.png"
+              src="/images/MoonRabbitSleep2.png"
               alt="Moon Rabbit Logo"
               className="h-24 w-auto mr-4"
             />

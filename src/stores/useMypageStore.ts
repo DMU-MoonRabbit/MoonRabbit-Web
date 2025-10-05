@@ -7,7 +7,9 @@ interface MypageStore {
   selectedCategory: string
   filteredConcerns: Concern[]
   pageInfo: PageInfo
+  totalBoardCount: number
   fetchMyConcerns: (page?: number) => Promise<void>
+  fetchTotalBoardCount: () => Promise<void>
   setSelectedCategory: (category: string) => void
   setPage: (page: number) => void
 }
@@ -16,6 +18,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
   concerns: [],
   selectedCategory: '전체',
   filteredConcerns: [],
+  totalBoardCount: 0,
   pageInfo: {
     totalPages: 0,
     totalElements: 0,
@@ -59,9 +62,8 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         return;
       }
 
-      const { pageInfo } = get()
       const response = await axios.get(
-        `https://moonrabbit-api.kro.kr/api/boards/my?page=${page}&size=${pageInfo.size}`,
+        `https://moonrabbit-api.kro.kr/api/boards/my?page=${page}&size=2`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -77,13 +79,13 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         filteredConcerns: concerns,
         pageInfo: {
           totalPages: response.data.totalPages || 0,
-          totalElements: response.data.totalElements || 0,
-          first: response.data.first ?? true,
-          last: response.data.last ?? true,
-          size: response.data.size || pageInfo.size,
-          number: response.data.number || page,
-          numberOfElements: response.data.numberOfElements || 0,
-          empty: response.data.empty ?? true,
+          totalElements: response.data.totalCount || boards.length,
+          first: (response.data.pageNumber || page) === 0,
+          last: (response.data.pageNumber || page) >= (response.data.totalPages || 1) - 1,
+          size: response.data.pageSize || 2,
+          number: response.data.pageNumber || page,
+          numberOfElements: response.data.content?.length || boards.length,
+          empty: boards.length === 0,
         },
       })
     } catch (error) {
@@ -102,6 +104,34 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
           numberOfElements: 0,
           empty: true,
         },
+      })
+    }
+  },
+
+  fetchTotalBoardCount: async () => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
+        console.warn('로그인이 필요합니다.');
+        return;
+      }
+
+      const response = await axios.get(
+        `https://moonrabbit-api.kro.kr/api/boards/my?page=0&size=100`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      )
+
+      set({
+        totalBoardCount: response.data.totalCount || 0,
+      })
+    } catch (error) {
+      console.error('전체 게시글 수 조회 실패:', error)
+      set({
+        totalBoardCount: 0,
       })
     }
   },

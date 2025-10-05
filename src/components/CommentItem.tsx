@@ -54,10 +54,10 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     <div className="mt-12">
       <div className="flex items-center">
         <img
-          src={comment.profileImg?.trim() || '/images/MoonRabbitSleep.png'}
+          src={comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
           className="w-[30px] h-[30px] md:w-[50px] md:h-[50px] rounded-[50%] mr-[8px]"
           onError={(e) => {
-            e.currentTarget.src = '/images/MoonRabbitSleep.png'
+            e.currentTarget.src = '/images/MoonRabbitSleep2.png'
           }}
         />
         <p className="text:[16px] md:text-[18px]">{comment.nickname}</p>

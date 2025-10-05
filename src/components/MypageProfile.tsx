@@ -1,12 +1,18 @@
-import React, { memo, useCallback, useMemo } from "react"
+import React, { memo, useCallback, useMemo, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "../stores/useAuthStore"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
+import { useUserProfileStore } from "../stores/useUserProfileStore"
 import clsx from 'clsx'
 
 const MypageProfile: React.FC = memo(() => {
   const navigate = useNavigate()
   const { setIsLoggedIn } = useAuthStore()
+  const { userProfile, loading, error, fetchUserProfile } = useUserProfileStore()
+
+  useEffect(() => {
+    fetchUserProfile()
+  }, [fetchUserProfile])
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('accessToken')
@@ -28,7 +34,7 @@ const MypageProfile: React.FC = memo(() => {
     isMobile ? "top-[2vw] left-3" : "-bottom-1/3 left-1/30"
   ), [isMobile])
 
-  const profileImageClass = useMemo(() => clsx("object-cover bg-black rounded-full",
+  const profileImageClass = useMemo(() => clsx("object-cover rounded-full",
     isMobile ? "w-[60px]" : "w-1/8 h-full"
   ), [isMobile])
 
@@ -47,16 +53,41 @@ const MypageProfile: React.FC = memo(() => {
         style={backgroundStyle}
       >
         <div className={profilePositionClass}> 
-          <div className="flex items-center">
+          <div className="flex items-center mb-2">
             <img 
-              src="/images/MoonRabbitStars.png" 
+              src={userProfile?.profileImage || "/images/MoonRabbitSleep2.png"} 
               alt="프로필 이미지" 
               className={profileImageClass}
               style={{ aspectRatio: '1/1' }}
               loading="lazy"
+              onError={(e) => {
+                e.currentTarget.src = '/images/MoonRabbitSleep2.png'
+              }}
             />
             <div className="flex flex-col h-full ml-4">
-              <p className={nameTextClass}>홍대걸코어룩</p>
+              <div className="flex items-center gap-2">
+                <p className={nameTextClass}>
+                  {loading ? '로딩 중...' : userProfile?.nickname || '사용자'}
+                </p>
+                {userProfile && (
+                  <div className="relative">
+                    <img 
+                      src="/images/point.png" 
+                      alt="포인트" 
+                      className={isMobile ? "w-11 h-6" : "w-19 h-10 mb-2"}
+                      loading="lazy"
+                    />
+                    <span className={`absolute inset-0 flex items-center justify-center font-mainFont ${
+                      isMobile ? "text-xs ml-5" : "text-sm mb-2 ml-8"
+                    }`}>
+                      {userProfile.point || 0}
+                    </span>
+                  </div>
+                )}
+              </div>
+              {error && (
+                <p className="text-red-500 text-xs mb-1">{error}</p>
+              )}
               <div 
                 className={logoutButtonClass}
                 onClick={handleLogout}
