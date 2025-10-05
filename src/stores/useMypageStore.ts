@@ -80,12 +80,12 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         filteredConcerns: concerns,
         pageInfo: {
           totalPages: response.data.totalPages || 0,
-          totalElements: response.data.totalElements || boards.length,
+          totalElements: response.data.totalCount || boards.length,
           first: response.data.first ?? true,
           last: response.data.last ?? true,
-          size: response.data.size || 2,
-          number: response.data.number || page,
-          numberOfElements: response.data.numberOfElements || boards.length,
+          size: response.data.pageSize || 2,
+          number: response.data.pageNumber || page,
+          numberOfElements: response.data.content?.length || boards.length,
           empty: response.data.empty ?? (boards.length === 0),
         },
       })
@@ -118,7 +118,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
       }
 
       const response = await axios.get(
-        `https://moonrabbit-api.kro.kr/api/boards/my?page=0&size=1`,
+        `https://moonrabbit-api.kro.kr/api/boards/my?page=0&size=100`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -127,7 +127,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
       )
 
       set({
-        totalBoardCount: response.data.totalElements || 0,
+        totalBoardCount: response.data.totalCount || 0,
       })
     } catch (error) {
       console.error('전체 게시글 수 조회 실패:', error)
