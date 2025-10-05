@@ -1,5 +1,6 @@
 import React, { useEffect, memo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMypageStore } from '../stores/useMypageStore'
 import CategoryBar from './CategoryBar'
 import ConcernCard from './ConcernCard'
@@ -69,7 +70,7 @@ const MyBoardContents: React.FC = memo(() => {
                 : 'cursor-pointer'
             }`}
           >
-            <img src="/images/PrevArrow.svg" alt='이전' className='w-3' />
+            <ChevronLeft size={16} className="text-darkWalnut" />
           </button>
           <span className="mx-4 text-black">
             {pageInfo.number + 1} / {pageInfo.totalPages}
@@ -83,7 +84,7 @@ const MyBoardContents: React.FC = memo(() => {
                 : 'cursor-pointer'
             }`}
           >
-            <img src="/images/NextArrow.svg" alt='다음' className='w-3' />
+            <ChevronRight size={16} className="text-darkWalnut" />
           </button>
         </div>
       )}
