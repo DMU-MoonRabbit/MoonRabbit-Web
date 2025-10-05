@@ -34,7 +34,7 @@ const MypageProfile: React.FC = memo(() => {
     isMobile ? "top-[2vw] left-3" : "-bottom-1/3 left-1/30"
   ), [isMobile])
 
-  const profileImageClass = useMemo(() => clsx("object-cover bg-black rounded-full",
+  const profileImageClass = useMemo(() => clsx("object-cover rounded-full",
     isMobile ? "w-[60px]" : "w-1/8 h-full"
   ), [isMobile])
 
@@ -55,13 +55,13 @@ const MypageProfile: React.FC = memo(() => {
         <div className={profilePositionClass}> 
           <div className="flex items-center">
             <img 
-              src={userProfile?.profileImage || "/images/MoonRabbitStars.png"} 
+              src={userProfile?.profileImage || "/images/MoonRabbitSleep2.png"} 
               alt="프로필 이미지" 
               className={profileImageClass}
               style={{ aspectRatio: '1/1' }}
               loading="lazy"
               onError={(e) => {
-                e.currentTarget.src = '/images/MoonRabbitStars.png'
+                e.currentTarget.src = '/images/MoonRabbitSleep2.png'
               }}
             />
             <div className="flex flex-col h-full ml-4">

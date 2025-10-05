@@ -30,7 +30,7 @@ const CenteredPopup: React.FC<CenteredPopupProps> = ({
         <div className="flex items-start justify-between mb-4">
           <div className="flex">
             <img
-              src="/images/MoonRabbitLogo.png"
+              src="/images/MoonRabbitSleep2.png"
               alt="logo"
               className="w-18 mr-5 inline"
             />

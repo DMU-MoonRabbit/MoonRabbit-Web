@@ -90,12 +90,12 @@ export const ConcernContent: React.FC = () => {
         <p className={clsx(isMobile ? "text-[24px]" : "text-[30px]")}>{title}</p>
         <div className={clsx("flex items-center", isMobile ? "my-4" : "my-5")}>
           <img
-            src={profileImg?.trim() || '/images/MoonRabbitSleep.png'}
+            src={profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
             alt="프로필이미지"
             className="w-[30px] h-[30px] rounded-[50%] mr-[12px]"
             loading="lazy"
             onError={(e) => {
-              e.currentTarget.src = '/images/MoonRabbitSleep.png'
+              e.currentTarget.src = '/images/MoonRabbitSleep2.png'
             }}
           />
           <p className="text-[16px]">{nickname}</p>
