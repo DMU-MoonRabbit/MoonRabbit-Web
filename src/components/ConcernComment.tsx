@@ -44,7 +44,7 @@ export const ConcernComment: React.FC = () => {
 
   return (
     <div className={clsx("text-darkWalnut font-mainFont bg-mainWhite h-auto rounded-[40px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]",
-      isMobile ? "mx-4 p-8 my-12" : "w-4/5 p-[50px] my-24"
+      isMobile ? "w-[calc(100%-2rem)] mx-auto p-8 my-12" : "w-4/5 p-[50px] my-24"
     )}>
       <div className="flex items-center mb-[20px]">
         <p className="text-[24px] md:text-[30px] mr-[16px]">댓글</p>

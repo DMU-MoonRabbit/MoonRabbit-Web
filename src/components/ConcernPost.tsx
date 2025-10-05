@@ -85,7 +85,7 @@ export const ConcernContent: React.FC = () => {
       )}
       <div className={clsx(
         "text-darkWalnut font-mainFont bg-mainWhite h-auto rounded-[40px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]",
-        isMobile ? "w-full p-8 mx-4 mt-8 mb-12" : "w-4/5 p-[50px] pb-[32px] mx-2 my-24 "
+        isMobile ? "w-[calc(100%-2rem)] mx-auto p-8 mt-8 mb-12" : "w-4/5 p-[50px] pb-[32px] mx-2 my-24 "
       )}>
         <p className={clsx(isMobile ? "text-[24px]" : "text-[30px]")}>{title}</p>
         <div className={clsx("flex items-center", isMobile ? "my-4" : "my-5")}>
@@ -148,7 +148,7 @@ export const ConcernAnswer: React.FC = () => {
   
   return (
     <div className={clsx("text-darkWalnut font-mainFont bg-mainWhite h-auto rounded-[40px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]",
-      isMobile ? "mx-4 p-8" : "w-4/5 p-[50px]"
+      isMobile ? "w-[calc(100%-2rem)] mx-auto p-8" : "w-4/5 p-[50px]"
     )}>
       <p className="text-[24px] md:text-[30px] mb-[20px]">달토끼 답변</p>
       <p className="whitespace-pre-line break-words font-gothicFont text-[16px] md:text-[18px] md:leading-tight">
