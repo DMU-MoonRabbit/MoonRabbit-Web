@@ -111,7 +111,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   }
 
   return (
-    <div className="border-2 border-darkWalnut p-[12px] mt-2">
+    <div className="border-2 border-darkWalnut p-[12px] mt-2 rounded-[12px]">
       <textarea
         className="font-gothicFont appearance-none border-none outline-none resize-none bg-transparent p-0 m-0 shadow-none focus:ring-0 focus:outline-none w-full"
         rows={4}
@@ -119,7 +119,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
         onChange={onChange}
       />
       <div
-        className="cursor-pointer flex justify-self-end bg-mainColor text-mainWhite w-fit p-[4px] px-[10px] rounded-[10px] text-[16px] mt-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]"
+        className="cursor-pointer flex justify-self-end bg-mainColor text-mainWhite w-fit p-[4px] px-[10px] rounded-[10px] text-[14px] md:text-[16px] mt-[12px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]"
         onClick={handleSubmit}
       >
         등록

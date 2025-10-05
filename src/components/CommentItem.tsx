@@ -55,23 +55,23 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       <div className="flex items-center">
         <img
           src={comment.profileImg?.trim() || '/images/MoonRabbitSleep.png'}
-          className="w-[50px] h-[50px] rounded-[50%] mr-[8px]"
+          className="w-[30px] h-[30px] md:w-[50px] md:h-[50px] rounded-[50%] mr-[8px]"
           onError={(e) => {
             e.currentTarget.src = '/images/MoonRabbitSleep.png'
           }}
         />
-        <p className="text-[18px]">{comment.nickname}</p>
+        <p className="text:[16px] md:text-[18px]">{comment.nickname}</p>
       </div>
-      <p className="whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight my-4">
+      <p className="whitespace-pre-line break-words font-gothicFont text-[16px] md:text-[18px] md:leading-tight my-4">
         {comment.content}
       </p>
-      <div className="flex text-[16px]">
+      <div className="flex text-[14px] md:text-[16px] items-center">
         <p className="mr-4">
           {comment.createdAt.split('T')[0].replace(/-/g, '.')}
         </p>
         {depth === 0 && (
           <div
-            className="mr-4 cursor-pointer"
+            className="mr-4 cursor-pointer text-[14px] md:text-[16px]"
             onClick={() =>
               setReplyTargetId(replyTargetId === comment.id ? null : comment.id)
             }

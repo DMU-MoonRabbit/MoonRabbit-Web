@@ -10,9 +10,9 @@ import Liked from '../assets/images/likedThick.svg'
 import PrevArrow from '../assets/images/PrevArrow.svg'
 import NextArrow from '../assets/images/NextArrow.svg'
 import axios from 'axios'
+import clsx from 'clsx'
 import { ENDPOINTS } from '../api/endpoints'
-import { CommentInput } from './CommentInput'
-import { CommentItem } from './CommentItem'
+import { useResponsiveStore } from '../stores/useResponsiveStore'
 
 export const ConcernContent: React.FC = () => {
   const { concern, setConcern, toggleConcernLike, concerns } = useUnifiedConcernStore()
@@ -38,7 +38,8 @@ export const ConcernContent: React.FC = () => {
     }
   }
 
-  // fetchAiAnswer는 fetchBoardDetail에서 자동으로 호출되므로 제거
+  const { res, setRes } = useResponsiveStore()
+  const isMobile = res === 'mo'
 
   useEffect(() => {
     if (pageNumber) {
@@ -73,16 +74,21 @@ export const ConcernContent: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center w-full">
-      <img
-        src={PrevArrow}
-        alt="이전 고민"
-        onClick={goToPrev}
-        className="cursor-pointer"
-        loading="lazy"
-      />
-      <div className="text-darkWalnut font-mainFont mx-2 bg-mainWhite h-auto w-4/5 rounded-[40px] p-[50px] pb-[32px] my-24 shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
-        <p className="text-[30px]">{title}</p>
-        <div className="flex items-center my-[20px]">
+      {!isMobile && (
+        <img
+          src={PrevArrow}
+          alt="이전 고민"
+          onClick={goToPrev}
+          className="cursor-pointer"
+          loading="lazy"
+        />
+      )}
+      <div className={clsx(
+        "text-darkWalnut font-mainFont bg-mainWhite h-auto rounded-[40px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]",
+        isMobile ? "w-full p-8 mx-4 mt-8 mb-12" : "w-4/5 p-[50px] pb-[32px] mx-2 my-24 "
+      )}>
+        <p className={clsx(isMobile ? "text-[24px]" : "text-[30px]")}>{title}</p>
+        <div className={clsx("flex items-center", isMobile ? "my-4" : "my-5")}>
           <img
             src={profileImg?.trim() || '/images/MoonRabbitSleep.png'}
             alt="프로필이미지"
@@ -94,10 +100,12 @@ export const ConcernContent: React.FC = () => {
           />
           <p className="text-[16px]">{nickname}</p>
         </div>
-        <p className="whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight">
+        <p className={clsx("whitespace-pre-line break-words font-gothicFont", 
+          isMobile ? "text-[16px]" : "text-[18px] leading-tight"
+        )}>
           {content}
         </p>
-        <div className="flex mt-[60px] justify-between">
+        <div className="flex mt-[40px] md:mt-[60px] justify-between">
           <div className="flex items-center">
             <img src={CommentIcon} alt="댓글아이콘" className="h-[24px]" loading="lazy" />
             <p className="mt-[2px] ml-[4px] mr-[20px] text-[20px]">
@@ -120,67 +128,32 @@ export const ConcernContent: React.FC = () => {
           <p>{createdAt}</p>
         </div>
       </div>
-      <img
-        src={NextArrow}
-        alt="다음 고민"
-        onClick={goToNext}
-        className="cursor-pointer"
-        loading="lazy"
-      />
+      {!isMobile && (
+        <img
+          src={NextArrow}
+          alt="다음 고민"
+          onClick={goToNext}
+          className="cursor-pointer"
+          loading="lazy"
+        />
+      )}
     </div>
   )
 }
 
 export const ConcernAnswer: React.FC = () => {
   const { boardDetail } = useBoardDetailStore()
+  const { res } = useResponsiveStore()
+  const isMobile = res === 'mo'
+  
   return (
-    <div className="text-darkWalnut font-mainFont bg-mainWhite h-auto w-4/5 rounded-[40px] p-[50px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
-      <p className="text-[30px] mb-[20px]">달토끼 답변</p>
-      <p className="whitespace-pre-line break-words font-gothicFont text-[18px] leading-tight">
+    <div className={clsx("text-darkWalnut font-mainFont bg-mainWhite h-auto rounded-[40px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]",
+      isMobile ? "mx-4 p-8" : "w-4/5 p-[50px]"
+    )}>
+      <p className="text-[24px] md:text-[30px] mb-[20px]">달토끼 답변</p>
+      <p className="whitespace-pre-line break-words font-gothicFont text-[16px] md:text-[18px] md:leading-tight">
         {boardDetail?.aiAnswer || 'AI 답변을 불러오는 중입니다...'}
       </p>
-    </div>
-  )
-}
-
-export const ConcernPost: React.FC = () => {
-  const { pageNumber } = useParams<{ pageNumber: string }>()
-  const boardId = pageNumber
-  const { comments, setComments } = useCommentStore()
-
-  useEffect(() => {
-    const getComments = async () => {
-      try {
-        const response = await axios.get(
-          ENDPOINTS.COMMENT_LIST(Number(boardId)),
-        )
-        const answers = await response.data
-        console.log(answers)
-        setComments(answers)
-      } catch (error) {
-        console.error('댓글 조회 실패', error)
-      }
-    }
-    getComments()
-  }, [boardId, setComments])
-
-  const getTotalCommentCount = (list: Comment[] = []): number =>
-    list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []), 0)
-  const totalCommentCount = getTotalCommentCount(comments)
-
-  return (
-    <div className="text-darkWalnut font-mainFont bg-mainWhite h-auto w-4/5 rounded-[40px] my-[50px] p-[50px] shadow-[0_2px_4px_rgba(0,0,0,0.25)]">
-      <div className="flex items-center mb-[20px]">
-        <p className="text-[30px] mr-[16px]">댓글</p>
-        <img src={CommentIcon} alt="댓글아이콘" />
-        <p className="mt-[2px] ml-[4px] text-[20px]">{totalCommentCount}</p>
-      </div>
-      <CommentInput />
-      <div className="mt-4">
-        {comments.map((comment) => (
-          <CommentItem key={comment.id} comment={comment} />
-        ))}
-      </div>
     </div>
   )
 }
