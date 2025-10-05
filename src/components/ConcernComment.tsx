@@ -39,7 +39,7 @@ export const ConcernComment: React.FC = () => {
     list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []), 0)
   const totalCommentCount = getTotalCommentCount(comments)
 
-  const { res, setRes } = useResponsiveStore()
+  const { res } = useResponsiveStore()
   const isMobile = res === 'mo'
 
   return (

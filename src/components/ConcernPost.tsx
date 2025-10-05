@@ -38,7 +38,7 @@ export const ConcernContent: React.FC = () => {
     }
   }
 
-  const { res, setRes } = useResponsiveStore()
+  const { res } = useResponsiveStore()
   const isMobile = res === 'mo'
 
   useEffect(() => {
