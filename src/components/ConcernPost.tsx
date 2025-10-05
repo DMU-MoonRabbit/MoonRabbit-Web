@@ -7,8 +7,7 @@ import CommentIcon from '../assets/images/Comment.svg'
 import Report from '../assets/images/Report.svg'
 import Like from '../assets/images/likeThick.svg'
 import Liked from '../assets/images/likedThick.svg'
-import PrevArrow from '../assets/images/PrevArrow.svg'
-import NextArrow from '../assets/images/NextArrow.svg'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 import axios from 'axios'
 import clsx from 'clsx'
 import { ENDPOINTS } from '../api/endpoints'
@@ -75,12 +74,10 @@ export const ConcernContent: React.FC = () => {
   return (
     <div className="flex items-center justify-center w-full">
       {!isMobile && (
-        <img
-          src={PrevArrow}
-          alt="이전 고민"
+        <ChevronLeft
+          size={32}
+          className="cursor-pointer text-darkWalnut hover:text-mainColor transition-colors"
           onClick={goToPrev}
-          className="cursor-pointer"
-          loading="lazy"
         />
       )}
       <div className={clsx(
@@ -90,12 +87,12 @@ export const ConcernContent: React.FC = () => {
         <p className={clsx(isMobile ? "text-[24px]" : "text-[30px]")}>{title}</p>
         <div className={clsx("flex items-center", isMobile ? "my-4" : "my-5")}>
           <img
-            src={profileImg?.trim() || '/images/MoonRabbitSleep.png'}
+            src={profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
             alt="프로필이미지"
             className="w-[30px] h-[30px] rounded-[50%] mr-[12px]"
             loading="lazy"
             onError={(e) => {
-              e.currentTarget.src = '/images/MoonRabbitSleep.png'
+              e.currentTarget.src = '/images/MoonRabbitSleep2.png'
             }}
           />
           <p className="text-[16px]">{nickname}</p>
@@ -129,12 +126,10 @@ export const ConcernContent: React.FC = () => {
         </div>
       </div>
       {!isMobile && (
-        <img
-          src={NextArrow}
-          alt="다음 고민"
+        <ChevronRight
+          size={32}
+          className="cursor-pointer text-darkWalnut hover:text-mainColor transition-colors"
           onClick={goToNext}
-          className="cursor-pointer"
-          loading="lazy"
         />
       )}
     </div>
