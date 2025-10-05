@@ -53,7 +53,7 @@ const MypageProfile: React.FC = memo(() => {
         style={backgroundStyle}
       >
         <div className={profilePositionClass}> 
-          <div className="flex items-center">
+          <div className="flex items-center mb-2">
             <img 
               src={userProfile?.profileImage || "/images/MoonRabbitSleep2.png"} 
               alt="프로필 이미지" 
@@ -65,9 +65,26 @@ const MypageProfile: React.FC = memo(() => {
               }}
             />
             <div className="flex flex-col h-full ml-4">
-              <p className={nameTextClass}>
-                {loading ? '로딩 중...' : userProfile?.nickname || '사용자'}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className={nameTextClass}>
+                  {loading ? '로딩 중...' : userProfile?.nickname || '사용자'}
+                </p>
+                {userProfile && (
+                  <div className="relative">
+                    <img 
+                      src="/images/point.png" 
+                      alt="포인트" 
+                      className={isMobile ? "w-11 h-6" : "w-19 h-10 mb-2"}
+                      loading="lazy"
+                    />
+                    <span className={`absolute inset-0 flex items-center justify-center font-mainFont ${
+                      isMobile ? "text-xs ml-5" : "text-sm mb-2 ml-8"
+                    }`}>
+                      {userProfile.point || 0}
+                    </span>
+                  </div>
+                )}
+              </div>
               {error && (
                 <p className="text-red-500 text-xs mb-1">{error}</p>
               )}

@@ -44,6 +44,8 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         },
       })
 
+      console.log('사용자 프로필 API 응답:', response.data)
+
       set({ 
         userProfile: response.data,
         loading: false 

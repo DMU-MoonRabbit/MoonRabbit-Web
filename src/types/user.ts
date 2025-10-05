@@ -5,7 +5,7 @@ export interface UserProfile {
   email: string
   profileImage?: string
   level: number
-  totalPoint: number
+  point: number
   trustPoint: number
   createdAt: string
   updatedAt: string
