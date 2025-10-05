@@ -61,7 +61,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
 
       const { pageInfo } = get()
       const response = await axios.get(
-        `https://moonrabbit-api.kro.kr/api/boards/my?page=${page}&size=${pageInfo.size}`,
+        `https://moonrabbit-api.kro.kr/api/boards/my?page=${page}&size=100`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -77,13 +77,13 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         filteredConcerns: concerns,
         pageInfo: {
           totalPages: response.data.totalPages || 0,
-          totalElements: response.data.totalElements || 0,
+          totalElements: response.data.totalElements || boards.length,
           first: response.data.first ?? true,
           last: response.data.last ?? true,
-          size: response.data.size || pageInfo.size,
+          size: response.data.size || 100,
           number: response.data.number || page,
-          numberOfElements: response.data.numberOfElements || 0,
-          empty: response.data.empty ?? true,
+          numberOfElements: response.data.numberOfElements || boards.length,
+          empty: response.data.empty ?? (boards.length === 0),
         },
       })
     } catch (error) {

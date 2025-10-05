@@ -5,13 +5,13 @@ import { useMypageStore } from "../stores/useMypageStore"
 import clsx from 'clsx'
 
 const MypageCountSection: React.FC = memo(() => {
-  const { pageInfo, fetchMyConcerns } = useMypageStore()
+  const { pageInfo, fetchMyConcerns, concerns } = useMypageStore()
   
   useEffect(() => {
     fetchMyConcerns(0)
   }, [fetchMyConcerns])
   
-  const myBoardCount = pageInfo.totalElements || 0;
+  const myBoardCount = pageInfo.totalElements > 0 ? pageInfo.totalElements : concerns.length;
 
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
