@@ -15,6 +15,7 @@ import MypagePage from './pages/MypagePage'
 import TermsPage from './pages/TermsPage'
 import FAQPage from './pages/FAQPage'
 import PrivacyPage from './pages/PrivacyPage'
+import AdminPage from './pages/AdminPage'
 
 function App() {
   const setRes = useResponsiveStore((state) => state.setRes)
@@ -54,6 +55,7 @@ function App() {
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/admin" element={<AdminPage />} />
         </Routes>
         <Footer />
       </div>
