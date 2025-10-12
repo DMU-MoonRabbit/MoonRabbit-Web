@@ -14,7 +14,7 @@ interface ShopStore {
   // 액션
   fetchShopItems: () => Promise<void>
   purchaseItem: (userId: number, itemId: number) => Promise<PurchaseResponse>
-  getItemsByType: (type: 'BANNER' | 'BORDER' | 'NICKNAME_COLOR') => ShopItem[]
+  getItemsByType: (type: 'BANNER' | 'BORDER' | 'NICKNAME_COLOR' | 'NAME_COLOR') => ShopItem[]
   clearError: () => void
 }
 
@@ -58,7 +58,7 @@ export const useShopStore = create<ShopStore>((set, get) => ({
   },
 
   // 타입별 아이템 필터링
-  getItemsByType: (type: 'BANNER' | 'BORDER' | 'NICKNAME_COLOR') => {
+  getItemsByType: (type: 'BANNER' | 'BORDER' | 'NICKNAME_COLOR' | 'NAME_COLOR') => {
     const { shopItems } = get()
     return shopItems.filter(item => item.type === type)
   },

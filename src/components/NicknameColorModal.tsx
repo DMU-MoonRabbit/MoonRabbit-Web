@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import { useShopStore } from '../stores/useShopStore'
@@ -9,6 +9,13 @@ import clsx from 'clsx'
 interface NicknameColorModalProps {
   isOpen: boolean
   onClose: () => void
+}
+
+interface ColorItem {
+  name: string
+  colorValue: string  // 실제 적용될 색상값
+  gradientClass: string  // 미리보기용 그라데이션 클래스
+  textColorClass: string  // 텍스트 색상 클래스
 }
 
 const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose }) => {
@@ -30,7 +37,62 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose
   
   const { getItemsByType, loading, purchaseItem, purchaseLoading } = useShopStore()
   const { userProfile, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
-  const nicknameColorItems = getItemsByType('NICKNAME_COLOR')
+  const apiNicknameColorItems = getItemsByType('NAME_COLOR')
+
+  // API name과 한글 이름 매핑
+  const nameMap: Record<string, string> = {
+    'magenta': '마젠타',
+    'cyan': '시안',
+    'space_gray': '스페이스 그레이',
+    'pastel_peach': '파스텔 피치',
+  }
+
+  // 프론트에서 정의하는 색상 데이터 (API name 기준)
+  const colorDefinitions: Record<string, {
+    koName: string
+    colorValue: string
+    gradientClass: string
+    textColorClass: string
+  }> = {
+    'magenta': { 
+      koName: '마젠타',
+      colorValue: '#EC4899',  // pink-600
+      gradientClass: 'bg-pink-600', 
+      textColorClass: 'text-pink-600' 
+    },
+    'cyan': { 
+      koName: '시안',
+      colorValue: '#7DD3FC',  // sky-300
+      gradientClass: 'bg-sky-300', 
+      textColorClass: 'text-sky-300' 
+    },
+    'space_gray': { 
+      koName: '스페이스 그레이',
+      colorValue: '#D4D4D4',  // neutral-300
+      gradientClass: 'bg-gradient-to-b from-neutral-300 to-black', 
+      textColorClass: 'text-neutral-300' 
+    },
+    'pastel_peach': { 
+      koName: '파스텔 피치',
+      colorValue: '#FCA5A5',  // red-300
+      gradientClass: 'bg-gradient-to-b from-red-300 via-red-200 to-yellow-200', 
+      textColorClass: 'text-red-300' 
+    },
+  }
+
+  // API 아이템과 프론트 색상 정의를 매칭
+  const mergedColorItems = useMemo(() => {
+    return apiNicknameColorItems.map(apiItem => {
+      const colorDef = colorDefinitions[apiItem.name]
+      return {
+        ...apiItem,
+        displayName: colorDef?.koName || apiItem.name,
+        gradientClass: colorDef?.gradientClass || 'bg-gray-200',
+        textColorClass: colorDef?.textColorClass || 'text-gray-500',
+        colorValue: colorDef?.colorValue || '#000000'
+      }
+    })
+  }, [apiNicknameColorItems])
 
   const handlePurchaseClick = (itemId: number, itemPrice: number) => {
     if (purchaseLoading) return
@@ -104,7 +166,7 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose
   }
 
   const itemsPerPage = isMobile ? 2 : 4
-  const totalPages = Math.ceil(nicknameColorItems.length / itemsPerPage)
+  const totalPages = Math.ceil(mergedColorItems.length / itemsPerPage)
 
   const handlePrevPage = () => {
     setCurrentPage((prev) => Math.max(0, prev - 1))
@@ -114,7 +176,7 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose
     setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))
   }
 
-  const displayedItems = nicknameColorItems.slice(
+  const displayedItems = mergedColorItems.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   )
@@ -170,7 +232,7 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose
             <div className="col-span-full text-center text-darkWalnut font-mainFont">
               로딩 중...
             </div>
-          ) : nicknameColorItems.length === 0 ? (
+          ) : mergedColorItems.length === 0 ? (
             <div className="col-span-full text-center text-darkWalnut font-mainFont">
               닉네임 색상 아이템이 없습니다.
             </div>
@@ -182,25 +244,12 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose
                   'rounded-[10px] border-[3px] border-mainColor p-4 mb-4 flex flex-col items-center',
                   isMobile ? 'w-full' : 'w-52 h-56'
                 )}>
-                  {/* 원형 색상 프리뷰 - S3 이미지 사용 */}
-                  <div className="relative mb-3">
-                    <img
-                      src={item.imageUrl}
-                      alt={item.name}
-                      className={clsx('rounded-full object-cover', isMobile ? 'w-24 h-24' : 'w-40 h-40')}
-                      onError={(e) => {
-                        // 이미지 로드 실패 시 기본 배경
-                        e.currentTarget.style.display = 'none'
-                        e.currentTarget.nextElementSibling?.classList.remove('hidden')
-                      }}
-                    />
-                    {/* Fallback 배경 */}
-                    <div className={clsx('bg-gray-200 rounded-full hidden', isMobile ? 'w-24 h-24' : 'w-40 h-40')} />
-                  </div>
+                  {/* 원형 색상 프리뷰 - 프론트 그라데이션 사용 */}
+                  <div className={clsx('rounded-full mb-3', item.gradientClass, isMobile ? 'w-24 h-24' : 'w-40 h-40 aspect-square')} />
                   
-                  {/* 색상 이름 */}
-                  <span className="font-mainFont text-xl lg:text-2xl mb-2 text-darkWalnut">
-                    {item.name}
+                  {/* 색상 이름 - 색상 적용 */}
+                  <span className={clsx('font-mainFont text-xl lg:text-2xl mb-2', item.textColorClass)}>
+                    {item.displayName}
                   </span>
                 </div>
                 

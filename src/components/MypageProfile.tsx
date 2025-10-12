@@ -40,7 +40,9 @@ const MypageProfile: React.FC = memo(() => {
   // 장착된 닉네임 색상 아이템 찾기
   const equippedNicknameColor = useMemo(() => {
     if (!userInventory?.items) return null
-    return userInventory.items.find(item => item.type === 'NICKNAME_COLOR' && item.equipped)
+    return userInventory.items.find(item => 
+      (item.type === 'NICKNAME_COLOR' || item.type === 'NAME_COLOR') && item.equipped
+    )
   }, [userInventory])
 
   const handleLogout = useCallback(() => {
@@ -75,12 +77,31 @@ const MypageProfile: React.FC = memo(() => {
     isMobile ? "text-[16px]" : "text-[2vw]"
   ), [isMobile])
 
+  // 닉네임 색상 정의 (프론트에서 관리, API name 기준)
+  const nicknameColorMap: Record<string, string> = {
+    'magenta': '#EC4899',
+    'cyan': '#7DD3FC',
+    'space_gray': '#D4D4D4',
+    'pastel_peach': '#FCA5A5',
+  }
+
   // 닉네임 색상 스타일
   const nicknameStyle = useMemo(() => {
-    if (!equippedNicknameColor?.content) return {}
-    return {
-      color: equippedNicknameColor.content
+    if (!equippedNicknameColor) return {}
+    
+    // itemName을 소문자로 변환하여 매칭 (API name 기준)
+    const itemNameLower = equippedNicknameColor.itemName.toLowerCase()
+    const colorFromName = nicknameColorMap[itemNameLower]
+    if (colorFromName) {
+      return { color: colorFromName }
     }
+    
+    // content가 있으면 사용 (백엔드에서 색상값 제공하는 경우)
+    if (equippedNicknameColor.content) {
+      return { color: equippedNicknameColor.content }
+    }
+    
+    return {}
   }, [equippedNicknameColor])
 
   const logoutButtonClass = useMemo(() => clsx("font-gothicFont font-thin cursor-pointer hover:bg-subBlack bg-mainGray text-white rounded-full mb-[1vw] xl:mb-[2vw] w-fit py-0.5",
