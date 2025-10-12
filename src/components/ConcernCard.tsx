@@ -15,6 +15,7 @@ interface ConcernCardProps {
   date?: string
   backgroundImage?: string
   onClick?: (id: number) => void
+  borderImageUrl?: string  // 테두리 이미지 URL 추가
 }
 
 const ConcernCard: React.FC<ConcernCardProps> = ({
@@ -27,6 +28,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
   date,
   backgroundImage,
   onClick,
+  borderImageUrl,
 }) => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
@@ -49,10 +51,10 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
       <div className={clsx('relative z-10 w-full h-full flex flex-col px-1 sm:px-2', !isMobile && 'px-[0.3125rem]')}>
         {/* 상단 영역 - 프로필, 제목, 카테고리 */}
         <div className="flex-shrink-0">
-          {/* 프로필 이미지 */}
+          {/* 프로필 이미지 + 테두리 */}
           <div
             className={clsx(
-              'absolute overflow-hidden transition-transform duration-200 bg-lightBackground hover:scale-105',
+              'absolute transition-transform duration-200 bg-lightBackground hover:scale-105',
               isMobile
                 ? 'w-12 h-12 sm:w-14 sm:h-14 rounded-full top-3 left-3'
                 : 'w-[5rem] h-[5rem] rounded-full top-[1.1875rem] left-[1.875rem]',
@@ -61,12 +63,20 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
             <img
               src={profileImage?.trim() || '/images/MoonRabbitSleep2.png'}
               alt="Profile"
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover rounded-full"
               loading="lazy"
               onError={(e) => {
                 e.currentTarget.src = '/images/MoonRabbitSleep2.png'
               }}
             />
+            {/* 장착된 테두리 이미지 */}
+            {borderImageUrl && (
+              <img
+                src={borderImageUrl}
+                alt="테두리"
+                className="absolute top-0 left-0 w-full h-full pointer-events-none"
+              />
+            )}
           </div>
 
           {/* 제목 */}

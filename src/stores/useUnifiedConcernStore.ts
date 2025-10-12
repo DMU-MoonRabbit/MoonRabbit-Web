@@ -27,6 +27,7 @@ export interface Board {
 
 export interface Concern {
   id: number
+  userId: number  // 작성자 userId 추가
   profileImage: string
   title: string
   category: string
@@ -53,6 +54,7 @@ export interface PageInfo {
 // Concern 상세 타입
 export interface ConcernArticle {
   id: number
+  userId?: number  // 작성자 userId 추가
   title: string
   profileImg: string
   nickname: string
@@ -90,6 +92,7 @@ interface UnifiedConcernStore {
 export const transformBoardToConcern = (board: Board): Concern => {
   return {
     id: board.boardId,
+    userId: board.userId,  // userId 포함
     profileImage: board.profileImg || 'images/MoonRabbitSleep2.png',
     title: board.title,
     category: board.category,

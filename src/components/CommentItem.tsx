@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Comment } from '../stores/useCommentStore'
 import { useCommentStore } from '../stores/useCommentStore'
 import { CommentInput } from './CommentInput'
 import { useAuthStore } from '../stores/useAuthStore'
+import { useUserProfileStore } from '../stores/useUserProfileStore'
 import Like from '../assets/images/likeThick.svg'
 import Liked from '../assets/images/likedThick.svg'
 import useUserStore from '../stores/useUserStore'
@@ -26,7 +27,50 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   } = useCommentStore()
   const { userId, setUserId } = useUserStore()
   const { isLoggedIn } = useAuthStore()
+  const { userProfile, userInventory, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
   const showReplyInput = replyTargetId === comment.id
+
+  // 사용자 프로필 및 인벤토리 로드
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchUserProfile()
+    }
+  }, [isLoggedIn, fetchUserProfile])
+
+  useEffect(() => {
+    if (userProfile?.id) {
+      fetchUserInventory(userProfile.id)
+    }
+  }, [userProfile?.id, fetchUserInventory])
+
+  // 장착된 테두리 찾기
+  const equippedBorder = useMemo(() => {
+    if (!userInventory?.items) return null
+    return userInventory.items.find(item => item.type === 'BORDER' && item.equipped)
+  }, [userInventory])
+
+  // 장착된 닉네임 색상 찾기
+  const nicknameColorMap: Record<string, string> = {
+    'magenta': '#EC4899',
+    'cyan': '#7DD3FC',
+    'space_gray': '#D4D4D4',
+    'pastel_peach': '#FCA5A5',
+  }
+
+  const equippedNicknameColor = useMemo(() => {
+    if (!userInventory?.items) return null
+    const item = userInventory.items.find(item => 
+      (item.type === 'NICKNAME_COLOR' || item.type === 'NAME_COLOR') && item.equipped
+    )
+    if (!item) return null
+    
+    const itemNameLower = item.itemName.toLowerCase()
+    const colorValue = nicknameColorMap[itemNameLower] || item.content
+    return colorValue
+  }, [userInventory])
+
+  // 본인 댓글인지 확인
+  const isOwnComment = userProfile?.id === comment.userId
 
   useEffect(() => {
     if( isLoggedIn ) {
@@ -53,14 +97,30 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   return (
     <div className="mt-12">
       <div className="flex items-center">
-        <img
-          src={comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
-          className="w-[30px] h-[30px] md:w-[50px] md:h-[50px] rounded-[50%] mr-[8px]"
-          onError={(e) => {
-            e.currentTarget.src = '/images/MoonRabbitSleep2.png'
-          }}
-        />
-        <p className="text:[16px] md:text-[18px]">{comment.nickname}</p>
+        {/* 프로필 이미지 + 테두리 */}
+        <div className="relative w-[30px] h-[30px] md:w-[50px] md:h-[50px] mr-[8px]">
+          <img
+            src={comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
+            className="w-full h-full rounded-full object-cover"
+            onError={(e) => {
+              e.currentTarget.src = '/images/MoonRabbitSleep2.png'
+            }}
+          />
+          {/* 장착된 테두리 - 본인 댓글일 때만 표시 */}
+          {isOwnComment && equippedBorder && (
+            <img
+              src={equippedBorder.imageUrl}
+              alt="프로필 테두리"
+              className="absolute top-0 left-0 w-full h-full pointer-events-none"
+            />
+          )}
+        </div>
+        <p 
+          className="text:[16px] md:text-[18px]"
+          style={isOwnComment && equippedNicknameColor ? { color: equippedNicknameColor } : {}}
+        >
+          {comment.nickname}
+        </p>
       </div>
       <p className="whitespace-pre-line break-words font-gothicFont text-[16px] md:text-[18px] md:leading-tight my-4">
         {comment.content}
