@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
+import { useShopStore } from '../stores/useShopStore'
+import { useUserProfileStore } from '../stores/useUserProfileStore'
+import MiniModal from './MiniModal'
 import clsx from 'clsx'
 
 interface BannerShopModalProps {
@@ -8,23 +11,97 @@ interface BannerShopModalProps {
   onClose: () => void
 }
 
-interface BannerItem {
-  id: number
-  image: string
-  price: number
-}
-
 const BannerShopModal: React.FC<BannerShopModalProps> = ({ isOpen, onClose }) => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
   const [currentPage, setCurrentPage] = useState(0)
+  const [purchasingItemId, setPurchasingItemId] = useState<number | null>(null)
+  const [miniModal, setMiniModal] = useState<{
+    isOpen: boolean
+    type: 'success' | 'error' | 'confirm'
+    title?: string
+    message: string
+    onConfirm?: () => void
+  }>({
+    isOpen: false,
+    type: 'success',
+    message: '',
+  })
+  
+  const { getItemsByType, loading, purchaseItem, purchaseLoading } = useShopStore()
+  const { userProfile, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
+  const bannerItems = getItemsByType('BANNER')
 
-  const bannerItems: BannerItem[] = [
-    { id: 1, image: 'https://placehold.co/479x200', price: 1050 },
-    { id: 2, image: 'https://placehold.co/479x200', price: 1050 },
-    { id: 3, image: 'https://placehold.co/479x200', price: 1050 },
-    { id: 4, image: 'https://placehold.co/479x200', price: 1050 },
-  ]
+  const handlePurchaseClick = (itemId: number, itemPrice: number) => {
+    if (purchaseLoading) return
+
+    // 포인트 부족 체크
+    if (userProfile && userProfile.point < itemPrice) {
+      setMiniModal({
+        isOpen: true,
+        type: 'error',
+        title: '포인트 부족',
+        message: '포인트가 부족합니다.',
+      })
+      return
+    }
+
+    // 구매 확인 모달
+    setMiniModal({
+      isOpen: true,
+      type: 'confirm',
+      title: '구매 확인',
+      message: '이 아이템을 구매하시겠습니까?',
+      onConfirm: () => handlePurchase(itemId),
+    })
+  }
+
+  const handlePurchase = async (itemId: number) => {
+    setPurchasingItemId(itemId)
+
+    if (!userProfile?.id) {
+      setMiniModal({
+        isOpen: true,
+        type: 'error',
+        title: '오류',
+        message: '사용자 정보를 찾을 수 없습니다.',
+      })
+      setPurchasingItemId(null)
+      return
+    }
+
+    try {
+      const result = await purchaseItem(userProfile.id, itemId)
+      
+      // 프로필 및 인벤토리 갱신
+      await fetchUserProfile()
+      await fetchUserInventory(userProfile.id)
+
+      setMiniModal({
+        isOpen: true,
+        type: 'success',
+        title: '구매 완료',
+        message: result.message || '아이템을 구매했습니다!',
+      })
+    } catch (error: any) {
+      setMiniModal({
+        isOpen: true,
+        type: 'error',
+        title: '구매 실패',
+        message: error.message || '구매에 실패했습니다.',
+      })
+    } finally {
+      setPurchasingItemId(null)
+    }
+  }
+
+  const closeMiniModal = () => {
+    setMiniModal({
+      isOpen: false,
+      type: 'success',
+      message: '',
+    })
+  }
 
   const itemsPerPage = isMobile ? 1 : 2
   const totalPages = Math.ceil(bannerItems.length / itemsPerPage)
@@ -78,7 +155,7 @@ const BannerShopModal: React.FC<BannerShopModalProps> = ({ isOpen, onClose }) =>
         </div>
 
         {/* 타이틀 */}
-        <h2 className={clsx('font-mainFont text-darkWalnut mb-6', isMobile ? 'text-xl' : 'text-2xl')}>
+        <h2 className={clsx('font-mainFont text-darkWalnut mb-8', isMobile ? 'text-xl' : 'text-2xl')}>
           움직이는 배너
         </h2>
 
@@ -89,24 +166,63 @@ const BannerShopModal: React.FC<BannerShopModalProps> = ({ isOpen, onClose }) =>
             isMobile ? 'grid-cols-1' : 'grid-cols-2'
           )}
         >
-          {displayedItems.map((item) => (
-            <div key={item.id} className="flex flex-col">
-              <div className="relative mb-4">
-                <img
-                  src={item.image}
-                  alt={`배너 ${item.id}`}
-                  className="w-full h-48 rounded-[10px]"
-                />
-                <div className="absolute inset-0 rounded-[10px] border-[3px] border-mainColor" />
-              </div>
-              <div className="flex items-center">
-                <img src="/images/MoonRabbitSleep2.png" alt="달토끼" className="w-12 h-12 mr-2" />
-                <span className="text-darkWalnut text-xl lg:text-2xl font-mainFont">
-                  {item.price} 포인트
-                </span>
-              </div>
+          {loading ? (
+            <div className="col-span-full text-center text-darkWalnut font-mainFont">
+              로딩 중...
             </div>
-          ))}
+          ) : bannerItems.length === 0 ? (
+            <div className="col-span-full text-center text-darkWalnut font-mainFont">
+              배너 아이템이 없습니다.
+            </div>
+          ) : (
+            displayedItems.map((item) => (
+              <div key={item.id} className="flex flex-col">
+                {/* 배너 이미지 */}
+                <div className="relative mb-4">
+                  <img
+                    src={item.imageUrl}
+                    alt={item.name}
+                    className="w-full h-48 rounded-[10px] object-cover"
+                    onError={(e) => {
+                      // 이미지 로드 실패 시 기본 배경
+                      e.currentTarget.style.display = 'none'
+                      e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                    }}
+                  />
+                  {/* Fallback 배경 */}
+                  <div className="bg-gray-200 rounded-[10px] w-full h-48 hidden" />
+                  <div className="absolute inset-0 rounded-[10px] border-[3px] border-mainColor" />
+                </div>
+                
+                {/* 아이템 이름 */}
+                <p className="text-darkWalnut font-mainFont text-sm lg:text-base mb-2">
+                  {item.name}
+                </p>
+                
+                {/* 가격 */}
+                <div className="flex items-center mb-3">
+                  <img src="/images/MoonRabbitSleep2.png" alt="달토끼" className="w-12 h-12 mr-2" />
+                  <span className="text-darkWalnut text-xl lg:text-2xl font-mainFont">
+                    {item.price} 포인트
+                  </span>
+                </div>
+
+                {/* 구매 버튼 */}
+                <button
+                  onClick={() => handlePurchaseClick(item.id, item.price)}
+                  disabled={purchasingItemId === item.id}
+                  className={clsx(
+                    'px-6 py-2 rounded-full font-mainFont text-white transition-colors',
+                    purchasingItemId === item.id
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-mainColor hover:bg-opacity-80 cursor-pointer'
+                  )}
+                >
+                  {purchasingItemId === item.id ? '구매 중...' : '구매하기'}
+                </button>
+              </div>
+            ))
+          )}
         </div>
 
         {/* 페이지네이션 */}
@@ -136,6 +252,16 @@ const BannerShopModal: React.FC<BannerShopModalProps> = ({ isOpen, onClose }) =>
           </button>
         </div>
       </div>
+
+      {/* 미니 모달 */}
+      <MiniModal
+        isOpen={miniModal.isOpen}
+        onClose={closeMiniModal}
+        type={miniModal.type}
+        title={miniModal.title}
+        message={miniModal.message}
+        onConfirm={miniModal.onConfirm}
+      />
     </div>
   )
 }

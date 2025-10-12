@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
+import { useShopStore } from '../stores/useShopStore'
+import { useUserProfileStore } from '../stores/useUserProfileStore'
+import MiniModal from './MiniModal'
 import clsx from 'clsx'
 
 interface NicknameColorModalProps {
@@ -8,28 +11,100 @@ interface NicknameColorModalProps {
   onClose: () => void
 }
 
-interface ColorItem {
-  id: number
-  name: string
-  color: string
-  gradientClass: string
-  price: number
-}
-
 const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose }) => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
   const [currentPage, setCurrentPage] = useState(0)
+  const [purchasingItemId, setPurchasingItemId] = useState<number | null>(null)
+  const [miniModal, setMiniModal] = useState<{
+    isOpen: boolean
+    type: 'success' | 'error' | 'confirm'
+    title?: string
+    message: string
+    onConfirm?: () => void
+  }>({
+    isOpen: false,
+    type: 'success',
+    message: '',
+  })
+  
+  const { getItemsByType, loading, purchaseItem, purchaseLoading } = useShopStore()
+  const { userProfile, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
+  const nicknameColorItems = getItemsByType('NICKNAME_COLOR')
 
-  const colorItems: ColorItem[] = [
-    { id: 1, name: '마젠타', color: 'text-pink-600', gradientClass: 'bg-pink-600', price: 200 },
-    { id: 2, name: '시안', color: 'text-sky-300', gradientClass: 'bg-sky-300', price: 200 },
-    { id: 3, name: '스페이스 실버', color: 'text-neutral-300', gradientClass: 'bg-gradient-to-b from-neutral-300 to-black', price: 1500 },
-    { id: 4, name: '파스텔 피치', color: 'text-red-300', gradientClass: 'bg-gradient-to-b from-red-300 via-red-200 to-yellow-200', price: 2000 },
-  ]
+  const handlePurchaseClick = (itemId: number, itemPrice: number) => {
+    if (purchaseLoading) return
+
+    // 포인트 부족 체크
+    if (userProfile && userProfile.point < itemPrice) {
+      setMiniModal({
+        isOpen: true,
+        type: 'error',
+        title: '포인트 부족',
+        message: '포인트가 부족합니다.',
+      })
+      return
+    }
+
+    // 구매 확인 모달
+    setMiniModal({
+      isOpen: true,
+      type: 'confirm',
+      title: '구매 확인',
+      message: '이 아이템을 구매하시겠습니까?',
+      onConfirm: () => handlePurchase(itemId),
+    })
+  }
+
+  const handlePurchase = async (itemId: number) => {
+    setPurchasingItemId(itemId)
+
+    if (!userProfile?.id) {
+      setMiniModal({
+        isOpen: true,
+        type: 'error',
+        title: '오류',
+        message: '사용자 정보를 찾을 수 없습니다.',
+      })
+      setPurchasingItemId(null)
+      return
+    }
+
+    try {
+      const result = await purchaseItem(userProfile.id, itemId)
+      
+      // 프로필 및 인벤토리 갱신
+      await fetchUserProfile()
+      await fetchUserInventory(userProfile.id)
+
+      setMiniModal({
+        isOpen: true,
+        type: 'success',
+        title: '구매 완료',
+        message: result.message || '아이템을 구매했습니다!',
+      })
+    } catch (error: any) {
+      setMiniModal({
+        isOpen: true,
+        type: 'error',
+        title: '구매 실패',
+        message: error.message || '구매에 실패했습니다.',
+      })
+    } finally {
+      setPurchasingItemId(null)
+    }
+  }
+
+  const closeMiniModal = () => {
+    setMiniModal({
+      isOpen: false,
+      type: 'success',
+      message: '',
+    })
+  }
 
   const itemsPerPage = isMobile ? 2 : 4
-  const totalPages = Math.ceil(colorItems.length / itemsPerPage)
+  const totalPages = Math.ceil(nicknameColorItems.length / itemsPerPage)
 
   const handlePrevPage = () => {
     setCurrentPage((prev) => Math.max(0, prev - 1))
@@ -39,7 +114,7 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose
     setCurrentPage((prev) => Math.min(totalPages - 1, prev + 1))
   }
 
-  const displayedItems = colorItems.slice(
+  const displayedItems = nicknameColorItems.slice(
     currentPage * itemsPerPage,
     (currentPage + 1) * itemsPerPage
   )
@@ -91,31 +166,68 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose
             isMobile ? 'grid-cols-2' : 'grid-cols-4'
           )}
         >
-          {displayedItems.map((item) => (
-            <div key={item.id} className="flex flex-col items-center">
-              {/* 색상 카드 */}
-              <div className={clsx(
-                'rounded-[10px] border-[3px] border-mainColor p-4 mb-4 flex flex-col items-center',
-                isMobile ? 'w-full' : 'w-52 h-56'
-              )}>
-                {/* 원형 색상 프리뷰 */}
-                <div className={clsx('rounded-full mb-3', item.gradientClass, isMobile ? 'w-24 h-24' : 'w-40 h-40 aspect-square')} />
-                
-                {/* 색상 이름 */}
-                <span className={clsx('font-mainFont text-xl lg:text-2xl mb-2', item.color)}>
-                  {item.name}
-                </span>
-              </div>
-              
-              {/* 가격 */}
-              <div className="flex items-center">
-                <img src="/images/MoonRabbitSleep2.png" alt="달토끼" className="w-12 h-12 mr-2" />
-                <span className="text-darkWalnut text-lg lg:text-2xl font-mainFont">
-                  {item.price} 포인트
-                </span>
-              </div>
+          {loading ? (
+            <div className="col-span-full text-center text-darkWalnut font-mainFont">
+              로딩 중...
             </div>
-          ))}
+          ) : nicknameColorItems.length === 0 ? (
+            <div className="col-span-full text-center text-darkWalnut font-mainFont">
+              닉네임 색상 아이템이 없습니다.
+            </div>
+          ) : (
+            displayedItems.map((item) => (
+              <div key={item.id} className="flex flex-col items-center">
+                {/* 색상 카드 */}
+                <div className={clsx(
+                  'rounded-[10px] border-[3px] border-mainColor p-4 mb-4 flex flex-col items-center',
+                  isMobile ? 'w-full' : 'w-52 h-56'
+                )}>
+                  {/* 원형 색상 프리뷰 - S3 이미지 사용 */}
+                  <div className="relative mb-3">
+                    <img
+                      src={item.imageUrl}
+                      alt={item.name}
+                      className={clsx('rounded-full object-cover', isMobile ? 'w-24 h-24' : 'w-40 h-40')}
+                      onError={(e) => {
+                        // 이미지 로드 실패 시 기본 배경
+                        e.currentTarget.style.display = 'none'
+                        e.currentTarget.nextElementSibling?.classList.remove('hidden')
+                      }}
+                    />
+                    {/* Fallback 배경 */}
+                    <div className={clsx('bg-gray-200 rounded-full hidden', isMobile ? 'w-24 h-24' : 'w-40 h-40')} />
+                  </div>
+                  
+                  {/* 색상 이름 */}
+                  <span className="font-mainFont text-xl lg:text-2xl mb-2 text-darkWalnut">
+                    {item.name}
+                  </span>
+                </div>
+                
+                {/* 가격 */}
+                <div className="flex items-center mb-3">
+                  <img src="/images/MoonRabbitSleep2.png" alt="달토끼" className={clsx(isMobile ? "w-10 h-10" : "w-12 h-12", "mr-2")} />
+                  <span className={clsx("text-darkWalnut font-mainFont", isMobile ? "text-sm" : "text-lg lg:text-2xl")}>
+                    {item.price} 포인트
+                  </span>
+                </div>
+
+                {/* 구매 버튼 */}
+                <button
+                  onClick={() => handlePurchaseClick(item.id, item.price)}
+                  disabled={purchasingItemId === item.id}
+                  className={clsx(
+                    'px-6 py-2 rounded-full font-mainFont text-white transition-colors',
+                    purchasingItemId === item.id
+                      ? 'bg-gray-400 cursor-not-allowed'
+                      : 'bg-mainColor hover:bg-opacity-80 cursor-pointer'
+                  )}
+                >
+                  {purchasingItemId === item.id ? '구매 중...' : '구매하기'}
+                </button>
+              </div>
+            ))
+          )}
         </div>
 
         {/* 페이지네이션 */}
@@ -145,6 +257,16 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose
           </button>
         </div>
       </div>
+
+      {/* 미니 모달 */}
+      <MiniModal
+        isOpen={miniModal.isOpen}
+        onClose={closeMiniModal}
+        type={miniModal.type}
+        title={miniModal.title}
+        message={miniModal.message}
+        onConfirm={miniModal.onConfirm}
+      />
     </div>
   )
 }

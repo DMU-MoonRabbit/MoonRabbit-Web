@@ -31,6 +31,18 @@ const MypageProfile: React.FC = memo(() => {
     return userInventory.items.find(item => item.type === 'BORDER' && item.equipped)
   }, [userInventory])
 
+  // 장착된 배너 아이템 찾기
+  const equippedBanner = useMemo(() => {
+    if (!userInventory?.items) return null
+    return userInventory.items.find(item => item.type === 'BANNER' && item.equipped)
+  }, [userInventory])
+
+  // 장착된 닉네임 색상 아이템 찾기
+  const equippedNicknameColor = useMemo(() => {
+    if (!userInventory?.items) return null
+    return userInventory.items.find(item => item.type === 'NICKNAME_COLOR' && item.equipped)
+  }, [userInventory])
+
   const handleLogout = useCallback(() => {
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
@@ -43,9 +55,13 @@ const MypageProfile: React.FC = memo(() => {
 
   const backgroundStyle = useMemo(() => ({
     aspectRatio: '5/1', 
-    backgroundImage: `url(/images/ConcernBackground.png)`, 
-    backgroundSize: 'cover'
-  }), [])
+    backgroundImage: equippedBanner 
+      ? `url(${equippedBanner.imageUrl})` 
+      : `url(/images/ConcernBackground.png)`, 
+    backgroundSize: '100% 200%',
+    backgroundPosition: 'bottom',
+    backgroundRepeat: 'no-repeat',
+  }), [equippedBanner])
 
   const profilePositionClass = useMemo(() => clsx("absolute", 
     isMobile ? "top-[2vw] left-3" : "-bottom-1/3 left-1/30"
@@ -58,6 +74,14 @@ const MypageProfile: React.FC = memo(() => {
   const nameTextClass = useMemo(() => clsx("font-mainFont mb-[0.5vw]", 
     isMobile ? "text-[16px]" : "text-[2vw]"
   ), [isMobile])
+
+  // 닉네임 색상 스타일
+  const nicknameStyle = useMemo(() => {
+    if (!equippedNicknameColor?.content) return {}
+    return {
+      color: equippedNicknameColor.content
+    }
+  }, [equippedNicknameColor])
 
   const logoutButtonClass = useMemo(() => clsx("font-gothicFont font-thin cursor-pointer hover:bg-subBlack bg-mainGray text-white rounded-full mb-[1vw] xl:mb-[2vw] w-fit py-0.5",
     isMobile ? "text-[10px] px-2" : "text-[1vw] px-[1vw]"
@@ -94,7 +118,7 @@ const MypageProfile: React.FC = memo(() => {
              <div className="flex flex-col justify-center items-start ml-5">
                {/* 닉네임 + 포인트 */}
                <div className="flex items-center gap-2 mb-1">
-                 <p className={nameTextClass}>
+                 <p className={nameTextClass} style={nicknameStyle}>
                    {loading ? '로딩 중...' : userProfile?.nickname || '사용자'}
                  </p>
                  
