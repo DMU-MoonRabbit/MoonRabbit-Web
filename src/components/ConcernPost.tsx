@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import { useUnifiedConcernStore } from '../stores/useUnifiedConcernStore'
 import { useCommentStore, Comment } from '../stores/useCommentStore'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useBoardDetailStore } from '../stores/useBoardDetailStore'
-import { useUserProfileStore } from '../stores/useUserProfileStore'
+import { usePostAuthorItems } from '../hooks/usePostAuthorItems'
 import CommentIcon from '../assets/images/Comment.svg'
 import Report from '../assets/images/Report.svg'
 import Like from '../assets/images/likeThick.svg'
@@ -41,45 +41,6 @@ export const ConcernContent: React.FC = () => {
   const { res } = useResponsiveStore()
   const isMobile = res === 'mo'
 
-  const { userProfile, userInventory, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
-
-  // 사용자 프로필 및 인벤토리 로드
-  useEffect(() => {
-    fetchUserProfile()
-  }, [fetchUserProfile])
-
-  useEffect(() => {
-    if (userProfile?.id) {
-      fetchUserInventory(userProfile.id)
-    }
-  }, [userProfile?.id, fetchUserInventory])
-
-  // 장착된 테두리 찾기
-  const equippedBorder = useMemo(() => {
-    if (!userInventory?.items) return null
-    return userInventory.items.find(item => item.type === 'BORDER' && item.equipped)
-  }, [userInventory])
-
-  // 장착된 닉네임 색상 찾기
-  const nicknameColorMap: Record<string, string> = {
-    'magenta': '#EC4899',
-    'cyan': '#7DD3FC',
-    'space_gray': '#D4D4D4',
-    'pastel_peach': '#FCA5A5',
-  }
-
-  const equippedNicknameColor = useMemo(() => {
-    if (!userInventory?.items) return null
-    const item = userInventory.items.find(item => 
-      (item.type === 'NICKNAME_COLOR' || item.type === 'NAME_COLOR') && item.equipped
-    )
-    if (!item) return null
-    
-    const itemNameLower = item.itemName.toLowerCase()
-    const colorValue = nicknameColorMap[itemNameLower] || item.content
-    return colorValue
-  }, [userInventory])
-
   useEffect(() => {
     if (pageNumber) {
       const boardId = Number(pageNumber)
@@ -112,8 +73,8 @@ export const ConcernContent: React.FC = () => {
   if (!concern) return <p>로딩 중...</p>
   const { title, nickname, profileImg, content, createdAt, userId } = concern
 
-  // 현재 로그인한 사용자가 작성한 게시글인지 확인
-  const isOwnPost = userProfile?.id === userId
+  // 커스텀 훅으로 장착 아이템 조회
+  const { isOwner, borderImageUrl, nicknameColor } = usePostAuthorItems(userId)
 
   return (
     <div className="flex items-center justify-center w-full">
@@ -142,9 +103,9 @@ export const ConcernContent: React.FC = () => {
               }}
             />
             {/* 장착된 테두리 - 본인 게시글일 때만 표시 */}
-            {isOwnPost && equippedBorder && (
+            {borderImageUrl && (
               <img
-                src={equippedBorder.imageUrl}
+                src={borderImageUrl}
                 alt="프로필 테두리"
                 className="absolute top-0 left-0 w-full h-full pointer-events-none"
               />
@@ -152,7 +113,7 @@ export const ConcernContent: React.FC = () => {
           </div>
           <p 
             className="text-[16px]"
-            style={isOwnPost && equippedNicknameColor ? { color: equippedNicknameColor } : {}}
+            style={nicknameColor ? { color: nicknameColor } : {}}
           >
             {nickname}
           </p>

@@ -5,6 +5,7 @@ import UserInventory from "./UserInventory"
 import clsx from "clsx"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 import { useUserProfileStore } from "../stores/useUserProfileStore"
+import { getExpForLevel } from "../constants/colors"
 
 const MypageSidebar: React.FC = memo(() => {
   const { userProfile, fetchUserProfile } = useUserProfileStore()
@@ -24,9 +25,6 @@ const MypageSidebar: React.FC = memo(() => {
     () => (showAllStars ? starCount : Math.min(5, starCount)),
     [showAllStars, starCount]
   )
-
-  // 레벨별 필요 경험치 계산 (예: 레벨 * 100)
-  const getExpForLevel = (level: number) => level * 100
   
   // 현재 레벨의 경험치 정보
   const expInfo = useMemo(() => {

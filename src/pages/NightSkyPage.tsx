@@ -1,11 +1,32 @@
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import CategoryBar from '../components/CategoryBar'
 import ConcernCard from '../components/ConcernCard'
 import CreateConcernButton from '../components/CreateConcernButton'
 import CreateConcernModal from '../components/CreateConcernModal'
-import { useUnifiedConcernStore } from '../stores/useUnifiedConcernStore'
+import { useUnifiedConcernStore, Concern } from '../stores/useUnifiedConcernStore'
 import { useUserProfileStore } from '../stores/useUserProfileStore'
+import { usePostAuthorItems } from '../hooks/usePostAuthorItems'
+
+// ConcernCard에 장착 아이템을 적용하는 래퍼 컴포넌트
+const ConcernCardWithItems: React.FC<{ concern: Concern; onClick: (id: number) => void }> = ({ concern, onClick }) => {
+  const { borderImageUrl } = usePostAuthorItems(concern.userId)
+  
+  return (
+    <ConcernCard
+      id={concern.id}
+      profileImage={concern.profileImage}
+      title={concern.title}
+      content={concern.content}
+      category={concern.category}
+      recentComment={concern.recentComment}
+      date={concern.date}
+      backgroundImage={concern.backgroundImage}
+      onClick={onClick}
+      borderImageUrl={borderImageUrl}
+    />
+  )
+}
 
 const NightSkyPage: React.FC = () => {
   //고민 관련 상태관리
@@ -29,7 +50,7 @@ const NightSkyPage: React.FC = () => {
 
   const navigate = useNavigate()
 
-  const { userProfile, userInventory, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
+  const { userProfile, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
 
   useEffect(() => {
     fetchConcerns(pageInfo.number)
@@ -44,32 +65,6 @@ const NightSkyPage: React.FC = () => {
       fetchUserInventory(userProfile.id)
     }
   }, [userProfile?.id, fetchUserInventory])
-
-  // 장착된 테두리 찾기
-  const equippedBorder = useMemo(() => {
-    if (!userInventory?.items) return null
-    return userInventory.items.find(item => item.type === 'BORDER' && item.equipped)
-  }, [userInventory])
-
-  // 장착된 닉네임 색상 찾기
-  const nicknameColorMap: Record<string, string> = {
-    'magenta': '#EC4899',
-    'cyan': '#7DD3FC',
-    'space_gray': '#D4D4D4',
-    'pastel_peach': '#FCA5A5',
-  }
-
-  const equippedNicknameColor = useMemo(() => {
-    if (!userInventory?.items) return null
-    const item = userInventory.items.find(item => 
-      (item.type === 'NICKNAME_COLOR' || item.type === 'NAME_COLOR') && item.equipped
-    )
-    if (!item) return null
-    
-    const itemNameLower = item.itemName.toLowerCase()
-    const colorValue = nicknameColorMap[itemNameLower] || item.content
-    return colorValue
-  }, [userInventory])
 
   const handleOpenModal = () => {
     setIsModalOpen(true)
@@ -114,26 +109,13 @@ const NightSkyPage: React.FC = () => {
           <CreateConcernButton onClick={handleOpenModal} />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {filteredConcerns.map((concern) => {
-            // 현재 로그인한 사용자가 작성한 게시글인지 확인
-            const isOwnPost = userProfile?.id === concern.userId
-            
-            return (
-              <ConcernCard
-                key={concern.id}
-                id={concern.id}
-                profileImage={concern.profileImage}
-                title={concern.title}
-                content={concern.content}
-                category={concern.category}
-                recentComment={concern.recentComment}
-                date={concern.date}
-                backgroundImage={concern.backgroundImage}
-                onClick={handleCardClick}
-                borderImageUrl={isOwnPost ? equippedBorder?.imageUrl : undefined}
-              />
-            )
-          })}
+          {filteredConcerns.map((concern) => (
+            <ConcernCardWithItems 
+              key={concern.id} 
+              concern={concern} 
+              onClick={handleCardClick}
+            />
+          ))}
         </div>
 
         {/* 페이징 UI */}

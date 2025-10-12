@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import { useShopStore } from '../stores/useShopStore'
-import { useUserProfileStore } from '../stores/useUserProfileStore'
+import { useShopPurchase } from '../hooks/useShopPurchase'
+import { NICKNAME_COLOR_DEFINITIONS } from '../constants/colors'
 import MiniModal from './MiniModal'
 import clsx from 'clsx'
 
@@ -22,68 +23,17 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
   const [currentPage, setCurrentPage] = useState(0)
-  const [purchasingItemId, setPurchasingItemId] = useState<number | null>(null)
-  const [miniModal, setMiniModal] = useState<{
-    isOpen: boolean
-    type: 'success' | 'error' | 'confirm'
-    title?: string
-    message: string
-    onConfirm?: () => void
-  }>({
-    isOpen: false,
-    type: 'success',
-    message: '',
-  })
   
-  const { getItemsByType, loading, purchaseItem, purchaseLoading } = useShopStore()
-  const { userProfile, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
+  const { getItemsByType, loading } = useShopStore()
   const apiNicknameColorItems = getItemsByType('NAME_COLOR')
 
-  // API name과 한글 이름 매핑
-  const nameMap: Record<string, string> = {
-    'magenta': '마젠타',
-    'cyan': '시안',
-    'space_gray': '스페이스 그레이',
-    'pastel_peach': '파스텔 피치',
-  }
-
-  // 프론트에서 정의하는 색상 데이터 (API name 기준)
-  const colorDefinitions: Record<string, {
-    koName: string
-    colorValue: string
-    gradientClass: string
-    textColorClass: string
-  }> = {
-    'magenta': { 
-      koName: '마젠타',
-      colorValue: '#EC4899',  // pink-600
-      gradientClass: 'bg-pink-600', 
-      textColorClass: 'text-pink-600' 
-    },
-    'cyan': { 
-      koName: '시안',
-      colorValue: '#7DD3FC',  // sky-300
-      gradientClass: 'bg-sky-300', 
-      textColorClass: 'text-sky-300' 
-    },
-    'space_gray': { 
-      koName: '스페이스 그레이',
-      colorValue: '#D4D4D4',  // neutral-300
-      gradientClass: 'bg-gradient-to-b from-neutral-300 to-black', 
-      textColorClass: 'text-neutral-300' 
-    },
-    'pastel_peach': { 
-      koName: '파스텔 피치',
-      colorValue: '#FCA5A5',  // red-300
-      gradientClass: 'bg-gradient-to-b from-red-300 via-red-200 to-yellow-200', 
-      textColorClass: 'text-red-300' 
-    },
-  }
+  // 공통 구매 로직 훅 사용
+  const { purchasingItemId, miniModal, handlePurchaseClick, closeMiniModal } = useShopPurchase()
 
   // API 아이템과 프론트 색상 정의를 매칭
   const mergedColorItems = useMemo(() => {
     return apiNicknameColorItems.map(apiItem => {
-      const colorDef = colorDefinitions[apiItem.name]
+      const colorDef = NICKNAME_COLOR_DEFINITIONS[apiItem.name]
       return {
         ...apiItem,
         displayName: colorDef?.koName || apiItem.name,
@@ -93,77 +43,6 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose
       }
     })
   }, [apiNicknameColorItems])
-
-  const handlePurchaseClick = (itemId: number, itemPrice: number) => {
-    if (purchaseLoading) return
-
-    // 포인트 부족 체크
-    if (userProfile && userProfile.point < itemPrice) {
-      setMiniModal({
-        isOpen: true,
-        type: 'error',
-        title: '포인트 부족',
-        message: '포인트가 부족합니다.',
-      })
-      return
-    }
-
-    // 구매 확인 모달
-    setMiniModal({
-      isOpen: true,
-      type: 'confirm',
-      title: '구매 확인',
-      message: '이 아이템을 구매하시겠습니까?',
-      onConfirm: () => handlePurchase(itemId),
-    })
-  }
-
-  const handlePurchase = async (itemId: number) => {
-    setPurchasingItemId(itemId)
-
-    if (!userProfile?.id) {
-      setMiniModal({
-        isOpen: true,
-        type: 'error',
-        title: '오류',
-        message: '사용자 정보를 찾을 수 없습니다.',
-      })
-      setPurchasingItemId(null)
-      return
-    }
-
-    try {
-      const result = await purchaseItem(userProfile.id, itemId)
-      
-      // 프로필 및 인벤토리 갱신
-      await fetchUserProfile()
-      await fetchUserInventory(userProfile.id)
-
-      setMiniModal({
-        isOpen: true,
-        type: 'success',
-        title: '구매 완료',
-        message: result.message || '아이템을 구매했습니다!',
-      })
-    } catch (error: any) {
-      setMiniModal({
-        isOpen: true,
-        type: 'error',
-        title: '구매 실패',
-        message: error.message || '구매에 실패했습니다.',
-      })
-    } finally {
-      setPurchasingItemId(null)
-    }
-  }
-
-  const closeMiniModal = () => {
-    setMiniModal({
-      isOpen: false,
-      type: 'success',
-      message: '',
-    })
-  }
 
   const itemsPerPage = isMobile ? 2 : 4
   const totalPages = Math.ceil(mergedColorItems.length / itemsPerPage)

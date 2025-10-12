@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import axios from 'axios'
 import { ENDPOINTS } from '../api/endpoints'
-import { UserProfile, UserInventory, LikedBoard } from '../types/user'
+import { UserProfile, UserInventory, LikedBoard, UserItem } from '../types/user'
+import { NICKNAME_COLOR_MAP } from '../constants/colors'
 
 interface UserProfileStore {
   // 상태
@@ -10,14 +11,21 @@ interface UserProfileStore {
   likedBoards: LikedBoard[]
   loading: boolean
   error: string | null
+  isProfileLoaded: boolean
 
   // 액션
-  fetchUserProfile: () => Promise<void>
+  fetchUserProfile: (force?: boolean) => Promise<void>
   fetchUserInventory: (userId: number) => Promise<void>
   fetchLikedBoards: () => Promise<void>
   equipItem: (userItemId: number) => Promise<void>
   unequipItem: (userItemId: number) => Promise<void>
   clearError: () => void
+  resetProfileLoadState: () => void
+  
+  // Selectors
+  getEquippedBorder: () => UserItem | null
+  getEquippedBanner: () => UserItem | null
+  getEquippedNicknameColor: () => string | null
 }
 
 export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
@@ -27,10 +35,15 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
   likedBoards: [],
   loading: false,
   error: null,
+  isProfileLoaded: false,
 
   // 사용자 프로필 조회
-  fetchUserProfile: async () => {
+  fetchUserProfile: async (force = false) => {
     try {
+      // 이미 로드되었고 강제 재로드가 아니라면 스킵
+      const { isProfileLoaded } = get()
+      if (isProfileLoaded && !force) return
+
       set({ loading: true, error: null })
       
       const accessToken = localStorage.getItem('accessToken')
@@ -48,7 +61,8 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
 
       set({ 
         userProfile: response.data,
-        loading: false 
+        loading: false,
+        isProfileLoaded: true
       })
     } catch (error) {
       console.error('사용자 프로필 조회 실패:', error)
@@ -146,10 +160,11 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         },
       })
 
-      // 인벤토리 다시 조회
+      // 인벤토리 다시 조회 (강제 재로드)
       const { userProfile } = get()
       if (userProfile?.id) {
         await get().fetchUserInventory(userProfile.id)
+        await get().fetchUserProfile(true)
       }
 
       set({ loading: false })
@@ -178,10 +193,11 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         },
       })
 
-      // 인벤토리 다시 조회
+      // 인벤토리 다시 조회 (강제 재로드)
       const { userProfile } = get()
       if (userProfile?.id) {
         await get().fetchUserInventory(userProfile.id)
+        await get().fetchUserProfile(true)
       }
 
       set({ loading: false })
@@ -196,4 +212,37 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
 
   // 에러 클리어
   clearError: () => set({ error: null }),
+
+  // 프로필 로드 상태 리셋
+  resetProfileLoadState: () => set({ isProfileLoaded: false }),
+
+  // Selectors - 장착된 아이템 조회
+  getEquippedBorder: () => {
+    const { userInventory } = get()
+    if (!userInventory?.items) return null
+    return userInventory.items.find(item => item.type === 'BORDER' && item.equipped) || null
+  },
+
+  getEquippedBanner: () => {
+    const { userInventory } = get()
+    if (!userInventory?.items) return null
+    return userInventory.items.find(item => item.type === 'BANNER' && item.equipped) || null
+  },
+
+  getEquippedNicknameColor: () => {
+    const { userInventory } = get()
+    if (!userInventory?.items) return null
+    
+    const item = userInventory.items.find(item => 
+      (item.type === 'NICKNAME_COLOR' || item.type === 'NAME_COLOR') && item.equipped
+    )
+    
+    if (!item) return null
+    
+    // 아이템 이름으로 색상 찾기
+    const itemNameLower = item.itemName.toLowerCase()
+    const colorValue = NICKNAME_COLOR_MAP[itemNameLower] || item.content
+    
+    return colorValue || null
+  },
 }))
