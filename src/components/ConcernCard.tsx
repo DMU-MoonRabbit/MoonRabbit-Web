@@ -85,7 +85,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
               'absolute font-mainFont bg-lightBeige text-darkWalnut rounded-full whitespace-nowrap overflow-hidden text-ellipsis',
               isMobile
                 ? 'left-16 sm:left-20 top-3 text-sm sm:text-base px-2 sm:px-3 py-1 max-w-[calc(100%-5rem)] sm:max-w-[calc(100%-6rem)]'
-                : 'left-[7.5rem] top-[1.5rem] text-[1.2rem] px-4 py-[0.375rem] max-w-[23.75rem]',
+                : 'left-[7.5rem] top-[1.5rem] text-[1.2rem] px-4 py-[0.375rem] max-w-[calc(100%-8.5rem)]',
             )}
           >
             {title}
@@ -97,7 +97,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
               'absolute flex flex-wrap gap-1 sm:gap-3',
               isMobile
                 ? 'top-10 sm:top-12 left-16 sm:left-20 w-[calc(100%-5rem)] sm:w-[calc(100%-6rem)]'
-                : 'top-[4.25rem] left-[7.5rem] w-[23.75rem]',
+                : 'top-[4.25rem] left-[7.5rem] max-w-[calc(100%-8.5rem)]',
             )}
           >
             {category.split(',').map((cat, i) => (
