@@ -8,11 +8,28 @@ import clsx from 'clsx'
 const MypageProfile: React.FC = memo(() => {
   const navigate = useNavigate()
   const { setIsLoggedIn } = useAuthStore()
-  const { userProfile, loading, error, fetchUserProfile } = useUserProfileStore()
+  const { userProfile, userInventory, loading, error, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
 
   useEffect(() => {
     fetchUserProfile()
   }, [fetchUserProfile])
+
+  useEffect(() => {
+    console.log('userProfile:', userProfile)
+    console.log('point:', userProfile?.point)
+  }, [userProfile])
+
+  useEffect(() => {
+    if (userProfile?.id) {
+      fetchUserInventory(userProfile.id)
+    }
+  }, [userProfile?.id, fetchUserInventory])
+
+  // 장착된 테두리 아이템 찾기
+  const equippedBorder = useMemo(() => {
+    if (!userInventory?.items) return null
+    return userInventory.items.find(item => item.type === 'BORDER' && item.equipped)
+  }, [userInventory])
 
   const handleLogout = useCallback(() => {
     localStorage.removeItem('accessToken')
@@ -54,40 +71,60 @@ const MypageProfile: React.FC = memo(() => {
       >
         <div className={profilePositionClass}> 
           <div className="flex items-center mb-2">
-            <img 
-              src={userProfile?.profileImage || "/images/MoonRabbitSleep2.png"} 
-              alt="프로필 이미지" 
-              className={profileImageClass}
-              style={{ aspectRatio: '1/1' }}
-              loading="lazy"
-              onError={(e) => {
-                e.currentTarget.src = '/images/MoonRabbitSleep2.png'
-              }}
-            />
-            <div className="flex flex-col h-full ml-4">
-              <div className="flex items-center gap-2">
-                <p className={nameTextClass}>
-                  {loading ? '로딩 중...' : userProfile?.nickname || '사용자'}
-                </p>
-                {userProfile && (
-                  <div className="relative">
-                    <img 
-                      src="/images/point.png" 
-                      alt="포인트" 
-                      className={isMobile ? "w-11 h-6" : "w-19 h-10 mb-2"}
-                      loading="lazy"
-                    />
-                    <span className={`absolute inset-0 flex items-center justify-center font-mainFont ${
-                      isMobile ? "text-xs ml-5" : "text-sm mb-2 ml-8"
-                    }`}>
-                      {userProfile.point || 0}
-                    </span>
-                  </div>
-                )}
-              </div>
+            {/* 프로필 이미지 + 테두리 */}
+            <div className={clsx("relative flex-shrink-0", isMobile ? "w-[60px] h-[60px]" : "w-[120px] h-[120px]")}>
+              <img 
+                src={userProfile?.profileImage || "/images/MoonRabbitSleep2.png"} 
+                alt="프로필 이미지" 
+                className={clsx("object-cover rounded-full w-full h-full")}
+                loading="lazy"
+                onError={(e) => {
+                  e.currentTarget.src = '/images/MoonRabbitSleep2.png'
+                }}
+              />
+              {/* 장착된 테두리 SVG - 프로필 이미지와 정확히 같은 크기 */}
+              {equippedBorder && (
+                <img
+                  src={equippedBorder.imageUrl}
+                  alt="프로필 테두리"
+                  className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                />
+              )}
+            </div>
+             <div className="flex flex-col justify-center items-start ml-5">
+               {/* 닉네임 + 포인트 */}
+               <div className="flex items-center gap-2 mb-1">
+                 <p className={nameTextClass}>
+                   {loading ? '로딩 중...' : userProfile?.nickname || '사용자'}
+                 </p>
+                 
+                 {userProfile && (
+                   <div className="relative flex items-center">
+                     <img 
+                       src="/images/point.png" 
+                       alt="포인트" 
+                       className={isMobile ? "w-11 h-6" : "w-16 h-8"}
+                       loading="lazy"
+                       onError={(e) => {
+                         console.error('포인트 이미지 로드 실패')
+                       }}
+                     />
+                     <span className={clsx(
+                       "absolute ml-5 inset-0 flex items-center justify-center font-mainFont text-darkWalnut font-bold",
+                       isMobile ? "text-[10px]" : "text-xs"
+                     )}>
+                       {userProfile.point !== undefined ? userProfile.point : 0}
+                     </span>
+                   </div>
+                 )}
+               </div>
+              
+              {/* 에러 메시지 */}
               {error && (
                 <p className="text-red-500 text-xs mb-1">{error}</p>
               )}
+              
+              {/* 로그아웃 버튼 */}
               <div 
                 className={logoutButtonClass}
                 onClick={handleLogout}

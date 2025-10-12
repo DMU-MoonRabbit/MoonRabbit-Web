@@ -1,11 +1,15 @@
-import React, { memo, useState } from 'react'
+import React, { memo, useState, useEffect } from 'react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
+import { useShopStore } from '../stores/useShopStore'
 import PageHeader from '../components/PageHeader'
 import StarBackground from '../components/StarBackground'
 import BannerShopModal from '../components/BannerShopModal'
 import BorderShopModal from '../components/BorderShopModal'
 import NicknameColorModal from '../components/NicknameColorModal'
 import clsx from 'clsx'
+import bannerBackgroundImg from '../assets/images/bannerBackground.png'
+import borderBackgroundImg from '../assets/images/borderBackground.png'
+import nicknameBackgroundImg from '../assets/images/nicknameBackground.png'
 
 const ShopPage: React.FC = memo(() => {
   const res = useResponsiveStore((state) => state.res)
@@ -13,12 +17,18 @@ const ShopPage: React.FC = memo(() => {
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false)
   const [isBorderModalOpen, setIsBorderModalOpen] = useState(false)
   const [isNicknameColorModalOpen, setIsNicknameColorModalOpen] = useState(false)
+  
+  const { fetchShopItems } = useShopStore()
+  
+  useEffect(() => {
+    fetchShopItems()
+  }, [fetchShopItems])
 
   const shopItems = [
     {
       id: 1,
       name: '배너',
-      image: 'https://placehold.co/480x326',
+      image: bannerBackgroundImg,
       type: 'banner',
       price: 100,
       onClick: () => setIsBannerModalOpen(true),
@@ -26,7 +36,7 @@ const ShopPage: React.FC = memo(() => {
     {
       id: 2,
       name: '테두리',
-      image: 'https://placehold.co/480x326',
+      image: borderBackgroundImg,
       type: 'border',
       price: 150,
       onClick: () => setIsBorderModalOpen(true),
@@ -34,7 +44,7 @@ const ShopPage: React.FC = memo(() => {
     {
       id: 3,
       name: '닉네임 색상',
-      image: 'https://placehold.co/480x326',
+      image: nicknameBackgroundImg,
       type: 'nameColor',
       price: 200,
       onClick: () => setIsNicknameColorModalOpen(true),

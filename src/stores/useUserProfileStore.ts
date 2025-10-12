@@ -75,8 +75,21 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         },
       })
 
+      console.log('인벤토리 API 응답:', response.data)
+      console.log('인벤토리 API 응답 타입:', typeof response.data)
+      console.log('인벤토리 items:', response.data.items || response.data.content)
+
+      // 페이지네이션 응답 처리
+      const inventoryData = {
+        userId,
+        items: response.data.content || [],
+        totalItems: response.data.totalElements || 0
+      }
+
+      console.log('처리된 인벤토리 데이터:', inventoryData)
+
       set({ 
-        userInventory: response.data,
+        userInventory: inventoryData,
         loading: false 
       })
     } catch (error) {
@@ -135,8 +148,8 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
 
       // 인벤토리 다시 조회
       const { userProfile } = get()
-      if (userProfile) {
-        await get().fetchUserInventory(userProfile.userId)
+      if (userProfile?.id) {
+        await get().fetchUserInventory(userProfile.id)
       }
 
       set({ loading: false })
@@ -167,8 +180,8 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
 
       // 인벤토리 다시 조회
       const { userProfile } = get()
-      if (userProfile) {
-        await get().fetchUserInventory(userProfile.userId)
+      if (userProfile?.id) {
+        await get().fetchUserInventory(userProfile.id)
       }
 
       set({ loading: false })
