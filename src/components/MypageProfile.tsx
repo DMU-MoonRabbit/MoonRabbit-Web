@@ -164,6 +164,7 @@ const MypageProfile: React.FC = memo(() => {
                  )}
                </div>
               
+              
               {/* 에러 메시지 */}
               {error && (
                 <p className="text-red-500 text-xs mb-1">{error}</p>

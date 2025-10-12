@@ -25,6 +25,29 @@ const MypageSidebar: React.FC = memo(() => {
     [showAllStars, starCount]
   )
 
+  // 레벨별 필요 경험치 계산 (예: 레벨 * 100)
+  const getExpForLevel = (level: number) => level * 100
+  
+  // 현재 레벨의 경험치 정보
+  const expInfo = useMemo(() => {
+    if (!userProfile) return { current: 0, required: 100, percentage: 0, nextLevel: 1 }
+    
+    const currentLevel = userProfile.level
+    const nextLevel = currentLevel + 1
+    const currentLevelExp = getExpForLevel(currentLevel)
+    const nextLevelExp = getExpForLevel(nextLevel)
+    const requiredExp = nextLevelExp - currentLevelExp
+    const currentExp = userProfile.trustPoint - currentLevelExp
+    const percentage = Math.min(Math.max((currentExp / requiredExp) * 100, 0), 100)
+    
+    return {
+      current: Math.max(currentExp, 0),
+      required: requiredExp,
+      percentage,
+      nextLevel
+    }
+  }, [userProfile])
+
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
@@ -39,14 +62,31 @@ const MypageSidebar: React.FC = memo(() => {
       isMobile ?
       "w-full pb-12 " : "w-[500px]"
     )}>
-      <div className={clsx("font-mainFont text-white",
-        isMobile ?
-        "pt-8 text-[16px]" : "text-[2vw]"
-      )}>
-        레벨
-        <span className={clsx(isMobile ? "" : "ml-[1vw]")}>
-          {level}
-        </span>
+      <div className="flex flex-col gap-2">
+        <div className={clsx("font-mainFont text-white",
+          isMobile ?
+          "pt-8 text-[16px]" : "text-[2vw]"
+        )}>
+          레벨
+          <span className={clsx(isMobile ? "" : "ml-[1vw]")}>
+            {level}
+          </span>
+        </div>
+        
+        {/* 경험치 정보 */}
+        <div className="flex items-center gap-2">
+          <span className={clsx("font-gothicFont text-white/80", isMobile ? "text-[10px]" : "text-[0.9vw]")}>
+            {expInfo.current} / {expInfo.required} EXP
+          </span>
+        </div>
+        
+        {/* 경험치 프로그레스바 */}
+        <div className={clsx("bg-white/20 rounded-full overflow-hidden", isMobile ? "h-2" : "h-3")}>
+          <div 
+            className="bg-gradient-to-r from-mainColor to-lightCaramel h-full rounded-full transition-all duration-500 ease-out"
+            style={{ width: `${expInfo.percentage}%` }}
+          />
+        </div>
       </div>
       <div className={clsx(isMobile ? "" : "p-3")}>
         <div className="grid grid-cols-5 gap-2 place-items-center">
