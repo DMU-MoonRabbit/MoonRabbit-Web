@@ -70,11 +70,11 @@ export const ConcernContent: React.FC = () => {
     }
   }, [pageNumber, setConcern])
 
+  // 커스텀 훅은 조건부 리턴 전에 호출
+  const { isOwner, borderImageUrl, nicknameColor } = usePostAuthorItems(concern?.userId)
+
   if (!concern) return <p>로딩 중...</p>
   const { title, nickname, profileImg, content, createdAt, userId } = concern
-
-  // 커스텀 훅으로 장착 아이템 조회
-  const { isOwner, borderImageUrl, nicknameColor } = usePostAuthorItems(userId)
 
   return (
     <div className="flex items-center justify-center w-full">
