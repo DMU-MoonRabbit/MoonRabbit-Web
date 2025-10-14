@@ -97,13 +97,9 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
             <tr className="bg-gray-50 border-b border-gray-200">
               <th className="text-left py-3 px-4 font-medium text-gray-700">ID</th>
               <th className="text-left py-3 px-4 font-medium text-gray-700">{idLabel}</th>
-              {isBoard && (
-                <th className="text-left py-3 px-4 font-medium text-gray-700">제목</th>
-              )}
               <th className="text-left py-3 px-4 font-medium text-gray-700">내용</th>
               <th className="text-left py-3 px-4 font-medium text-gray-700">신고 이유</th>
               <th className="text-left py-3 px-4 font-medium text-gray-700">신고자</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-700">상태</th>
               <th className="text-left py-3 px-4 font-medium text-gray-700">신고일</th>
             </tr>
           </thead>
@@ -118,13 +114,6 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
               >
                 <td className="py-3 px-4 text-gray-800 font-medium">{item.id}</td>
                 <td className="py-3 px-4 text-gray-700">{item.reportedId}</td>
-                {isBoard && (
-                  <td className="py-3 px-4">
-                    <div className="max-w-xs truncate" title={item.title}>
-                      {item.title}
-                    </div>
-                  </td>
-                )}
                 <td className="py-3 px-4">
                   <div className="max-w-xs truncate" title={item.content}>
                     {item.content}
@@ -132,11 +121,6 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
                 </td>
                 <td className="py-3 px-4 text-gray-700">{item.reason}</td>
                 <td className="py-3 px-4 text-gray-700">{item.reporterName}</td>
-                <td className="py-3 px-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(item.status)}`}>
-                    {getStatusText(item.status)}
-                  </span>
-                </td>
                 <td className="py-3 px-4 text-gray-600">{item.reportedAt}</td>
               </tr>
             ))}

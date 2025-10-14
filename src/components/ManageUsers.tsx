@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useAdminStore, getAdminUsers, updateUserPoint, updateUserTrust } from "../stores/useAdminStore"
 import { ManagePointModal } from "./ManagePointModal"
+import { UserReportsModal } from "./UserReportsModal"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import clsx from "clsx"
@@ -23,6 +24,16 @@ export const ManageUsers = () => {
     currentValue: 0,
   })
 
+  const [reportsModalState, setReportsModalState] = useState<{
+    isOpen: boolean
+    userId: number | null
+    userName: string
+  }>({
+    isOpen: false,
+    userId: null,
+    userName: '',
+  })
+
   const openModal = (type: 'point' | 'trust', userId: number, userName: string, currentValue: number) => {
     setModalState({
       isOpen: true,
@@ -40,6 +51,22 @@ export const ManageUsers = () => {
       userId: null,
       userName: '',
       currentValue: 0,
+    })
+  }
+
+  const openReportsModal = (userId: number, userName: string) => {
+    setReportsModalState({
+      isOpen: true,
+      userId,
+      userName,
+    })
+  }
+
+  const closeReportsModal = () => {
+    setReportsModalState({
+      isOpen: false,
+      userId: null,
+      userName: '',
     })
   }
 
@@ -104,6 +131,7 @@ export const ManageUsers = () => {
                 <th className="text-left py-3 px-4 font-medium text-gray-700">총 포인트</th>
                 <th className="text-left py-3 px-4 font-medium text-gray-700">레벨</th>
                 <th className="text-left py-3 px-4 font-medium text-gray-700">가입일</th>
+                <th className="text-left py-3 px-4 font-medium text-gray-700">신고조회</th>
               </tr>
             </thead>
             <tbody>
@@ -146,6 +174,14 @@ export const ManageUsers = () => {
                     </span>
                   </td>
                   <td className="py-3 px-4 text-gray-600">{user.createdAt.slice(0, 16).replace('T', ' ')}</td>
+                  <td className="py-3 px-4">
+                    <button
+                      onClick={() => openReportsModal(user.id, user.nickname)}
+                      className="px-3 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
+                    >
+                      신고조회
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -203,7 +239,7 @@ export const ManageUsers = () => {
               </div>
 
               {/* 신뢰도 수정 */}
-              <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded">
+              <div className="flex justify-between items-center py-2 px-3 bg-green-50 rounded mb-2">
                 <div className="flex-1">
                   <p className="text-xs text-green-700 mb-0.5">신뢰도</p>
                   <p className="text-base font-bold text-green-600">{user.trustPoint}</p>
@@ -213,6 +249,20 @@ export const ManageUsers = () => {
                   className="px-3 py-1.5 text-xs bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
                 >
                   수정
+                </button>
+              </div>
+
+              {/* 신고 조회 */}
+              <div className="flex justify-between items-center py-2 px-3 bg-red-50 rounded">
+                <div className="flex-1">
+                  <p className="text-xs text-red-700 mb-0.5">신고 내역</p>
+                  <p className="text-base font-bold text-red-600">조회하기</p>
+                </div>
+                <button
+                  onClick={() => openReportsModal(user.id, user.nickname)}
+                  className="px-3 py-1.5 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                >
+                  신고조회
                 </button>
               </div>
             </div>
@@ -264,6 +314,14 @@ export const ManageUsers = () => {
         onSave={handleSave}
         title={`${modalState.userName}님의 ${modalState.type === 'point' ? '포인트' : '신뢰도'} 수정`}
         initialValue={modalState.currentValue}
+      />
+
+      {/* 신고 내역 조회 모달 */}
+      <UserReportsModal
+        isOpen={reportsModalState.isOpen}
+        onClose={closeReportsModal}
+        userId={reportsModalState.userId || 0}
+        userName={reportsModalState.userName}
       />
     </div>
   )
