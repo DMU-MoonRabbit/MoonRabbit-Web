@@ -1,6 +1,6 @@
 import React from 'react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { AdminPagination } from './AdminPagination'
 import { Report } from '../types/admin'
 import clsx from 'clsx'
 
@@ -23,16 +23,9 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
   const isMobile = res === 'mo'
   const pageSize = 10
 
-  // 페이지네이션 처리
   const getPaginatedItems = (page: number) => {
     const startIndex = page * pageSize
     return items.slice(startIndex, startIndex + pageSize)
-  }
-
-  const handlePageChange = (newPage: number) => {
-    if (newPage >= 0 && newPage < totalPages) {
-      onPageChange(newPage)
-    }
   }
 
   const isBoard = type === 'board'
@@ -85,35 +78,11 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
       </div>
 
       {/* 페이지네이션 */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-8 gap-2">
-          <button
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 0}
-            className={`px-4 py-2 rounded-lg ${
-              currentPage === 0
-                ? 'cursor-not-allowed opacity-50'
-                : 'cursor-pointer hover:bg-gray-100'
-            }`}
-          >
-            <ChevronLeft size={16} className="text-darkWalnut" />
-          </button>
-          <span className="mx-4 text-darkWalnut font-mainFont">
-            {currentPage + 1} / {totalPages}
-          </span>
-          <button
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages - 1}
-            className={`px-4 py-2 rounded-lg ${
-              currentPage === totalPages - 1
-                ? 'cursor-not-allowed opacity-50'
-                : 'cursor-pointer hover:bg-gray-100'
-            }`}
-          >
-            <ChevronRight size={16} className="text-darkWalnut" />
-          </button>
-        </div>
-      )}
+      <AdminPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+      />
     </>
   )
 }

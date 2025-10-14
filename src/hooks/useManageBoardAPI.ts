@@ -1,0 +1,186 @@
+import { useEffect } from 'react'
+import { useManageBoardStore } from '../stores/useManageBoardStore'
+import { usePaginationStore } from '../stores/usePaginationStore'
+import ENDPOINTS from '../api/endpoints'
+import axios from 'axios'
+
+export const useManageBoardAPI = () => {
+  const {
+    activeTab,
+    setBoardData,
+    setReportedBoardsData,
+    setReportedCommentsData,
+    setLoading,
+    setReportsLoading,
+  } = useManageBoardStore()
+
+  const {
+    boardPostsPage,
+    reportedBoardsPage,
+    reportedCommentsPage,
+  } = usePaginationStore()
+
+  const pageSize = 9
+  const reportsPageSize = 10
+
+  // 게시글 목록 조회
+  const fetchBoardPosts = async (page: number) => {
+    setLoading(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      const response = await axios.get(
+        ENDPOINTS.CONCERN_LIST(page, pageSize),
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      console.log('게시글 목록 API 응답:', response.data)
+      setBoardData(response.data)
+      setLoading(false)
+      
+    } catch (error) {
+      console.error('게시글 목록 조회 실패:', error)
+      setBoardData(null)
+      setLoading(false)
+    }
+  }
+
+  // 신고된 게시글 목록 조회
+  const fetchReportedBoards = async (page: number) => {
+    setReportsLoading(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      const response = await axios.get(
+        ENDPOINTS.ADMIN_REPORTS_LIST('BOARD', page, reportsPageSize),
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      console.log('신고된 게시글 목록 API 응답:', response.data)
+      setReportedBoardsData(response.data)
+      setReportsLoading(false)
+      
+    } catch (error) {
+      console.error('신고된 게시글 목록 조회 실패:', error)
+      setReportedBoardsData(null)
+      setReportsLoading(false)
+    }
+  }
+
+  // 신고된 댓글 목록 조회
+  const fetchReportedComments = async (page: number) => {
+    setReportsLoading(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      const response = await axios.get(
+        ENDPOINTS.ADMIN_REPORTS_LIST('ANSWER', page, reportsPageSize),
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      console.log('신고된 댓글 목록 API 응답:', response.data)
+      setReportedCommentsData(response.data)
+      setReportsLoading(false)
+      
+    } catch (error) {
+      console.error('신고된 댓글 목록 조회 실패:', error)
+      setReportedCommentsData(null)
+      setReportsLoading(false)
+    }
+  }
+
+  // 게시글 수정
+  const updateBoard = async (boardId: number, updateData: any) => {
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      await axios.put(
+        ENDPOINTS.ADMIN_BOARD_UPDATE(boardId),
+        updateData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      console.log('게시글 수정 성공:', updateData)
+      return true
+      
+    } catch (error) {
+      console.error('게시글 수정 실패:', error)
+      throw error
+    }
+  }
+
+  // 게시글 삭제
+  const deleteBoard = async (boardId: number) => {
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      await axios.delete(
+        ENDPOINTS.ADMIN_BOARD_DELETE(boardId),
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      console.log('게시글 삭제 성공:', boardId)
+      return true
+      
+    } catch (error) {
+      console.error('게시글 삭제 실패:', error)
+      throw error
+    }
+  }
+
+  // 자동 데이터 로딩
+  useEffect(() => {
+    fetchBoardPosts(boardPostsPage)
+  }, [boardPostsPage])
+
+  useEffect(() => {
+    if (activeTab === 'reportedBoards') {
+      fetchReportedBoards(reportedBoardsPage)
+    }
+  }, [activeTab, reportedBoardsPage])
+
+  useEffect(() => {
+    if (activeTab === 'reportedComments') {
+      fetchReportedComments(reportedCommentsPage)
+    }
+  }, [activeTab, reportedCommentsPage])
+
+  return {
+    fetchBoardPosts,
+    fetchReportedBoards,
+    fetchReportedComments,
+    updateBoard,
+    deleteBoard,
+  }
+}
+

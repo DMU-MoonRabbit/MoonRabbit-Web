@@ -13,7 +13,6 @@ interface AdminState {
   setPageData: (data: AdminUserResponse | null) => void
   setLoading: (loading: boolean) => void
   handleSearch: () => Promise<void>
-  handlePageChange: (pageNumber: number) => Promise<void>
 }
 
 export const useAdminStore = create<AdminState>((set, get) => ({
@@ -28,10 +27,6 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   handleSearch: async () => {
     const { searchTerm } = get()
     set({ loading: true })
-  },
-
-  handlePageChange: async (pageNumber: number) => {
-    await getAdminUsers(pageNumber, 10)
   }
 }))
 
