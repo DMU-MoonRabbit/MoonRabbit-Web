@@ -49,6 +49,18 @@ export const getAdminUsers = async (page = 0, size = 10) => {
   setLoading(true)
   
   try {
+    // 임시로 목업 데이터 사용 (어드민 권한 없음)
+    console.log('목업 데이터 사용 중...')
+    
+    setTimeout(() => {
+      const allUsers = getMockUsers()
+      const pageData = createMockPageData(allUsers, page, size)
+      console.log('목업 회원 목록:', pageData)
+      setPageData(pageData)
+      setLoading(false)
+    }, 500)
+    
+    /*
     const token = localStorage.getItem('accessToken')
     
     const response = await axios.get(ENDPOINTS.ADMIN_USERS(page+1, size), {
@@ -61,6 +73,8 @@ export const getAdminUsers = async (page = 0, size = 10) => {
     
     console.log('회원 목록 API 응답:', response.data)
     setPageData(response.data)
+    setLoading(false)
+    */
   } catch (error) {
     console.error('회원 목록 조회 실패:', error)
     // 에러 발생 시 빈 데이터로 설정
@@ -84,13 +98,16 @@ export const getAdminUsers = async (page = 0, size = 10) => {
       },
       empty: true
     })
-  } finally {
     setLoading(false)
   }
 }
 
 export const updateUserPoint = async (userId: number, newPoint: number) => {
   try {
+    // 임시로 목업 데이터 업데이트
+    console.log('목업 포인트 수정:', { userId, newPoint })
+    
+    /*
     const token = localStorage.getItem('accessToken')
     
     const response = await axios.put(
@@ -107,6 +124,10 @@ export const updateUserPoint = async (userId: number, newPoint: number) => {
     
     console.log('포인트 수정 API 응답:', response.data)
     return response.data
+    */
+    
+    // 목업 응답 시뮬레이션
+    return { success: true, message: '포인트가 수정되었습니다.' }
   } catch (error) {
     console.error('포인트 수정 실패:', error)
     throw error
@@ -115,6 +136,10 @@ export const updateUserPoint = async (userId: number, newPoint: number) => {
 
 export const updateUserTrust = async (userId: number, newTrust: number) => {
   try {
+    // 임시로 목업 데이터 업데이트
+    console.log('목업 신뢰도 수정:', { userId, newTrust })
+    
+    /*
     const token = localStorage.getItem('accessToken')
     
     const response = await axios.put(
@@ -131,6 +156,10 @@ export const updateUserTrust = async (userId: number, newTrust: number) => {
     
     console.log('신뢰도 수정 API 응답:', response.data)
     return response.data
+    */
+    
+    // 목업 응답 시뮬레이션
+    return { success: true, message: '신뢰도가 수정되었습니다.' }
   } catch (error) {
     console.error('신뢰도 수정 실패:', error)
     throw error

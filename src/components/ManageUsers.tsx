@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import { useAdminStore, getAdminUsers, updateUserPoint, updateUserTrust } from "../stores/useAdminStore"
 import { ManagePointModal } from "./ManagePointModal"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import clsx from "clsx"
 
 export const ManageUsers = () => {
@@ -89,7 +90,7 @@ export const ManageUsers = () => {
         </div>
       )}
 
-      {/* PC - 테이블 뷰 */}
+      {/* PC 뷰 */}
       {!loading && pageData && !isMobile && (
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
@@ -152,7 +153,7 @@ export const ManageUsers = () => {
         </div>
       )}
 
-      {/* 모바일 - 카드 뷰 */}
+      {/* 모바일 뷰 */}
       {!loading && pageData && isMobile && (
         <div className="space-y-4">
           {pageData.content.map((user) => (
@@ -227,30 +228,32 @@ export const ManageUsers = () => {
 
       {/* 페이지네이션 */}
       {!loading && pageData && !pageData.empty && (
-        <div className={clsx("flex justify-center items-center gap-2", isMobile ? "mt-4" : "mt-6")}>
-            <button
-              onClick={() => handlePageChange(pageData.number - 1)}
-              disabled={pageData.first}
-              className={clsx(
-                "rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors",
-                isMobile ? "p-1.5 text-sm" : "p-2"
-              )}
-            >
-              ◀
-            </button>
-            <span className={clsx("text-gray-700", isMobile ? "px-2 py-1 text-sm" : "px-4 py-2")}>
-              {pageData.number + 1} / {pageData.totalPages}
-            </span>
-            <button
-              onClick={() => handlePageChange(pageData.number + 1)}
-              disabled={pageData.last}
-              className={clsx(
-                "rounded-lg border border-gray-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors",
-                isMobile ? "p-1.5 text-sm" : "p-2"
-              )}
-            >
-              ▶
-            </button>
+        <div className="flex justify-center items-center mt-8 gap-2">
+          <button
+            onClick={() => handlePageChange(pageData.number - 1)}
+            disabled={pageData.first}
+            className={`px-4 py-2 rounded-lg ${
+              pageData.first
+                ? 'cursor-not-allowed opacity-50'
+                : 'cursor-pointer hover:bg-gray-100'
+            }`}
+          >
+            <ChevronLeft size={16} className="text-darkWalnut" />
+          </button>
+          <span className="mx-4 text-darkWalnut font-mainFont">
+            {pageData.number + 1} / {pageData.totalPages}
+          </span>
+          <button
+            onClick={() => handlePageChange(pageData.number + 1)}
+            disabled={pageData.last}
+            className={`px-4 py-2 rounded-lg ${
+              pageData.last
+                ? 'cursor-not-allowed opacity-50'
+                : 'cursor-pointer hover:bg-gray-100'
+            }`}
+          >
+            <ChevronRight size={16} className="text-darkWalnut" />
+          </button>
         </div>
       )}
 
