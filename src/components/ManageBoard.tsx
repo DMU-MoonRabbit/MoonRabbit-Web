@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ReportedBoard } from './ReportedBoard'
 import clsx from 'clsx'
 
 // 게시글 타입 정의
@@ -14,10 +15,22 @@ interface BoardPost {
   category: string
 }
 
-// 신고된 글 타입 정의
-interface ReportedPost {
+// 신고된 게시글 타입 정의
+interface ReportedBoardItem {
   id: number
-  type: 'BOARD' | 'COMMENT'
+  reportedId: number
+  title: string
+  content: string
+  reason: string
+  reporterId: number
+  reporterName: string
+  status: 'PENDING' | 'APPROVED' | 'REJECTED'
+  reportedAt: string
+}
+
+// 신고된 댓글 타입 정의
+interface ReportedCommentItem {
+  id: number
   reportedId: number
   content: string
   reason: string
@@ -58,12 +71,12 @@ const mockBoardPosts: BoardPost[] = [
   }
 ]
 
-const mockReportedPosts: ReportedPost[] = [
+const mockReportedBoards: ReportedBoardItem[] = [
   {
     id: 1,
-    type: 'BOARD',
     reportedId: 5,
-    content: "부적절한 내용이 포함된 게시글",
+    title: "부적절한 제목의 게시글",
+    content: "부적절한 내용이 포함된 게시글입니다.",
     reason: "욕설 사용",
     reporterId: 10,
     reporterName: "신고자1",
@@ -72,23 +85,58 @@ const mockReportedPosts: ReportedPost[] = [
   },
   {
     id: 2,
-    type: 'COMMENT',
-    reportedId: 15,
-    content: "부적절한 댓글 내용",
+    reportedId: 8,
+    title: "스팸성 게시글",
+    content: "반복적인 광고 내용이 포함된 게시글입니다.",
     reason: "스팸",
+    reporterId: 12,
+    reporterName: "신고자3",
+    status: 'APPROVED',
+    reportedAt: "2024-01-26"
+  },
+  {
+    id: 3,
+    reportedId: 12,
+    title: "개인정보 노출 게시글",
+    content: "다른 사람의 개인정보가 포함된 게시글입니다.",
+    reason: "개인정보 노출",
+    reporterId: 15,
+    reporterName: "신고자4",
+    status: 'REJECTED',
+    reportedAt: "2024-01-27"
+  }
+]
+
+const mockReportedComments: ReportedCommentItem[] = [
+  {
+    id: 1,
+    reportedId: 15,
+    content: "부적절한 댓글 내용입니다. 욕설이 포함되어 있어요.",
+    reason: "욕설 사용",
     reporterId: 11,
     reporterName: "신고자2",
     status: 'PENDING',
     reportedAt: "2024-01-26"
+  },
+  {
+    id: 2,
+    reportedId: 23,
+    content: "스팸 댓글 내용",
+    reason: "스팸",
+    reporterId: 13,
+    reporterName: "신고자5",
+    status: 'PENDING',
+    reportedAt: "2024-01-28"
   }
 ]
 
 export const ManageBoard = () => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
-  const [activeTab, setActiveTab] = useState<'posts' | 'reports'>('posts')
+  const [activeTab, setActiveTab] = useState<'posts' | 'reportedBoards' | 'reportedComments'>('posts')
   const [currentPage, setCurrentPage] = useState(0)
-  const [reportsPage, setReportsPage] = useState(0)
+  const [reportedBoardsPage, setReportedBoardsPage] = useState(0)
+  const [reportedCommentsPage, setReportedCommentsPage] = useState(0)
   const pageSize = 10
 
   // 페이지네이션 처리
@@ -97,49 +145,13 @@ export const ManageBoard = () => {
     return mockBoardPosts.slice(startIndex, startIndex + pageSize)
   }
 
-  const getPaginatedReports = (page: number) => {
-    const startIndex = page * pageSize
-    return mockReportedPosts.slice(startIndex, startIndex + pageSize)
-  }
-
   const totalPostsPages = Math.ceil(mockBoardPosts.length / pageSize)
-  const totalReportsPages = Math.ceil(mockReportedPosts.length / pageSize)
+  const totalReportedBoardsPages = Math.ceil(mockReportedBoards.length / pageSize)
+  const totalReportedCommentsPages = Math.ceil(mockReportedComments.length / pageSize)
 
   const handlePostPageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPostsPages) {
       setCurrentPage(newPage)
-    }
-  }
-
-  const handleReportsPageChange = (newPage: number) => {
-    if (newPage >= 0 && newPage < totalReportsPages) {
-      setReportsPage(newPage)
-    }
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'APPROVED':
-        return 'bg-green-100 text-green-800'
-      case 'REJECTED':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return '대기중'
-      case 'APPROVED':
-        return '승인됨'
-      case 'REJECTED':
-        return '거부됨'
-      default:
-        return status
     }
   }
 
@@ -159,15 +171,26 @@ export const ManageBoard = () => {
           게시글 목록
         </button>
         <button
-          onClick={() => setActiveTab('reports')}
+          onClick={() => setActiveTab('reportedBoards')}
           className={clsx(
             "px-6 py-3 font-mainFont transition-colors",
-            activeTab === 'reports'
+            activeTab === 'reportedBoards'
               ? "border-b-2 border-mainColor text-mainColor font-bold"
               : "text-gray-600 hover:text-gray-800"
           )}
         >
-          신고된 글 ({mockReportedPosts.length})
+          신고된 게시글 ({mockReportedBoards.length})
+        </button>
+        <button
+          onClick={() => setActiveTab('reportedComments')}
+          className={clsx(
+            "px-6 py-3 font-mainFont transition-colors",
+            activeTab === 'reportedComments'
+              ? "border-b-2 border-mainColor text-mainColor font-bold"
+              : "text-gray-600 hover:text-gray-800"
+          )}
+        >
+          신고된 댓글 ({mockReportedComments.length})
         </button>
       </div>
 
@@ -265,102 +288,26 @@ export const ManageBoard = () => {
         </>
       )}
 
-      {/* 신고된 글 목록 탭 */}
-      {activeTab === 'reports' && (
-        <>
-          {/* 총 건수 */}
-          <div className="mb-4">
-            <span className={clsx("text-gray-600", isMobile ? "text-sm" : "text-base")}>
-              전체 {mockReportedPosts.length}건
-            </span>
-          </div>
+      {/* 신고된 게시글 목록 탭 */}
+      {activeTab === 'reportedBoards' && (
+        <ReportedBoard
+          items={mockReportedBoards}
+          currentPage={reportedBoardsPage}
+          totalPages={totalReportedBoardsPages}
+          onPageChange={setReportedBoardsPage}
+          type="board"
+        />
+      )}
 
-          {/* 신고된 글 테이블 */}
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">ID</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">타입</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">신고된 글 ID</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">내용</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">신고 이유</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">신고자</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">상태</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">신고일</th>
-                </tr>
-              </thead>
-              <tbody>
-                {getPaginatedReports(reportsPage).map((report, index) => (
-                  <tr 
-                    key={report.id} 
-                    className={clsx(
-                      "border-b border-gray-100 hover:bg-gray-50 transition-colors",
-                      index % 2 === 0 ? 'bg-white' : 'bg-gray-25'
-                    )}
-                  >
-                    <td className="py-3 px-4 text-gray-800 font-medium">{report.id}</td>
-                    <td className="py-3 px-4">
-                      <span className={clsx(
-                        "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                        report.type === 'BOARD' 
-                          ? 'bg-purple-100 text-purple-800' 
-                          : 'bg-orange-100 text-orange-800'
-                      )}>
-                        {report.type === 'BOARD' ? '게시글' : '댓글'}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-gray-700">{report.reportedId}</td>
-                    <td className="py-3 px-4">
-                      <div className="max-w-xs truncate" title={report.content}>
-                        {report.content}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 text-gray-700">{report.reason}</td>
-                    <td className="py-3 px-4 text-gray-700">{report.reporterName}</td>
-                    <td className="py-3 px-4">
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(report.status)}`}>
-                        {getStatusText(report.status)}
-                      </span>
-                    </td>
-                    <td className="py-3 px-4 text-gray-600">{report.reportedAt}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* 신고된 글 페이지네이션 */}
-          {totalReportsPages > 1 && (
-            <div className="flex justify-center items-center mt-8 gap-2">
-              <button
-                onClick={() => handleReportsPageChange(reportsPage - 1)}
-                disabled={reportsPage === 0}
-                className={`px-4 py-2 rounded-lg ${
-                  reportsPage === 0
-                    ? 'cursor-not-allowed opacity-50'
-                    : 'cursor-pointer hover:bg-gray-100'
-                }`}
-              >
-                <ChevronLeft size={16} className="text-darkWalnut" />
-              </button>
-              <span className="mx-4 text-darkWalnut font-mainFont">
-                {reportsPage + 1} / {totalReportsPages}
-              </span>
-              <button
-                onClick={() => handleReportsPageChange(reportsPage + 1)}
-                disabled={reportsPage === totalReportsPages - 1}
-                className={`px-4 py-2 rounded-lg ${
-                  reportsPage === totalReportsPages - 1
-                    ? 'cursor-not-allowed opacity-50'
-                    : 'cursor-pointer hover:bg-gray-100'
-                }`}
-              >
-                <ChevronRight size={16} className="text-darkWalnut" />
-              </button>
-            </div>
-          )}
-        </>
+      {/* 신고된 댓글 목록 탭 */}
+      {activeTab === 'reportedComments' && (
+        <ReportedBoard
+          items={mockReportedComments}
+          currentPage={reportedCommentsPage}
+          totalPages={totalReportedCommentsPages}
+          onPageChange={setReportedCommentsPage}
+          type="comment"
+        />
       )}
     </div>
   )

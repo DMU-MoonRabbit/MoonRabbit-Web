@@ -45,8 +45,8 @@ export const ENDPOINTS = {
   
   // 관리자(Admin)
   ADMIN_USERS: (page = 0, size = 10) => `${BASE_URL}/admin/users?page=${page}&size=${size}`,
-  ADMIN_USER_UPDATE_POINT: (userId: number) => `${BASE_URL}/admin/users/${userId}/point`,
-  ADMIN_USER_UPDATE_TRUST: (userId: number) => `${BASE_URL}/admin/users/${userId}/trust`,
+  ADMIN_USER_UPDATE_POINT: (userId: number, newPoint: number) => `${BASE_URL}/admin/users/${userId}/point?point=${newPoint}`,
+  ADMIN_USER_UPDATE_TRUST: (userId: number, newPoint: number) => `${BASE_URL}/admin/users/${userId}/trust?point=${newPoint}`,
 };
 
 export default ENDPOINTS; 

@@ -145,7 +145,7 @@ export const ManageUsers = () => {
                       Lv.{user.level}
                     </span>
                   </td>
-                  <td className="py-3 px-4 text-gray-600">{user.createdAt}</td>
+                  <td className="py-3 px-4 text-gray-600">{user.createdAt.slice(0, 16).replace('T', ' ')}</td>
                 </tr>
               ))}
             </tbody>
@@ -180,7 +180,7 @@ export const ManageUsers = () => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 mb-1">가입일</p>
-                  <p className="text-sm text-gray-700">{user.createdAt}</p>
+                  <p className="text-sm text-gray-700">{user.createdAt.slice(0, 10)}</p>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 mb-1">총 포인트</p>

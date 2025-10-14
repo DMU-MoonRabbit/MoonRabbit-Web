@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { User, AdminUserResponse } from '../types/admin'
+import { AdminUserResponse } from '../types/admin'
 import { ENDPOINTS } from '../api/endpoints'
 import axios from 'axios'
 
@@ -28,15 +28,6 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   handleSearch: async () => {
     const { searchTerm } = get()
     set({ loading: true })
-    setTimeout(() => {
-      const allUsers = getMockUsers()
-      const filteredUsers = allUsers.filter(user => 
-        user.nickname.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-      
-      const filteredPageData = createMockPageData(filteredUsers, 0, 10)
-      set({ pageData: filteredPageData, loading: false })
-    }, 500)
   },
 
   handlePageChange: async (pageNumber: number) => {
@@ -49,21 +40,9 @@ export const getAdminUsers = async (page = 0, size = 10) => {
   setLoading(true)
   
   try {
-    // 임시로 목업 데이터 사용 (어드민 권한 없음)
-    console.log('목업 데이터 사용 중...')
-    
-    setTimeout(() => {
-      const allUsers = getMockUsers()
-      const pageData = createMockPageData(allUsers, page, size)
-      console.log('목업 회원 목록:', pageData)
-      setPageData(pageData)
-      setLoading(false)
-    }, 500)
-    
-    /*
     const token = localStorage.getItem('accessToken')
     
-    const response = await axios.get(ENDPOINTS.ADMIN_USERS(page+1, size), {
+    const response = await axios.get(ENDPOINTS.ADMIN_USERS(page, size), {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
@@ -71,10 +50,9 @@ export const getAdminUsers = async (page = 0, size = 10) => {
       withCredentials: true
     })
     
-    console.log('회원 목록 API 응답:', response.data)
     setPageData(response.data)
     setLoading(false)
-    */
+
   } catch (error) {
     console.error('회원 목록 조회 실패:', error)
     // 에러 발생 시 빈 데이터로 설정
@@ -104,15 +82,10 @@ export const getAdminUsers = async (page = 0, size = 10) => {
 
 export const updateUserPoint = async (userId: number, newPoint: number) => {
   try {
-    // 임시로 목업 데이터 업데이트
-    console.log('목업 포인트 수정:', { userId, newPoint })
-    
-    /*
     const token = localStorage.getItem('accessToken')
     
     const response = await axios.put(
-      ENDPOINTS.ADMIN_USER_UPDATE_POINT(userId),
-      { point: newPoint },
+      ENDPOINTS.ADMIN_USER_UPDATE_POINT(userId, newPoint),
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -124,10 +97,7 @@ export const updateUserPoint = async (userId: number, newPoint: number) => {
     
     console.log('포인트 수정 API 응답:', response.data)
     return response.data
-    */
     
-    // 목업 응답 시뮬레이션
-    return { success: true, message: '포인트가 수정되었습니다.' }
   } catch (error) {
     console.error('포인트 수정 실패:', error)
     throw error
@@ -136,15 +106,10 @@ export const updateUserPoint = async (userId: number, newPoint: number) => {
 
 export const updateUserTrust = async (userId: number, newTrust: number) => {
   try {
-    // 임시로 목업 데이터 업데이트
-    console.log('목업 신뢰도 수정:', { userId, newTrust })
-    
-    /*
     const token = localStorage.getItem('accessToken')
     
     const response = await axios.put(
-      ENDPOINTS.ADMIN_USER_UPDATE_TRUST(userId),
-      { trustPoint: newTrust },
+      ENDPOINTS.ADMIN_USER_UPDATE_TRUST(userId, newTrust),
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -156,99 +121,9 @@ export const updateUserTrust = async (userId: number, newTrust: number) => {
     
     console.log('신뢰도 수정 API 응답:', response.data)
     return response.data
-    */
-    
-    // 목업 응답 시뮬레이션
-    return { success: true, message: '신뢰도가 수정되었습니다.' }
+
   } catch (error) {
     console.error('신뢰도 수정 실패:', error)
     throw error
-  }
-}
-
-const getMockUsers = (): User[] => [
-  {
-    id: 1,
-    email: "user1@example.com",
-    nickname: "달토끼1",
-    point: 150,
-    trustPoint: 85,
-    totalPoint: 235,
-    level: 3,
-    createdAt: "2024-01-15",
-    content: "안녕하세요!"
-  },
-  {
-    id: 2,
-    email: "user2@example.com", 
-    nickname: "별토끼2",
-    point: 200,
-    trustPoint: 92,
-    totalPoint: 292,
-    level: 4,
-    createdAt: "2024-01-20",
-    content: "좋은 하루 되세요"
-  },
-  {
-    id: 3,
-    email: "user3@example.com",
-    nickname: "밤토끼3", 
-    point: 75,
-    trustPoint: 78,
-    totalPoint: 153,
-    level: 2,
-    createdAt: "2024-02-01",
-    content: "감사합니다"
-  },
-  {
-    id: 4,
-    email: "user4@example.com",
-    nickname: "달토끼4",
-    point: 300,
-    trustPoint: 95,
-    totalPoint: 395,
-    level: 5,
-    createdAt: "2024-01-10",
-    content: "반갑습니다"
-  },
-  {
-    id: 5,
-    email: "user5@example.com",
-    nickname: "별토끼5",
-    point: 120,
-    trustPoint: 80,
-    totalPoint: 200,
-    level: 3,
-    createdAt: "2024-01-25",
-    content: "안녕하세요"
-  }
-]
-
-const createMockPageData = (users: User[], pageNumber: number = 0, pageSize: number = 10): AdminUserResponse => {
-  const totalElements = users.length
-  const totalPages = Math.ceil(totalElements / pageSize)
-  const startIndex = pageNumber * pageSize
-  const endIndex = startIndex + pageSize
-  const content = users.slice(startIndex, endIndex)
-  
-  return {
-    totalElements,
-    totalPages,
-    first: pageNumber === 0,
-    last: pageNumber === totalPages - 1,
-    size: pageSize,
-    content,
-    number: pageNumber,
-    sort: [],
-    numberOfElements: content.length,
-    pageable: {
-      offset: startIndex,
-      sort: [],
-      pageNumber,
-      pageSize,
-      paged: true,
-      unpaged: false
-    },
-    empty: content.length === 0
   }
 }
