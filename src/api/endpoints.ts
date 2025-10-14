@@ -42,6 +42,11 @@ export const ENDPOINTS = {
   
   // 기타 필요시 추가
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,
+  
+  // 관리자(Admin)
+  ADMIN_USERS: (page = 0, size = 10) => `${BASE_URL}/admin/users?page=${page}&size=${size}`,
+  ADMIN_USER_UPDATE_POINT: (userId: number) => `${BASE_URL}/admin/users/${userId}/point`,
+  ADMIN_USER_UPDATE_TRUST: (userId: number) => `${BASE_URL}/admin/users/${userId}/trust`,
 };
 
 export default ENDPOINTS; 

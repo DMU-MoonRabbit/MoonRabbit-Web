@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 import { User, AdminUserResponse } from '../types/admin'
+import { ENDPOINTS } from '../api/endpoints'
+import axios from 'axios'
 
 interface AdminState {
   activeTab: 'members' | 'posts'
@@ -38,27 +40,100 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   },
 
   handlePageChange: async (pageNumber: number) => {
-    set({ loading: true })
-    setTimeout(() => {
-      const allUsers = getMockUsers()
-      const pageData = createMockPageData(allUsers, pageNumber, 10)
-      set({ pageData, loading: false })
-    }, 300)
+    await getAdminUsers(pageNumber, 10)
   }
 }))
 
-export const getAdminUsers = async () => {
+export const getAdminUsers = async (page = 0, size = 10) => {
   const { setPageData, setLoading } = useAdminStore.getState()
   setLoading(true)
   
   try {
-    const allUsers = getMockUsers()
-    const pageData = createMockPageData(allUsers, 0, 10)
-    setPageData(pageData)
+    const token = localStorage.getItem('accessToken')
+    
+    const response = await axios.get(ENDPOINTS.ADMIN_USERS(page+1, size), {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      withCredentials: true
+    })
+    
+    console.log('회원 목록 API 응답:', response.data)
+    setPageData(response.data)
   } catch (error) {
-    console.error('Initial data load failed:', error)
+    console.error('회원 목록 조회 실패:', error)
+    // 에러 발생 시 빈 데이터로 설정
+    setPageData({
+      totalElements: 0,
+      totalPages: 0,
+      first: true,
+      last: true,
+      size: size,
+      content: [],
+      number: page,
+      sort: [],
+      numberOfElements: 0,
+      pageable: {
+        offset: page * size,
+        sort: [],
+        pageNumber: page,
+        pageSize: size,
+        paged: true,
+        unpaged: false
+      },
+      empty: true
+    })
   } finally {
     setLoading(false)
+  }
+}
+
+export const updateUserPoint = async (userId: number, newPoint: number) => {
+  try {
+    const token = localStorage.getItem('accessToken')
+    
+    const response = await axios.put(
+      ENDPOINTS.ADMIN_USER_UPDATE_POINT(userId),
+      { point: newPoint },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      }
+    )
+    
+    console.log('포인트 수정 API 응답:', response.data)
+    return response.data
+  } catch (error) {
+    console.error('포인트 수정 실패:', error)
+    throw error
+  }
+}
+
+export const updateUserTrust = async (userId: number, newTrust: number) => {
+  try {
+    const token = localStorage.getItem('accessToken')
+    
+    const response = await axios.put(
+      ENDPOINTS.ADMIN_USER_UPDATE_TRUST(userId),
+      { trustPoint: newTrust },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      }
+    )
+    
+    console.log('신뢰도 수정 API 응답:', response.data)
+    return response.data
+  } catch (error) {
+    console.error('신뢰도 수정 실패:', error)
+    throw error
   }
 }
 
