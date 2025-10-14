@@ -48,6 +48,7 @@ export const ENDPOINTS = {
   ADMIN_USER_UPDATE_POINT: (userId: number, newPoint: number) => `${BASE_URL}/admin/users/${userId}/point?point=${newPoint}`,
   ADMIN_USER_UPDATE_TRUST: (userId: number, newPoint: number) => `${BASE_URL}/admin/users/${userId}/trust?point=${newPoint}`,
   ADMIN_USER_REPORTS: (userId: number, page = 0, size = 10) => `${BASE_URL}/reports/${userId}?page=${page}&size=${size}`,
+  ADMIN_BOARDS: (page = 0, size = 9) => `${BASE_URL}/boards/list?page=${page}&size=${size}`,
 };
 
 export default ENDPOINTS; 
