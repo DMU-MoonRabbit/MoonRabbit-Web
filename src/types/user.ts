@@ -26,6 +26,12 @@ export interface UserItem {
   content?: string  // itemDescription
 }
 
+// API 응답에서 제공되는 장착 아이템 타입
+export interface EquippedItem {
+  type: 'BORDER' | 'NAME_COLOR'
+  imageUrl: string
+}
+
 // 사용자 인벤토리 응답 타입
 export interface UserInventory {
   userId: number

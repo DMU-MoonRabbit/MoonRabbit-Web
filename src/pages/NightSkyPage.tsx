@@ -10,7 +10,8 @@ import { usePostAuthorItems } from '../hooks/usePostAuthorItems'
 
 // ConcernCard에 장착 아이템을 적용하는 래퍼 컴포넌트
 const ConcernCardWithItems: React.FC<{ concern: Concern; onClick: (id: number) => void }> = ({ concern, onClick }) => {
-  const { borderImageUrl } = usePostAuthorItems(concern.userId)
+  // API 데이터에서 장착 아이템 정보를 받아오거나, 본인 게시글이면 현재 장착 아이템 사용
+  const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } = usePostAuthorItems(concern.userId)
   
   return (
     <ConcernCard
@@ -23,7 +24,8 @@ const ConcernCardWithItems: React.FC<{ concern: Concern; onClick: (id: number) =
       date={concern.date}
       backgroundImage={concern.backgroundImage}
       onClick={onClick}
-      borderImageUrl={borderImageUrl}
+      borderImageUrl={concern.borderImageUrl || ownBorderUrl}
+      nicknameColor={concern.nicknameColor || ownNicknameColor}
     />
   )
 }

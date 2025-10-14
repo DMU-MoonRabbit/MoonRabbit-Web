@@ -1,5 +1,36 @@
 import { create } from 'zustand'
 import axios from 'axios'
+import { EquippedItem } from '../types/user'
+
+// equippedItems에서 테두리와 닉네임 색상 추출하는 헬퍼 함수
+const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
+  if (!equippedItems || !Array.isArray(equippedItems)) {
+    return { borderImageUrl: undefined, nicknameColor: undefined }
+  }
+
+  const borderItem = equippedItems.find(item => item.type === 'BORDER')
+  const nicknameColorItem = equippedItems.find(item => item.type === 'NAME_COLOR')
+  
+  // 닉네임 색상은 이미지 URL에서 색상 이름을 추출하여 색상 값으로 변환
+  let nicknameColor: string | undefined
+  if (nicknameColorItem?.imageUrl) {
+    const colorName = nicknameColorItem.imageUrl.match(/NameColor_(\w+)\.png/)?.[1]
+    if (colorName) {
+      const colorMap: Record<string, string> = {
+        'magenta': '#EC4899',
+        'cyan': '#7DD3FC', 
+        'space_gray': '#D4D4D4',
+        'pastel_peach': '#FCA5A5'
+      }
+      nicknameColor = colorMap[colorName]
+    }
+  }
+
+  return {
+    borderImageUrl: borderItem?.imageUrl,
+    nicknameColor
+  }
+}
 
 export interface Comment {
   id: number
@@ -13,6 +44,9 @@ export interface Comment {
   reportCount: number
   like: boolean // 나중에 삭제
   replies?: Comment[]  // optional로 변경
+  equippedItems?: EquippedItem[]  // API에서 제공되는 장착 아이템
+  borderImageUrl?: string  // 작성자의 장착 테두리
+  nicknameColor?: string   // 작성자의 장착 닉네임 색상
 }
 
 interface CommentStore {
@@ -76,7 +110,15 @@ function buildCommentTree(flatComments: Comment[]): Comment[] {
   const rootComments: Comment[] = []
 
   flatComments.forEach((comment) => {
-    commentMap[comment.id] = { ...comment, replies: [] }
+    // equippedItems 파싱하여 borderImageUrl과 nicknameColor 설정
+    const { borderImageUrl, nicknameColor } = parseEquippedItems(comment.equippedItems)
+    
+    commentMap[comment.id] = { 
+      ...comment, 
+      replies: [],
+      borderImageUrl,
+      nicknameColor
+    }
   })
 
   flatComments.forEach((comment) => {

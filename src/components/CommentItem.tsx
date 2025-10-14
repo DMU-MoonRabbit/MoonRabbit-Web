@@ -29,8 +29,10 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   const { isLoggedIn } = useAuthStore()
   const showReplyInput = replyTargetId === comment.id
 
-  // 커스텀 훅으로 장착 아이템 조회
-  const { isOwner, borderImageUrl, nicknameColor } = usePostAuthorItems(comment.userId)
+  // API 데이터에서 장착 아이템 정보를 받아오거나, 본인 댓글이면 현재 장착 아이템 사용
+  const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } = usePostAuthorItems(comment.userId)
+  const borderImageUrl = comment.borderImageUrl || ownBorderUrl
+  const nicknameColor = comment.nicknameColor || ownNicknameColor
 
   useEffect(() => {
     if( isLoggedIn ) {

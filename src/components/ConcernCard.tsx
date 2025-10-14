@@ -15,7 +15,8 @@ interface ConcernCardProps {
   date?: string
   backgroundImage?: string
   onClick?: (id: number) => void
-  borderImageUrl?: string  // 테두리 이미지 URL 추가
+  borderImageUrl?: string  // 작성자의 장착 테두리 (API 또는 본인)
+  nicknameColor?: string    // 작성자의 장착 닉네임 색상 (API 또는 본인)
 }
 
 const ConcernCard: React.FC<ConcernCardProps> = ({
@@ -29,6 +30,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
   backgroundImage,
   onClick,
   borderImageUrl,
+  nicknameColor,
 }) => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'

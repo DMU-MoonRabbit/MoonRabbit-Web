@@ -4,6 +4,7 @@ import { useCommentStore, Comment } from '../stores/useCommentStore'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useBoardDetailStore } from '../stores/useBoardDetailStore'
 import { usePostAuthorItems } from '../hooks/usePostAuthorItems'
+import { EquippedItem } from '../types/user'
 import CommentIcon from '../assets/images/Comment.svg'
 import Report from '../assets/images/Report.svg'
 import Like from '../assets/images/likeThick.svg'
@@ -13,6 +14,36 @@ import axios from 'axios'
 import clsx from 'clsx'
 import { ENDPOINTS } from '../api/endpoints'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
+
+// equippedItems에서 테두리와 닉네임 색상 추출하는 헬퍼 함수
+const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
+  if (!equippedItems || !Array.isArray(equippedItems)) {
+    return { borderImageUrl: undefined, nicknameColor: undefined }
+  }
+
+  const borderItem = equippedItems.find(item => item.type === 'BORDER')
+  const nicknameColorItem = equippedItems.find(item => item.type === 'NAME_COLOR')
+  
+  // 닉네임 색상은 이미지 URL에서 색상 이름을 추출하여 색상 값으로 변환
+  let nicknameColor: string | undefined
+  if (nicknameColorItem?.imageUrl) {
+    const colorName = nicknameColorItem.imageUrl.match(/NameColor_(\w+)\.png/)?.[1]
+    if (colorName) {
+      const colorMap: Record<string, string> = {
+        'magenta': '#EC4899',
+        'cyan': '#7DD3FC', 
+        'space_gray': '#D4D4D4',
+        'pastel_peach': '#FCA5A5'
+      }
+      nicknameColor = colorMap[colorName]
+    }
+  }
+
+  return {
+    borderImageUrl: borderItem?.imageUrl,
+    nicknameColor
+  }
+}
 
 export const ConcernContent: React.FC = () => {
   const { concern, setConcern, toggleConcernLike, concerns } = useUnifiedConcernStore()
@@ -50,6 +81,10 @@ export const ConcernContent: React.FC = () => {
           ENDPOINTS.CONCERN_DETAIL(boardId),
         )
         const data = response.data
+        
+        // equippedItems 파싱
+        const { borderImageUrl, nicknameColor } = parseEquippedItems(data.equippedItems)
+        
         const concern = {
           id: data.id,
           userId: data.userId,  // userId 포함
@@ -59,7 +94,10 @@ export const ConcernContent: React.FC = () => {
           content: data.content,
           createdAt: data.createdAt,
           answer: data.answer,
-          like: false
+          like: false,
+          equippedItems: data.equippedItems,  // 원본 데이터 보존
+          borderImageUrl,  // 파싱된 테두리
+          nicknameColor,   // 파싱된 닉네임 색상
         }
         setConcern(concern)
       } catch (error) {
@@ -71,10 +109,14 @@ export const ConcernContent: React.FC = () => {
   }, [pageNumber, setConcern])
 
   // 커스텀 훅은 조건부 리턴 전에 호출
-  const { isOwner, borderImageUrl, nicknameColor } = usePostAuthorItems(concern?.userId)
+  const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } = usePostAuthorItems(concern?.userId)
 
   if (!concern) return <p>로딩 중...</p>
-  const { title, nickname, profileImg, content, createdAt, userId } = concern
+  const { title, nickname, profileImg, content, createdAt, userId, borderImageUrl: apiBorderUrl, nicknameColor: apiNicknameColor } = concern
+
+  // API 데이터 우선, 없으면 본인 장착 아이템 사용
+  const borderImageUrl = apiBorderUrl || ownBorderUrl
+  const nicknameColor = apiNicknameColor || ownNicknameColor
 
   return (
     <div className="flex items-center justify-center w-full">
