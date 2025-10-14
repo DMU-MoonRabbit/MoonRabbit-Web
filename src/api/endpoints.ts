@@ -16,7 +16,7 @@ export const ENDPOINTS = {
   USER_INFO: `${BASE_URL}/user/info`,
   USER_UPDATE: `${BASE_URL}/user/update`,
   USER_PROFILE: `${BASE_URL}/users/profile`,
-  USER_ITEMS: (userId: number) => `${BASE_URL}/user/items/${userId}`,
+  USER_ITEMS: (userId: number, page = 0, size = 100) => `${BASE_URL}/user/items/${userId}?page=${page}&size=${size}`,
   USER_ITEM_EQUIP: (userItemId: number) => `${BASE_URL}/user/items/${userItemId}/equip`,
   USER_ITEM_UNEQUIP: (userItemId: number) => `${BASE_URL}/user/items/${userItemId}/unequip`,
 
@@ -36,6 +36,10 @@ export const ENDPOINTS = {
   // 좋아요(Likes)
   BOARD_LIKES_MY: `${BASE_URL}/likes/board-my`,
 
+  // 상점(Shop)
+  ITEM_LIST: `${BASE_URL}/items`,
+  ITEM_BUY: `${BASE_URL}/user/items/buy`,
+  
   // 기타 필요시 추가
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,
 };

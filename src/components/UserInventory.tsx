@@ -18,9 +18,14 @@ const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {
 
   useEffect(() => {
     if (userId) {
+      console.log('UserInventory: fetchUserInventory 호출, userId:', userId)
       fetchUserInventory(userId)
     }
   }, [userId, fetchUserInventory])
+
+  useEffect(() => {
+    console.log('UserInventory: userInventory 업데이트:', userInventory)
+  }, [userInventory])
 
   const handleEquipItem = useCallback(async (userItemId: number) => {
     await equipItem(userItemId)
@@ -65,10 +70,10 @@ const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
         {userInventory.items.map((item) => (
           <div
-            key={item.userItemId}
+            key={item.id}
             className={clsx(
               "border rounded-lg p-4 transition-all duration-200",
-              item.isEquipped 
+              item.equipped 
                 ? "border-mainColor bg-lightBeige" 
                 : "border-gray-200 bg-white hover:border-gray-300"
             )}
@@ -78,24 +83,24 @@ const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {
                 <h4 className="font-mainFont text-darkWalnut text-sm mb-1">
                   {item.itemName}
                 </h4>
-                {item.itemDescription && (
+                {item.content && (
                   <p className="text-xs text-gray-600 mb-2">
-                    {item.itemDescription}
+                    {item.content}
                   </p>
                 )}
                 <span className={clsx(
                   "inline-block px-2 py-1 rounded-full text-xs",
-                  item.isEquipped 
+                  item.equipped 
                     ? "bg-mainColor text-white" 
                     : "bg-gray-100 text-gray-600"
                 )}>
-                  {item.isEquipped ? "장착 중" : "미장착"}
+                  {item.equipped ? "장착 중" : "미장착"}
                 </span>
               </div>
               
-              {item.itemImage && (
+              {item.imageUrl && (
                 <img
-                  src={item.itemImage}
+                  src={item.imageUrl}
                   alt={item.itemName}
                   className="w-12 h-12 object-cover rounded ml-2"
                   onError={(e) => {
@@ -106,16 +111,16 @@ const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {
             </div>
             
             <div className="flex gap-2">
-              {item.isEquipped ? (
+              {item.equipped ? (
                 <button
-                  onClick={() => handleUnequipItem(item.userItemId)}
+                  onClick={() => handleUnequipItem(item.id)}
                   className="flex-1 bg-gray-500 hover:bg-gray-600 text-white text-xs py-2 px-3 rounded transition-colors"
                 >
                   장착 해제
                 </button>
               ) : (
                 <button
-                  onClick={() => handleEquipItem(item.userItemId)}
+                  onClick={() => handleEquipItem(item.id)}
                   className="flex-1 bg-mainColor hover:bg-mainColor/80 text-white text-xs py-2 px-3 rounded transition-colors"
                 >
                   장착

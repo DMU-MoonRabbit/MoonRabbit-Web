@@ -4,7 +4,31 @@ import CategoryBar from '../components/CategoryBar'
 import ConcernCard from '../components/ConcernCard'
 import CreateConcernButton from '../components/CreateConcernButton'
 import CreateConcernModal from '../components/CreateConcernModal'
-import { useUnifiedConcernStore } from '../stores/useUnifiedConcernStore'
+import { useUnifiedConcernStore, Concern } from '../stores/useUnifiedConcernStore'
+import { useUserProfileStore } from '../stores/useUserProfileStore'
+import { usePostAuthorItems } from '../hooks/usePostAuthorItems'
+
+// ConcernCard에 장착 아이템을 적용하는 래퍼 컴포넌트
+const ConcernCardWithItems: React.FC<{ concern: Concern; onClick: (id: number) => void }> = ({ concern, onClick }) => {
+  // API 데이터에서 장착 아이템 정보를 받아오거나, 본인 게시글이면 현재 장착 아이템 사용
+  const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } = usePostAuthorItems(concern.userId)
+  
+  return (
+    <ConcernCard
+      id={concern.id}
+      profileImage={concern.profileImage}
+      title={concern.title}
+      content={concern.content}
+      category={concern.category}
+      recentComment={concern.recentComment}
+      date={concern.date}
+      backgroundImage={concern.backgroundImage}
+      onClick={onClick}
+      borderImageUrl={concern.borderImageUrl || ownBorderUrl}
+      nicknameColor={concern.nicknameColor || ownNicknameColor}
+    />
+  )
+}
 
 const NightSkyPage: React.FC = () => {
   //고민 관련 상태관리
@@ -28,9 +52,21 @@ const NightSkyPage: React.FC = () => {
 
   const navigate = useNavigate()
 
+  const { userProfile, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
+
   useEffect(() => {
     fetchConcerns(pageInfo.number)
   }, [fetchConcerns, pageInfo.number])
+
+  useEffect(() => {
+    fetchUserProfile()
+  }, [fetchUserProfile])
+
+  useEffect(() => {
+    if (userProfile?.id) {
+      fetchUserInventory(userProfile.id)
+    }
+  }, [userProfile?.id, fetchUserInventory])
 
   const handleOpenModal = () => {
     setIsModalOpen(true)
@@ -76,16 +112,9 @@ const NightSkyPage: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {filteredConcerns.map((concern) => (
-            <ConcernCard
-              key={concern.id}
-              id={concern.id}
-              profileImage={concern.profileImage}
-              title={concern.title}
-              content={concern.content}
-              category={concern.category}
-              recentComment={concern.recentComment}
-              date={concern.date}
-              backgroundImage={concern.backgroundImage}
+            <ConcernCardWithItems 
+              key={concern.id} 
+              concern={concern} 
               onClick={handleCardClick}
             />
           ))}

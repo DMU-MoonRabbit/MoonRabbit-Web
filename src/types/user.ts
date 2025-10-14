@@ -1,26 +1,35 @@
 // 사용자 프로필 관련 타입 정의
 export interface UserProfile {
-  userId: number
+  id: number
+  userId?: number
   nickname: string
   email: string
+  password?: string
   profileImage?: string
   level: number
   point: number
   trustPoint: number
-  createdAt: string
-  updatedAt: string
+  createdAt?: string
+  updatedAt?: string
 }
 
-// 사용자 아이템 관련 타입 정의
+// 사용자 아이템 관련 타입 정의 (백엔드 API 응답 기반)
 export interface UserItem {
-  userItemId: number
+  id: number  // userItemId
   itemId: number
   itemName: string
-  itemDescription?: string
-  itemImage?: string
-  itemType: string
-  isEquipped: boolean
-  purchasedAt: string
+  price: number
+  type: string  // itemType
+  equipped: boolean  // isEquipped
+  createdAt: string  // purchasedAt
+  imageUrl: string  // itemImage
+  content?: string  // itemDescription
+}
+
+// API 응답에서 제공되는 장착 아이템 타입
+export interface EquippedItem {
+  type: 'BORDER' | 'NAME_COLOR'
+  imageUrl: string
 }
 
 // 사용자 인벤토리 응답 타입

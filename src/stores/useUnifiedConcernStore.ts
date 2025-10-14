@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import axios from 'axios'
+import { EquippedItem } from '../types/user'
 
 // 기존 ConcernStore Concern, Board, PageInfo 타입 등 복사
 interface Answer {
@@ -12,6 +13,7 @@ interface Answer {
   userId: number
   nickname: string
   profileImg: string
+  equippedItems?: EquippedItem[]  // API에서 제공되는 장착 아이템
 }
 
 export interface Board {
@@ -23,10 +25,12 @@ export interface Board {
   answers: Answer[]
   nickname: string
   profileImg: string
+  equippedItems?: EquippedItem[]  // API에서 제공되는 장착 아이템
 }
 
 export interface Concern {
   id: number
+  userId: number  // 작성자 userId 추가
   profileImage: string
   title: string
   category: string
@@ -37,6 +41,8 @@ export interface Concern {
   }
   date: string
   backgroundImage: string
+  borderImageUrl?: string  // 작성자의 장착 테두리
+  nicknameColor?: string   // 작성자의 장착 닉네임 색상
 }
 
 export interface PageInfo {
@@ -53,6 +59,7 @@ export interface PageInfo {
 // Concern 상세 타입
 export interface ConcernArticle {
   id: number
+  userId?: number  // 작성자 userId 추가
   title: string
   profileImg: string
   nickname: string
@@ -60,6 +67,9 @@ export interface ConcernArticle {
   createdAt: string
   answer: string
   like: boolean
+  equippedItems?: EquippedItem[]  // API에서 제공되는 장착 아이템
+  borderImageUrl?: string  // 작성자의 장착 테두리
+  nicknameColor?: string   // 작성자의 장착 닉네임 색상
 }
 
 interface UnifiedConcernStore {
@@ -87,9 +97,42 @@ interface UnifiedConcernStore {
   toggleConcernLike: () => void
 }
 
+// equippedItems에서 테두리와 닉네임 색상 추출하는 헬퍼 함수
+const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
+  if (!equippedItems || !Array.isArray(equippedItems)) {
+    return { borderImageUrl: undefined, nicknameColor: undefined }
+  }
+
+  const borderItem = equippedItems.find(item => item.type === 'BORDER')
+  const nicknameColorItem = equippedItems.find(item => item.type === 'NAME_COLOR')
+  
+  // 닉네임 색상은 이미지 URL에서 색상 이름을 추출하여 색상 값으로 변환
+  let nicknameColor: string | undefined
+  if (nicknameColorItem?.imageUrl) {
+    const colorName = nicknameColorItem.imageUrl.match(/NameColor_(\w+)\.png/)?.[1]
+    if (colorName) {
+      const colorMap: Record<string, string> = {
+        'magenta': '#EC4899',
+        'cyan': '#7DD3FC', 
+        'space_gray': '#D4D4D4',
+        'pastel_peach': '#FCA5A5'
+      }
+      nicknameColor = colorMap[colorName]
+    }
+  }
+
+  return {
+    borderImageUrl: borderItem?.imageUrl,
+    nicknameColor
+  }
+}
+
 export const transformBoardToConcern = (board: Board): Concern => {
+  const { borderImageUrl, nicknameColor } = parseEquippedItems(board.equippedItems)
+  
   return {
     id: board.boardId,
+    userId: board.userId,  // userId 포함
     profileImage: board.profileImg || 'images/MoonRabbitSleep2.png',
     title: board.title,
     category: board.category,
@@ -108,6 +151,8 @@ export const transformBoardToConcern = (board: Board): Concern => {
       .toISOString()
       .split('T')[0],
     backgroundImage: '/images/ConcernBackground.png',
+    borderImageUrl,  // API에서 받은 테두리
+    nicknameColor,   // API에서 받은 닉네임 색상
   }
 }
 
