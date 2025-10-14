@@ -1,27 +1,11 @@
 import React from 'react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { Report } from '../types/admin'
 import clsx from 'clsx'
 
-// 신고된 게시글/댓글 공통 타입
-interface ReportedItem {
-  id: number
-  reportedId: number
-  content: string
-  reason: string
-  reporterId: number
-  reporterName: string
-  status: 'PENDING' | 'APPROVED' | 'REJECTED'
-  reportedAt: string
-}
-
-// 신고된 게시글 타입 (제목 포함)
-interface ReportedBoardItem extends ReportedItem {
-  title?: string
-}
-
 interface ReportedBoardProps {
-  items: ReportedBoardItem[]
+  items: Report[]
   currentPage: number
   totalPages: number
   onPageChange: (page: number) => void
@@ -45,32 +29,6 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
     return items.slice(startIndex, startIndex + pageSize)
   }
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return 'bg-yellow-100 text-yellow-800'
-      case 'APPROVED':
-        return 'bg-green-100 text-green-800'
-      case 'REJECTED':
-        return 'bg-red-100 text-red-800'
-      default:
-        return 'bg-gray-100 text-gray-800'
-    }
-  }
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'PENDING':
-        return '대기중'
-      case 'APPROVED':
-        return '승인됨'
-      case 'REJECTED':
-        return '거부됨'
-      default:
-        return status
-    }
-  }
-
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < totalPages) {
       onPageChange(newPage)
@@ -78,7 +36,6 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
   }
 
   const isBoard = type === 'board'
-  const typeLabel = isBoard ? '게시글' : '댓글'
   const idLabel = isBoard ? '신고된 게시글 ID' : '신고된 댓글 ID'
 
   return (
@@ -94,14 +51,14 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-200">
-              <th className="text-left py-3 px-4 font-medium text-gray-700">ID</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-700">{idLabel}</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-700">내용</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-700">신고 이유</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-700">신고자</th>
-              <th className="text-left py-3 px-4 font-medium text-gray-700">신고일</th>
-            </tr>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">ID</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">{idLabel}</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">내용</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">신고 이유</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">신고자 ID</th>
+                  <th className="text-left py-3 px-4 font-medium text-gray-700">상태</th>
+                </tr>
           </thead>
           <tbody>
             {getPaginatedItems(currentPage).map((item, index) => (
@@ -113,15 +70,14 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
                 )}
               >
                 <td className="py-3 px-4 text-gray-800 font-medium">{item.id}</td>
-                <td className="py-3 px-4 text-gray-700">{item.reportedId}</td>
+                <td className="py-3 px-4 text-gray-700">{item.targetId}</td>
                 <td className="py-3 px-4">
-                  <div className="max-w-xs truncate" title={item.content}>
-                    {item.content}
+                  <div className="max-w-xs truncate" title={item.targetContent}>
+                    {item.targetContent}
                   </div>
                 </td>
                 <td className="py-3 px-4 text-gray-700">{item.reason}</td>
-                <td className="py-3 px-4 text-gray-700">{item.reporterName}</td>
-                <td className="py-3 px-4 text-gray-600">{item.reportedAt}</td>
+                <td className="py-3 px-4 text-gray-700">{item.reporterId}</td>
               </tr>
             ))}
           </tbody>

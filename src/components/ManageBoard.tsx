@@ -2,142 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { ReportedBoard } from './ReportedBoard'
+import { BoardEditModal } from './BoardEditModal'
 import ENDPOINTS from '../api/endpoints'
 import axios from 'axios'
 import clsx from 'clsx'
-
-interface BoardPost {
-  boardId: number
-  userId: number
-  title: string
-  content: string
-  category: string
-  answers: Answer[]
-  nickname: string
-  profileImg: string
-  selectedAnswerId: number
-  likeCount: number
-  equippedItems: EquippedItem[]
-}
-
-interface Answer {
-  id: number
-  content: string
-  createdAt: string
-  likeCount: number
-  reportCount: number
-  parentId: number
-  userId: number
-  nickname: string
-  profileImg: string
-  equippedItems: EquippedItem[]
-  likedByMe: boolean
-  selected: boolean
-}
-
-interface EquippedItem {
-  type: string
-  imageUrl: string
-}
-
-interface BoardPageData {
-  totalElements: number
-  totalPages: number
-  first: boolean
-  last: boolean
-  size: number
-  content: BoardPost[]
-  number: number
-  sort: any[]
-  numberOfElements: number
-  pageable: any
-  empty: boolean
-}
-
-// 신고된 게시글 타입 정의
-interface ReportedBoardItem {
-  id: number
-  reportedId: number
-  title: string
-  content: string
-  reason: string
-  reporterId: number
-  reporterName: string
-  status: 'PENDING' | 'APPROVED' | 'REJECTED'
-  reportedAt: string
-}
-
-// 신고된 댓글 타입 정의
-interface ReportedCommentItem {
-  id: number
-  reportedId: number
-  content: string
-  reason: string
-  reporterId: number
-  reporterName: string
-  status: 'PENDING' | 'APPROVED' | 'REJECTED'
-  reportedAt: string
-}
-
-
-const mockReportedBoards: ReportedBoardItem[] = [
-  {
-    id: 1,
-    reportedId: 5,
-    title: "부적절한 제목의 게시글",
-    content: "부적절한 내용이 포함된 게시글입니다.",
-    reason: "욕설 사용",
-    reporterId: 10,
-    reporterName: "신고자1",
-    status: 'PENDING',
-    reportedAt: "2024-01-25"
-  },
-  {
-    id: 2,
-    reportedId: 8,
-    title: "스팸성 게시글",
-    content: "반복적인 광고 내용이 포함된 게시글입니다.",
-    reason: "스팸",
-    reporterId: 12,
-    reporterName: "신고자3",
-    status: 'APPROVED',
-    reportedAt: "2024-01-26"
-  },
-  {
-    id: 3,
-    reportedId: 12,
-    title: "개인정보 노출 게시글",
-    content: "다른 사람의 개인정보가 포함된 게시글입니다.",
-    reason: "개인정보 노출",
-    reporterId: 15,
-    reporterName: "신고자4",
-    status: 'REJECTED',
-    reportedAt: "2024-01-27"
-  }
-]
-
-const mockReportedComments: ReportedCommentItem[] = [
-  {
-    id: 1,
-    reportedId: 15,
-    content: "부적절한 댓글 내용입니다. 욕설이 포함되어 있어요.",
-    reason: "욕설 사용",
-    reporterId: 11,
-    reporterName: "신고자2",
-    status: 'PENDING',
-    reportedAt: "2024-01-26"
-  },
-  {
-    id: 2,
-    reportedId: 23,
-    content: "스팸 댓글 내용",
-    reason: "스팸",
-    reporterId: 13,
-    reporterName: "신고자5",
-    status: 'PENDING',
-    reportedAt: "2024-01-28"
-  }
-]
+import { BoardPageData } from '../types/board'
+import { AdminReportsResponse, BoardUpdateRequest } from '../types/admin'
 
 export const ManageBoard = () => {
   const res = useResponsiveStore((state) => state.res)
@@ -149,9 +19,29 @@ export const ManageBoard = () => {
   const [reportedCommentsPage, setReportedCommentsPage] = useState(0)
   
   const [boardData, setBoardData] = useState<BoardPageData | null>(null)
+  const [reportedBoardsData, setReportedBoardsData] = useState<AdminReportsResponse | null>(null)
+  const [reportedCommentsData, setReportedCommentsData] = useState<AdminReportsResponse | null>(null)
   const [loading, setLoading] = useState(false)
+  const [reportsLoading, setReportsLoading] = useState(false)
   
-  const pageSize = 9 
+  // 게시글 수정 모달 상태
+  const [editModalState, setEditModalState] = useState<{
+    isOpen: boolean
+    boardId: number | null
+    initialData: {
+      title: string
+      content: string
+      category: string
+      anonymous: boolean
+    } | null
+  }>({
+    isOpen: false,
+    boardId: null,
+    initialData: null,
+  })
+  
+  const pageSize = 9
+  const reportsPageSize = 10 
 
   // 게시글 목록 조회
   const fetchBoardPosts = async (page: number) => {
@@ -181,16 +71,180 @@ export const ManageBoard = () => {
     }
   }
 
+  // 신고된 게시글 목록 조회
+  const fetchReportedBoards = async (page: number) => {
+    setReportsLoading(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      const response = await axios.get(
+        ENDPOINTS.ADMIN_REPORTS_LIST('BOARD', page, reportsPageSize),
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      console.log('신고된 게시글 목록 API 응답:', response.data)
+      setReportedBoardsData(response.data)
+      setReportsLoading(false)
+      
+    } catch (error) {
+      console.error('신고된 게시글 목록 조회 실패:', error)
+      setReportedBoardsData(null)
+      setReportsLoading(false)
+    }
+  }
+
+  // 신고된 댓글 목록 조회
+  const fetchReportedComments = async (page: number) => {
+    setReportsLoading(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      const response = await axios.get(
+        ENDPOINTS.ADMIN_REPORTS_LIST('ANSWER', page, reportsPageSize),
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      console.log('신고된 댓글 목록 API 응답:', response.data)
+      setReportedCommentsData(response.data)
+      setReportsLoading(false)
+      
+    } catch (error) {
+      console.error('신고된 댓글 목록 조회 실패:', error)
+      setReportedCommentsData(null)
+      setReportsLoading(false)
+    }
+  }
+
   useEffect(() => {
     fetchBoardPosts(currentPage)
   }, [currentPage])
 
-  const totalReportedBoardsPages = Math.ceil(mockReportedBoards.length / pageSize)
-  const totalReportedCommentsPages = Math.ceil(mockReportedComments.length / pageSize)
+  useEffect(() => {
+    if (activeTab === 'reportedBoards') {
+      fetchReportedBoards(reportedBoardsPage)
+    }
+  }, [activeTab, reportedBoardsPage])
+
+  useEffect(() => {
+    if (activeTab === 'reportedComments') {
+      fetchReportedComments(reportedCommentsPage)
+    }
+  }, [activeTab, reportedCommentsPage])
 
   const handlePostPageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < (boardData?.totalPages || 0)) {
       setCurrentPage(newPage)
+    }
+  }
+
+  const handleReportedBoardsPageChange = (newPage: number) => {
+    if (newPage >= 0 && newPage < (reportedBoardsData?.totalPages || 0)) {
+      setReportedBoardsPage(newPage)
+    }
+  }
+
+  const handleReportedCommentsPageChange = (newPage: number) => {
+    if (newPage >= 0 && newPage < (reportedCommentsData?.totalPages || 0)) {
+      setReportedCommentsPage(newPage)
+    }
+  }
+
+  // 게시글 수정 모달 열기
+  const openEditModal = (boardId: number, boardData: any) => {
+    setEditModalState({
+      isOpen: true,
+      boardId,
+      initialData: {
+        title: boardData.title,
+        content: boardData.content,
+        category: boardData.category,
+        anonymous: false, // 기본값
+      },
+    })
+  }
+
+  // 게시글 수정 모달 닫기
+  const closeEditModal = () => {
+    setEditModalState({
+      isOpen: false,
+      boardId: null,
+      initialData: null,
+    })
+  }
+
+  // 게시글 수정
+  const handleUpdateBoard = async (updateData: BoardUpdateRequest) => {
+    if (!editModalState.boardId) return
+
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      await axios.put(
+        ENDPOINTS.ADMIN_BOARD_UPDATE(editModalState.boardId),
+        updateData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      console.log('게시글 수정 성공:', updateData)
+      alert('게시글이 성공적으로 수정되었습니다.')
+      
+      // 현재 페이지 데이터 새로고침
+      fetchBoardPosts(currentPage)
+      closeEditModal()
+      
+    } catch (error) {
+      console.error('게시글 수정 실패:', error)
+      alert('게시글 수정에 실패했습니다.')
+    }
+  }
+
+  // 게시글 삭제
+  const handleDeleteBoard = async (boardId: number) => {
+    if (!confirm('정말로 이 게시글을 삭제하시겠습니까?')) {
+      return
+    }
+
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      await axios.delete(
+        ENDPOINTS.ADMIN_BOARD_DELETE(boardId),
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      console.log('게시글 삭제 성공:', boardId)
+      alert('게시글이 성공적으로 삭제되었습니다.')
+      
+      // 현재 페이지 데이터 새로고침
+      fetchBoardPosts(currentPage)
+      
+    } catch (error) {
+      console.error('게시글 삭제 실패:', error)
+      alert('게시글 삭제에 실패했습니다.')
     }
   }
 
@@ -218,7 +272,7 @@ export const ManageBoard = () => {
               : "text-gray-600 hover:text-gray-800"
           )}
         >
-          신고된 게시글 ({mockReportedBoards.length})
+          신고된 게시글 ({reportedBoardsData?.totalElements || 0})
         </button>
         <button
           onClick={() => setActiveTab('reportedComments')}
@@ -229,7 +283,7 @@ export const ManageBoard = () => {
               : "text-gray-600 hover:text-gray-800"
           )}
         >
-          신고된 댓글 ({mockReportedComments.length})
+          신고된 댓글 ({reportedCommentsData?.totalElements || 0})
         </button>
       </div>
 
@@ -292,10 +346,16 @@ export const ManageBoard = () => {
                       <td className="py-3 px-4 text-gray-600">{post.likeCount}</td>
                       <td className="py-3 px-4">
                         <div className="flex gap-2">
-                          <button className="px-3 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors">
+                          <button 
+                            onClick={() => openEditModal(post.boardId, post)}
+                            className="px-3 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100 transition-colors"
+                          >
                             수정
                           </button>
-                          <button className="px-3 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors">
+                          <button 
+                            onClick={() => handleDeleteBoard(post.boardId)}
+                            className="px-3 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
+                          >
                             삭제
                           </button>
                         </div>
@@ -349,25 +409,72 @@ export const ManageBoard = () => {
 
       {/* 신고된 게시글 목록 탭 */}
       {activeTab === 'reportedBoards' && (
-        <ReportedBoard
-          items={mockReportedBoards}
-          currentPage={reportedBoardsPage}
-          totalPages={totalReportedBoardsPages}
-          onPageChange={setReportedBoardsPage}
-          type="board"
-        />
+        <>
+          {/* 로딩 */}
+          {reportsLoading && (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mainColor"></div>
+            </div>
+          )}
+
+          {/* 신고된 게시글 목록 */}
+          {!reportsLoading && reportedBoardsData && (
+            <ReportedBoard
+              items={reportedBoardsData.content}
+              currentPage={reportedBoardsPage}
+              totalPages={reportedBoardsData.totalPages}
+              onPageChange={handleReportedBoardsPageChange}
+              type="board"
+            />
+          )}
+
+          {/* 빈 데이터 */}
+          {!reportsLoading && reportedBoardsData && reportedBoardsData.empty && (
+            <div className="text-center py-8 text-gray-500">
+              신고된 게시글이 없습니다.
+            </div>
+          )}
+        </>
       )}
 
       {/* 신고된 댓글 목록 탭 */}
       {activeTab === 'reportedComments' && (
-        <ReportedBoard
-          items={mockReportedComments}
-          currentPage={reportedCommentsPage}
-          totalPages={totalReportedCommentsPages}
-          onPageChange={setReportedCommentsPage}
-          type="comment"
-        />
+        <>
+          {/* 로딩 */}
+          {reportsLoading && (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-mainColor"></div>
+            </div>
+          )}
+
+          {/* 신고된 댓글 목록 */}
+          {!reportsLoading && reportedCommentsData && (
+            <ReportedBoard
+              items={reportedCommentsData.content}
+              currentPage={reportedCommentsPage}
+              totalPages={reportedCommentsData.totalPages}
+              onPageChange={handleReportedCommentsPageChange}
+              type="comment"
+            />
+          )}
+
+          {/* 빈 데이터 */}
+          {!reportsLoading && reportedCommentsData && reportedCommentsData.empty && (
+            <div className="text-center py-8 text-gray-500">
+              신고된 댓글이 없습니다.
+            </div>
+          )}
+        </>
       )}
+
+      {/* 게시글 수정 모달 */}
+      <BoardEditModal
+        isOpen={editModalState.isOpen}
+        onClose={closeEditModal}
+        onSave={handleUpdateBoard}
+        initialData={editModalState.initialData || undefined}
+        boardId={editModalState.boardId || 0}
+      />
     </div>
   )
 }
