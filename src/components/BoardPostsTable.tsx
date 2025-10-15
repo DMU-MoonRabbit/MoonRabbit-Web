@@ -11,7 +11,6 @@ interface BoardPostsTableProps {
   onPageChange: (page: number) => void
   onEdit: (boardId: number, boardData: any) => void
   onDelete: (boardId: number) => void
-  onViewReports: (boardId: number) => void
 }
 
 export const BoardPostsTable: React.FC<BoardPostsTableProps> = ({
@@ -21,7 +20,6 @@ export const BoardPostsTable: React.FC<BoardPostsTableProps> = ({
   onPageChange,
   onEdit,
   onDelete,
-  onViewReports,
 }) => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
@@ -95,12 +93,6 @@ export const BoardPostsTable: React.FC<BoardPostsTableProps> = ({
                         className="px-3 py-1 text-xs bg-red-50 text-red-600 rounded hover:bg-red-100 transition-colors"
                       >
                         삭제
-                      </button>
-                      <button
-                        onClick={() => onViewReports(post.boardId)}
-                        className='px-3 py-1 text-xs bg-green-50 text-green-600 rounded hover:bg-green-100 transition-colors'
-                      >
-                        신고 조회
                       </button>
                     </div>
                   </td>

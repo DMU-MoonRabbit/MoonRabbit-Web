@@ -12,7 +12,6 @@ export const useManageBoardAPI = () => {
     setReportedCommentsData,
     setLoading,
     setReportsLoading,
-    setReportedBoardsDataTarget,
   } = useManageBoardStore()
 
   const {
@@ -204,34 +203,6 @@ export const useManageBoardAPI = () => {
     } catch (error) {
       console.error('게시글 삭제 실패:', error)
       throw error
-    }
-  }
-
-  // 신고된 게시글 목록 조회
-  const fetchReportedBoardsTarget = async (boardId: number, page: number) => {
-    setReportsLoading(true)
-    try {
-      const token = localStorage.getItem('accessToken')
-      
-      const response = await axios.get(
-        ENDPOINTS.ADMIN_REPORTS_TARGET(boardId, page, reportsPageSize),
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
-      
-      console.log('특정 게시글 신고 조회 API 응답:', response.data)
-      setReportedBoardsDataTarget(response.data)
-      setReportsLoading(false)
-      
-    } catch (error) {
-      console.error('특정 게시글 신고 조회 실패:', error)
-      setReportedBoardsDataTarget(null)
-      setReportsLoading(false)
     }
   }
 
