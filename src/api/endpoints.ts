@@ -36,6 +36,8 @@ export const ENDPOINTS = {
   // 오늘의 질문 (Daily Question) - 새로운 API
   DAILY_QUESTION: `${BASE_URL}/daily/question`,
   DAILY_ANSWER: `${BASE_URL}/daily/answer`,
+  DAILY_ANSWER_ME: `${BASE_URL}/daily/answer/me`,
+  DAILY_HISTORY: (page = 0, size = 10) => `${BASE_URL}/daily/history?page=${page}&size=${size}`,
 
   // 좋아요(Likes)
   BOARD_LIKES_MY: `${BASE_URL}/likes/board-my`,

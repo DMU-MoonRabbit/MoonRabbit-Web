@@ -37,3 +37,16 @@ export interface DailyAnswerResponse {
   answerContent: string
   answeredAt: string
 }
+
+// 답변 히스토리 응답 타입
+export interface DailyAnswerHistoryResponse {
+  totalElements: number
+  totalPages: number
+  first: boolean
+  last: boolean
+  size: number
+  content: DailyAnswerResponse[]
+  number: number
+  numberOfElements: number
+  empty: boolean
+}

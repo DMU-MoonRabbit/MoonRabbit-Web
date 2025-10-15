@@ -27,8 +27,48 @@ export const useQuestionCards = () => {
       }
     }
 
+    const fetchMyAnswer = async () => {
+      const token = localStorage.getItem('accessToken')
+      if (!token) return
+
+      try {
+        const response = await axios.get<DailyAnswerResponse>(
+          ENDPOINTS.DAILY_ANSWER_ME,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            },
+            withCredentials: true
+          }
+        )
+        
+        if (response.data) {
+          setMyAnswer(response.data)
+          
+          // 답변 카드에도 추가
+          const newCard: QuestionCard = {
+            type: 'text',
+            content: response.data.answerContent,
+            answerId: response.data.answerId,
+            nickname: nickname || '익명',
+            answeredAt: response.data.answeredAt,
+            isMyAnswer: true
+          }
+          setQuestionCards([newCard])
+        }
+      } catch (error) {
+        // 404 에러는 답변이 없는 경우이므로 무시
+        if (axios.isAxiosError(error) && error.response?.status === 404) {
+          console.log('오늘 작성한 답변이 없습니다.')
+        } else {
+          console.error('내 답변 조회 실패:', error)
+        }
+      }
+    }
+
     fetchTodayQuestion()
-  }, [])
+    fetchMyAnswer()
+  }, [nickname])
 
   const handleLikeClick = (cardIndex: number) => {
     if (likedCards.has(cardIndex)) {
