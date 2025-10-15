@@ -11,9 +11,11 @@ interface ManageBoardState {
   boardData: BoardPageData | null
   reportedBoardsData: AdminReportsResponse | null
   reportedCommentsData: AdminReportsResponse | null
+  reportedBoardsDataTarget: AdminReportsResponse | null
   setBoardData: (data: BoardPageData | null) => void
   setReportedBoardsData: (data: AdminReportsResponse | null) => void
   setReportedCommentsData: (data: AdminReportsResponse | null) => void
+  setReportedBoardsDataTarget: (data: AdminReportsResponse | null) => void
 
   // 로딩 상태
   loading: boolean
@@ -63,9 +65,11 @@ export const useManageBoardStore = create<ManageBoardState>((set, get) => ({
   boardData: null,
   reportedBoardsData: null,
   reportedCommentsData: null,
+  reportedBoardsDataTarget: null,
   setBoardData: (data) => set({ boardData: data }),
   setReportedBoardsData: (data) => set({ reportedBoardsData: data }),
   setReportedCommentsData: (data) => set({ reportedCommentsData: data }),
+  setReportedBoardsDataTarget: (data) => set({ reportedBoardsDataTarget: data }),
 
   // 로딩 상태
   loading: false,

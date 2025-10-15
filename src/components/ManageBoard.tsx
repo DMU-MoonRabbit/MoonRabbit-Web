@@ -36,7 +36,7 @@ export const ManageBoard = () => {
   } = usePaginationStore()
   
   // API Hook 사용
-  const { fetchBoardPosts, updateBoard, deleteBoard } = useManageBoardAPI()
+  const { fetchBoardPosts, updateBoard, deleteBoard, fetchReportedBoardsTarget } = useManageBoardAPI()
 
   const handlePostPageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < (boardData?.totalPages || 0)) {
@@ -101,6 +101,11 @@ export const ManageBoard = () => {
     }
   }
 
+  const handleViewReports = (boardId: number) => {
+    const reportedBoardsDataTarget = fetchReportedBoardsTarget(boardId, reportedBoardsPage)
+    console.log(reportedBoardsDataTarget)
+  }
+
   return (
     <div className={clsx("bg-white rounded-lg shadow-sm", isMobile ? "p-4" : "p-6")}>
       {/* 탭 헤더 */}
@@ -149,6 +154,7 @@ export const ManageBoard = () => {
           onPageChange={handlePostPageChange}
           onEdit={handleOpenEditModal}
           onDelete={handleDeleteBoard}
+          onViewReports={handleViewReports}
         />
       )}
 
