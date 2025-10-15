@@ -3,7 +3,6 @@ import { useManageUsersStore } from "../stores/useManageUsersStore"
 import { usePaginationStore } from "../stores/usePaginationStore"
 import { useManageUsersAPI } from "../hooks/useManageUsersAPI"
 import { ManagePointModal } from "./ManagePointModal"
-import { UserReportsModal } from "./UserReportsModal"
 import { UsersTable } from "./UsersTable"
 
 export const ManageUsers = () => {
@@ -11,11 +10,8 @@ export const ManageUsers = () => {
     pageData,
     loading,
     editModalState,
-    reportsModalState,
     openEditModal,
     closeEditModal,
-    openReportsModal,
-    closeReportsModal,
   } = useManageUsersStore()
   
   const { usersPage, setUsersPage } = usePaginationStore()
@@ -53,10 +49,6 @@ export const ManageUsers = () => {
     openEditModal('trust', userId, userName, currentValue)
   }
 
-  const handleViewReports = (userId: number, userName: string) => {
-    openReportsModal(userId, userName)
-  }
-
   return(
     <div className="bg-white rounded-lg shadow-sm p-6">
       <UsersTable
@@ -66,7 +58,6 @@ export const ManageUsers = () => {
         onPageChange={handlePageChange}
         onEditPoint={handleEditPoint}
         onEditTrust={handleEditTrust}
-        onViewReports={handleViewReports}
       />
 
       {/* 포인트/신뢰도 수정 모달 */}
@@ -76,14 +67,6 @@ export const ManageUsers = () => {
         onSave={handleSave}
         title={`${editModalState.userName}님의 ${editModalState.type === 'point' ? '포인트' : '신뢰도'} 수정`}
         initialValue={editModalState.currentValue}
-      />
-
-      {/* 신고 내역 조회 모달 */}
-      <UserReportsModal
-        isOpen={reportsModalState.isOpen}
-        onClose={closeReportsModal}
-        userId={reportsModalState.userId || 0}
-        userName={reportsModalState.userName}
       />
     </div>
   )

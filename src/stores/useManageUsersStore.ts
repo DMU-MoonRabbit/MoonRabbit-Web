@@ -19,15 +19,6 @@ interface ManageUsersState {
   openEditModal: (type: 'point' | 'trust', userId: number, userName: string, currentValue: number) => void
   closeEditModal: () => void
 
-  // 신고 내역 조회 모달
-  reportsModalState: {
-    isOpen: boolean
-    userId: number | null
-    userName: string
-  }
-  openReportsModal: (userId: number, userName: string) => void
-  closeReportsModal: () => void
-
   // 초기화 함수
   reset: () => void
 }
@@ -66,27 +57,6 @@ export const useManageUsersStore = create<ManageUsersState>((set) => ({
     }
   }),
 
-  // 신고 내역 조회 모달
-  reportsModalState: {
-    isOpen: false,
-    userId: null,
-    userName: '',
-  },
-  openReportsModal: (userId, userName) => set({
-    reportsModalState: {
-      isOpen: true,
-      userId,
-      userName,
-    }
-  }),
-  closeReportsModal: () => set({
-    reportsModalState: {
-      isOpen: false,
-      userId: null,
-      userName: '',
-    }
-  }),
-
   // 초기화 함수
   reset: () => set({
     pageData: null,
@@ -98,11 +68,6 @@ export const useManageUsersStore = create<ManageUsersState>((set) => ({
       userName: '',
       currentValue: 0,
     },
-    reportsModalState: {
-      isOpen: false,
-      userId: null,
-      userName: '',
-    }
   })
 }))
 

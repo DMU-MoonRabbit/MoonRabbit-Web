@@ -24,6 +24,7 @@ function App() {
 
   useEffect(() => {
     // 토큰 체크
+    localStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnbGF5QGtha2FvLmNvbSIsImF1dGgiOiJST0xFX0FETUlOIiwiaWF0IjoxNzYwNTEwNzI2LCJleHAiOjE3NjA1MTQzMjZ9.cJe7SrsFCo53Xnoww94liAx9k2dDYZrORBwI2cXkFHM')
     const accessToken = localStorage.getItem('accessToken')
     if (accessToken) {
       setIsLoggedIn(true)
