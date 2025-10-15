@@ -43,6 +43,13 @@ export const ENDPOINTS = {
   // 기타 필요시 추가
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,
   
+  // 신고(Report) - /api prefix 없음
+  REPORT_CREATE: `https://moonrabbit-api.kro.kr/reports/create`,
+  REPORT_LIST_BY_TARGET: (targetId: number, type: 'BOARD' | 'ANSWER', page = 0, size = 10) => 
+    `https://moonrabbit-api.kro.kr/reports/${targetId}?type=${type}&page=${page}&size=${size}`,
+  REPORT_LIST_BY_TYPE: (type: 'BOARD' | 'ANSWER', page = 0, size = 10) => 
+    `https://moonrabbit-api.kro.kr/reports/list?type=${type}&page=${page}&size=${size}`,
+  
   // 관리자(Admin)
   ADMIN_USERS: (page = 0, size = 10) => `${BASE_URL}/admin/users?page=${page}&size=${size}`,
   ADMIN_USER_UPDATE_POINT: (userId: number, newPoint: number) => `${BASE_URL}/admin/users/${userId}/point?point=${newPoint}`,
