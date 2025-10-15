@@ -9,6 +9,8 @@ export const useQuestionCards = () => {
   const [loading, setLoading] = useState(true)
   const [likedCards, setLikedCards] = useState<Set<number>>(new Set())
   const [submitting, setSubmitting] = useState(false)
+  const [myAnswer, setMyAnswer] = useState<DailyAnswerResponse | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
 
   useEffect(() => {
     const fetchTodayQuestion = async () => {
@@ -41,17 +43,21 @@ export const useQuestionCards = () => {
   const submitAnswer = async (answer: string): Promise<DailyAnswerResponse | null> => {
     setSubmitting(true)
     try {
+      const token = localStorage.getItem('accessToken')
       const requestData: DailyAnswerRequest = { answer }
       const response = await axios.post<DailyAnswerResponse>(
         ENDPOINTS.DAILY_ANSWER,
         requestData,
         {
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            Authorization: token ? `Bearer ${token}` : ''
           },
           withCredentials: true // 인증 필요
         }
       )
+      setMyAnswer(response.data)
+      setIsEditing(false)
       return response.data
     } catch (error) {
       console.error('답변 제출 실패:', error)
@@ -61,6 +67,14 @@ export const useQuestionCards = () => {
     }
   }
 
+  const startEditing = () => {
+    setIsEditing(true)
+  }
+
+  const cancelEditing = () => {
+    setIsEditing(false)
+  }
+
   return {
     todayQuestion,
     loading,
@@ -68,6 +82,10 @@ export const useQuestionCards = () => {
     handleLikeClick,
     questionCards: mockQuestionCards,
     submitAnswer,
-    submitting
+    submitting,
+    myAnswer,
+    isEditing,
+    startEditing,
+    cancelEditing
   }
 }
