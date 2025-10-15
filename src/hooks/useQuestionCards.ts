@@ -2,15 +2,18 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { ENDPOINTS } from '../api/endpoints'
 import { DailyQuestion, DailyAnswerRequest, DailyAnswerResponse } from '../types/question'
-import { mockQuestionCards } from '../types/questionCard'
+import { QuestionCard } from '../types/questionCard'
+import useUserStore from '../stores/useUserStore'
 
 export const useQuestionCards = () => {
+  const { nickname } = useUserStore()
   const [todayQuestion, setTodayQuestion] = useState<DailyQuestion | null>(null)
   const [loading, setLoading] = useState(true)
   const [likedCards, setLikedCards] = useState<Set<number>>(new Set())
   const [submitting, setSubmitting] = useState(false)
   const [myAnswer, setMyAnswer] = useState<DailyAnswerResponse | null>(null)
   const [isEditing, setIsEditing] = useState(false)
+  const [questionCards, setQuestionCards] = useState<QuestionCard[]>([])
 
   useEffect(() => {
     const fetchTodayQuestion = async () => {
@@ -56,9 +59,26 @@ export const useQuestionCards = () => {
           withCredentials: true // 인증 필요
         }
       )
-      setMyAnswer(response.data)
+      
+      const answerData = response.data
+      setMyAnswer(answerData)
       setIsEditing(false)
-      return response.data
+      
+      // 기존 내 답변이 있으면 제거하고 새로운 답변을 맨 앞에 추가
+      setQuestionCards(prev => {
+        const filteredCards = prev.filter(card => !card.isMyAnswer)
+        const newCard: QuestionCard = {
+          type: 'text',
+          content: answerData.answerContent,
+          answerId: answerData.answerId,
+          nickname: nickname || '익명',
+          answeredAt: answerData.answeredAt,
+          isMyAnswer: true
+        }
+        return [newCard, ...filteredCards]
+      })
+      
+      return answerData
     } catch (error) {
       console.error('답변 제출 실패:', error)
       return null
@@ -80,7 +100,7 @@ export const useQuestionCards = () => {
     loading,
     likedCards,
     handleLikeClick,
-    questionCards: mockQuestionCards,
+    questionCards,
     submitAnswer,
     submitting,
     myAnswer,
