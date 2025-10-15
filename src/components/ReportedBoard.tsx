@@ -21,12 +21,6 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
 }) => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
-  const pageSize = 10
-
-  const getPaginatedItems = (page: number) => {
-    const startIndex = page * pageSize
-    return items.slice(startIndex, startIndex + pageSize)
-  }
 
   const isBoard = type === 'board'
   const idLabel = isBoard ? '신고된 게시글 ID' : '신고된 댓글 ID'
@@ -54,7 +48,7 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
                 </tr>
           </thead>
           <tbody>
-            {getPaginatedItems(currentPage).map((item, index) => (
+            {items.map((item, index) => (
               <tr 
                 key={item.id} 
                 className={clsx(
@@ -71,6 +65,16 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
                 </td>
                 <td className="py-3 px-4 text-gray-700">{item.reason}</td>
                 <td className="py-3 px-4 text-gray-700">{item.reporterId}</td>
+                <td className="py-3 px-4">
+                  <span className={clsx(
+                    "px-2 py-1 rounded-full text-xs font-medium",
+                    item.status === 'PENDING' && "bg-yellow-100 text-yellow-800",
+                    item.status === 'APPROVED' && "bg-green-100 text-green-800",
+                    item.status === 'REJECTED' && "bg-red-100 text-red-800"
+                  )}>
+                    {item.status === 'PENDING' ? '대기' : item.status === 'APPROVED' ? '승인' : '거부'}
+                  </span>
+                </td>
               </tr>
             ))}
           </tbody>

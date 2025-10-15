@@ -56,17 +56,17 @@ export const useManageBoardAPI = () => {
     setReportsLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
+      const url = ENDPOINTS.REPORT_LIST_BY_TYPE('BOARD', page, reportsPageSize)
       
-      const response = await axios.get(
-        ENDPOINTS.ADMIN_REPORTS_LIST('BOARD', page, reportsPageSize),
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
+      console.log('신고된 게시글 목록 조회 URL:', url)
+      
+      const response = await axios.get(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      })
       
       console.log('신고된 게시글 목록 API 응답:', response.data)
       setReportedBoardsData(response.data)
@@ -74,7 +74,31 @@ export const useManageBoardAPI = () => {
       
     } catch (error) {
       console.error('신고된 게시글 목록 조회 실패:', error)
-      setReportedBoardsData(null)
+      if (axios.isAxiosError(error)) {
+        console.error('에러 응답:', error.response?.data)
+        console.error('에러 상태:', error.response?.status)
+      }
+      // 빈 데이터로 설정
+      setReportedBoardsData({
+        totalElements: 0,
+        totalPages: 0,
+        first: true,
+        last: true,
+        size: reportsPageSize,
+        content: [],
+        number: page,
+        sort: [],
+        numberOfElements: 0,
+        pageable: {
+          offset: page * reportsPageSize,
+          sort: [],
+          pageNumber: page,
+          pageSize: reportsPageSize,
+          paged: true,
+          unpaged: false
+        },
+        empty: true
+      })
       setReportsLoading(false)
     }
   }
@@ -84,17 +108,17 @@ export const useManageBoardAPI = () => {
     setReportsLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
+      const url = ENDPOINTS.REPORT_LIST_BY_TYPE('ANSWER', page, reportsPageSize)
       
-      const response = await axios.get(
-        ENDPOINTS.ADMIN_REPORTS_LIST('ANSWER', page, reportsPageSize),
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
+      console.log('신고된 댓글 목록 조회 URL:', url)
+      
+      const response = await axios.get(url, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      })
       
       console.log('신고된 댓글 목록 API 응답:', response.data)
       setReportedCommentsData(response.data)
@@ -102,7 +126,31 @@ export const useManageBoardAPI = () => {
       
     } catch (error) {
       console.error('신고된 댓글 목록 조회 실패:', error)
-      setReportedCommentsData(null)
+      if (axios.isAxiosError(error)) {
+        console.error('에러 응답:', error.response?.data)
+        console.error('에러 상태:', error.response?.status)
+      }
+      // 빈 데이터로 설정
+      setReportedCommentsData({
+        totalElements: 0,
+        totalPages: 0,
+        first: true,
+        last: true,
+        size: reportsPageSize,
+        content: [],
+        number: page,
+        sort: [],
+        numberOfElements: 0,
+        pageable: {
+          offset: page * reportsPageSize,
+          sort: [],
+          pageNumber: page,
+          pageSize: reportsPageSize,
+          paged: true,
+          unpaged: false
+        },
+        empty: true
+      })
       setReportsLoading(false)
     }
   }
@@ -175,12 +223,43 @@ export const useManageBoardAPI = () => {
     }
   }, [activeTab, reportedCommentsPage])
 
+  // 신고 생성
+  const createReport = async (reportData: {
+    reportTargetType: 'BOARD' | 'ANSWER'
+    targetId: number
+    reason: string
+  }) => {
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      await axios.post(
+        ENDPOINTS.REPORT_CREATE,
+        reportData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      console.log('신고 생성 성공:', reportData)
+      return true
+      
+    } catch (error) {
+      console.error('신고 생성 실패:', error)
+      throw error
+    }
+  }
+
   return {
     fetchBoardPosts,
     fetchReportedBoards,
     fetchReportedComments,
     updateBoard,
     deleteBoard,
+    createReport,
   }
 }
 

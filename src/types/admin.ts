@@ -94,3 +94,10 @@ export interface BoardUpdateRequest {
   category: string
   anonymous: boolean
 }
+
+// 신고 생성 요청 타입
+export interface ReportCreateRequest {
+  reportTargetType: 'BOARD' | 'ANSWER'
+  targetId: number
+  reason: string
+}
