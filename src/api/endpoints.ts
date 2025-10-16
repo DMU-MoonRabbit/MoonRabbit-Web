@@ -48,6 +48,9 @@ export const ENDPOINTS = {
   
   // 기타 필요시 추가
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,
+  
+  // 신고(Report)
+  REPORT_CREATE: `https://moonrabbit-api.kro.kr/reports/create`,
 };
 
 export default ENDPOINTS; 
