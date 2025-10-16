@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { ReportCreateRequest } from '../types/report'
 import MiniModal from './MiniModal'
+import axios from 'axios'
 
 interface ReportModalProps {
   isOpen: boolean
@@ -58,10 +59,32 @@ export const ReportModal: React.FC<ReportModalProps> = ({
         onClose()
       }, 1500)
     } catch (error) {
+      console.error('신고 제출 에러:', error)
+      
+      // 에러 유형별 세부 메시지 처리
       if (error instanceof Error && error.message.includes('로그인')) {
         showModal('error', '로그인 후 신고할 수 있습니다.')
+      } else if (axios.isAxiosError(error)) {
+        const status = error.response?.status
+        const message = error.response?.data?.message || error.response?.data?.error
+        
+        if (status === 400) {
+          showModal('error', message || '잘못된 신고 요청입니다. 신고 사유를 확인해주세요.')
+        } else if (status === 401 || status === 403) {
+          showModal('error', '로그인이 필요하거나 권한이 없습니다.')
+        } else if (status === 404) {
+          showModal('error', '신고 대상을 찾을 수 없습니다.')
+        } else if (status === 409) {
+          showModal('error', '이미 신고한 내용입니다.')
+        } else if (status === 429) {
+          showModal('error', '신고 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.')
+        } else if (status && status >= 500) {
+          showModal('error', '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+        } else {
+          showModal('error', message || '신고 접수에 실패했습니다. 다시 시도해주세요.')
+        }
       } else {
-        showModal('error', '신고 접수에 실패했습니다.')
+        showModal('error', '네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.')
       }
     } finally {
       setSubmitting(false)
