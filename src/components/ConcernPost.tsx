@@ -17,6 +17,7 @@ import { useResponsiveStore } from '../stores/useResponsiveStore'
 import ReportModal from './ReportModal'
 import { ReportCreateRequest } from '../types/report'
 import MiniModal from './MiniModal'
+import { useUserProfileStore } from '../stores/useUserProfileStore'
 
 // equippedItems에서 테두리와 닉네임 색상 추출하는 헬퍼 함수
 const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
@@ -54,6 +55,8 @@ export const ConcernContent: React.FC = () => {
   const getTotalCommentCount = (list: Comment[] = []): number =>
     list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []), 0)
   const totalCommentCount = getTotalCommentCount(comments)
+  
+  const { userProfile, fetchUserProfile } = useUserProfileStore()
 
   const { pageNumber } = useParams()
   const currentId = Number(pageNumber)
@@ -131,20 +134,32 @@ export const ConcernContent: React.FC = () => {
     }
 
     try {
-      // userId 가져오기
-      const userResponse = await axios.get(ENDPOINTS.USER_INFO, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        withCredentials: true
-      })
-      const userId = userResponse.data.id
+      // userProfile에서 userId 가져오기
+      let userId = userProfile?.id
+      
+      // 프로필이 로드되지 않았으면 먼저 로드
+      if (!userId) {
+        await fetchUserProfile()
+        userId = useUserProfileStore.getState().userProfile?.id
+      }
+
+      if (!userId) {
+        showModal('error', '사용자 정보를 불러올 수 없습니다.')
+        return
+      }
 
       const isCurrentlyLiked = concern.like
 
+      console.log('🔍 좋아요 요청:', {
+        boardId: concern.id,
+        userId,
+        isCurrentlyLiked,
+        url: ENDPOINTS.BOARD_LIKE(concern.id, userId)
+      })
+
       if (isCurrentlyLiked) {
         // 좋아요 취소
-        await axios.delete(
+        const response = await axios.delete(
           ENDPOINTS.BOARD_LIKE(concern.id, userId),
           {
             headers: {
@@ -153,9 +168,10 @@ export const ConcernContent: React.FC = () => {
             withCredentials: true
           }
         )
+        console.log('✅ 좋아요 취소 성공:', response.data)
       } else {
         // 좋아요 추가
-        await axios.post(
+        const response = await axios.post(
           ENDPOINTS.BOARD_LIKE(concern.id, userId),
           {},
           {
@@ -165,16 +181,33 @@ export const ConcernContent: React.FC = () => {
             withCredentials: true
           }
         )
+        console.log('✅ 좋아요 추가 성공:', response.data)
       }
 
       // 성공하면 로컬 상태 업데이트
       toggleConcernLike()
     } catch (error) {
-      console.error('좋아요 처리 실패:', error)
+      console.error('❌ 좋아요 처리 실패:', error)
       if (axios.isAxiosError(error)) {
         const status = error.response?.status
+        const errorData = error.response?.data
+        
+        console.error('에러 상세:', {
+          status,
+          statusText: error.response?.statusText,
+          data: errorData,
+          message: errorData?.message || errorData?.error
+        })
+        
         if (status === 401 || status === 403) {
           showModal('error', '로그인이 필요합니다.')
+        } else if (status === 500) {
+          const serverMessage = errorData?.message || errorData?.error
+          const errorCode = errorData?.code
+          const displayMessage = errorCode 
+            ? `${serverMessage} (오류코드: ${errorCode})\n잠시 후 다시 시도해주세요.`
+            : serverMessage || '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+          showModal('error', displayMessage)
         } else {
           showModal('error', '좋아요 처리에 실패했습니다.')
         }
