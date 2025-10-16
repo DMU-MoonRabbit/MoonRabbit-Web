@@ -10,6 +10,8 @@ import useUserStore from '../stores/useUserStore'
 import axios from 'axios'
 import { ENDPOINTS } from '../api/endpoints'
 import MiniModal from './MiniModal'
+import ReportModal from './ReportModal'
+import { ReportCreateRequest } from '../types/report'
 
 interface CommentItemProps {
   comment: Comment
@@ -45,6 +47,8 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     message: ''
   })
 
+  const [reportModalOpen, setReportModalOpen] = useState(false)
+
   const showModal = (type: 'success' | 'error', message: string) => {
     setModalState({ isOpen: true, type, message })
   }
@@ -60,6 +64,29 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     } else {
       showModal('error', '삭제에 실패했습니다.')
     }
+  }
+
+  // 신고 제출 함수
+  const handleReportSubmit = async (reportData: ReportCreateRequest) => {
+    const token = localStorage.getItem('accessToken')
+    if (!token) {
+      throw new Error('로그인 후 신고할 수 있습니다.')
+    }
+
+    const response = await axios.post(
+      ENDPOINTS.REPORT_CREATE,
+      reportData,
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      }
+    )
+
+    console.log('댓글 신고 제출 성공:', response.data)
+    return response.data
   }
 
   useEffect(() => {
@@ -138,6 +165,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               삭제하기
             </div>
           )}
+          {userId !== comment.userId && (
+            <div
+              className="mr-4 text-red-500 cursor-pointer"
+              onClick={() => setReportModalOpen(true)}
+            >
+              신고하기
+            </div>
+          )}
           <div onClick={() => toggleCommentLike(comment.id)} className="mr-2">
             <img
               src={comment.like ? Liked : Like}
@@ -168,6 +203,15 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         onClose={closeModal}
         type={modalState.type}
         message={modalState.message}
+      />
+
+      {/* 댓글 신고 모달 */}
+      <ReportModal
+        isOpen={reportModalOpen}
+        onClose={() => setReportModalOpen(false)}
+        onSubmit={handleReportSubmit}
+        targetType="ANSWER"
+        targetId={comment.id}
       />
     </>
   )
