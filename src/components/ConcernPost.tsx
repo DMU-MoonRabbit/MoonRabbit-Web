@@ -16,6 +16,7 @@ import { ENDPOINTS } from '../api/endpoints'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import ReportModal from './ReportModal'
 import { ReportCreateRequest } from '../types/report'
+import MiniModal from './MiniModal'
 
 // equippedItems에서 테두리와 닉네임 색상 추출하는 헬퍼 함수
 const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
@@ -77,6 +78,25 @@ export const ConcernContent: React.FC = () => {
   // 신고 모달 상태
   const [reportModalOpen, setReportModalOpen] = useState(false)
 
+  // 알림 모달 상태
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean
+    type: 'success' | 'error'
+    message: string
+  }>({
+    isOpen: false,
+    type: 'error',
+    message: ''
+  })
+
+  const showModal = (type: 'success' | 'error', message: string) => {
+    setModalState({ isOpen: true, type, message })
+  }
+
+  const closeModal = () => {
+    setModalState(prev => ({ ...prev, isOpen: false }))
+  }
+
   // 신고 제출 함수
   const handleReportSubmit = async (reportData: ReportCreateRequest) => {
     const token = localStorage.getItem('accessToken')
@@ -100,6 +120,68 @@ export const ConcernContent: React.FC = () => {
     return response.data
   }
 
+  // 좋아요 토글 함수
+  const handleLikeToggle = async () => {
+    if (!concern) return
+
+    const token = localStorage.getItem('accessToken')
+    if (!token) {
+      showModal('error', '로그인 후 좋아요를 누를 수 있습니다.')
+      return
+    }
+
+    try {
+      // userId 가져오기
+      const userResponse = await axios.get(ENDPOINTS.USER_INFO, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        withCredentials: true
+      })
+      const userId = userResponse.data.id
+
+      const isCurrentlyLiked = concern.like
+
+      if (isCurrentlyLiked) {
+        // 좋아요 취소
+        await axios.delete(
+          ENDPOINTS.BOARD_LIKE(concern.id, userId),
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            withCredentials: true
+          }
+        )
+      } else {
+        // 좋아요 추가
+        await axios.post(
+          ENDPOINTS.BOARD_LIKE(concern.id, userId),
+          {},
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            withCredentials: true
+          }
+        )
+      }
+
+      // 성공하면 로컬 상태 업데이트
+      toggleConcernLike()
+    } catch (error) {
+      console.error('좋아요 처리 실패:', error)
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status
+        if (status === 401 || status === 403) {
+          showModal('error', '로그인이 필요합니다.')
+        } else {
+          showModal('error', '좋아요 처리에 실패했습니다.')
+        }
+      }
+    }
+  }
+
   useEffect(() => {
     if (pageNumber) {
       const boardId = Number(pageNumber)
@@ -110,8 +192,13 @@ export const ConcernContent: React.FC = () => {
         )
         const data = response.data
         
+        console.log('🔍 게시글 상세 API 응답:', data) // 디버깅용
+        
         // equippedItems 파싱
         const { borderImageUrl, nicknameColor } = parseEquippedItems(data.equippedItems)
+        
+        // 좋아요 상태 확인 (API 응답에 likedByMe 또는 liked 필드가 있을 수 있음)
+        const isLiked = data.likedByMe || data.liked || false
         
         const concern = {
           id: data.boardId,  // API는 boardId를 사용
@@ -122,7 +209,7 @@ export const ConcernContent: React.FC = () => {
           content: data.content,
           createdAt: data.createdAt || new Date().toISOString(),  // createdAt이 없으면 현재 시간
           answer: data.answers?.[0]?.content || '',  // answers 배열의 첫번째 답변
-          like: false,
+          like: isLiked,
           equippedItems: data.equippedItems || [],
           borderImageUrl,
           nicknameColor,
@@ -207,7 +294,7 @@ export const ConcernContent: React.FC = () => {
               loading="lazy"
               onClick={() => setReportModalOpen(true)}
             />
-              <div onClick={toggleConcernLike}>
+              <div onClick={handleLikeToggle}>
                 <img
                   src={concern?.like ? Liked : Like}
                   className="cursor-pointer h-[25px]"
@@ -234,6 +321,14 @@ export const ConcernContent: React.FC = () => {
         onSubmit={handleReportSubmit}
         targetType="BOARD"
         targetId={currentId}
+      />
+
+      {/* 알림 모달 */}
+      <MiniModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        type={modalState.type}
+        message={modalState.message}
       />
     </>
   )
