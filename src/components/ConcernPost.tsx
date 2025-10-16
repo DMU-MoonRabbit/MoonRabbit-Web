@@ -157,9 +157,11 @@ export const ConcernContent: React.FC = () => {
         url: ENDPOINTS.BOARD_LIKE(concern.id, userId)
       })
 
+      let response
+      
       if (isCurrentlyLiked) {
         // 좋아요 취소
-        const response = await axios.delete(
+        response = await axios.delete(
           ENDPOINTS.BOARD_LIKE(concern.id, userId),
           {
             headers: {
@@ -171,7 +173,7 @@ export const ConcernContent: React.FC = () => {
         console.log('✅ 좋아요 취소 성공:', response.data)
       } else {
         // 좋아요 추가
-        const response = await axios.post(
+        response = await axios.post(
           ENDPOINTS.BOARD_LIKE(concern.id, userId),
           {},
           {
@@ -184,8 +186,25 @@ export const ConcernContent: React.FC = () => {
         console.log('✅ 좋아요 추가 성공:', response.data)
       }
 
-      // 성공하면 로컬 상태 업데이트
-      toggleConcernLike()
+      // API 응답에서 업데이트된 상태 반영
+      // API가 전체 게시글 정보를 반환한다면 그것을 사용
+      if (response.data && typeof response.data === 'object') {
+        const updatedData = response.data
+        
+        // API 응답에 likedByMe나 liked 필드가 있는지 확인
+        const newLikeStatus = updatedData.likedByMe ?? updatedData.liked ?? !isCurrentlyLiked
+        
+        // concern 상태 업데이트
+        setConcern({
+          ...concern,
+          like: newLikeStatus
+        })
+        
+        console.log('📌 좋아요 상태 업데이트:', newLikeStatus)
+      } else {
+        // 응답이 없으면 토글만 실행
+        toggleConcernLike()
+      }
     } catch (error) {
       console.error('❌ 좋아요 처리 실패:', error)
       if (axios.isAxiosError(error)) {
@@ -220,9 +239,51 @@ export const ConcernContent: React.FC = () => {
       const boardId = Number(pageNumber)
       const fetchConcern = async() => {
       try {
-        const response = await axios.get(
-          ENDPOINTS.CONCERN_DETAIL(boardId),
-        )
+        const token = localStorage.getItem('accessToken')
+        let response
+        
+        try {
+          // 로그인 상태라면 토큰 포함하여 조회 (좋아요 상태 확인을 위해)
+          const headers: Record<string, string> = {}
+          if (token) {
+            headers['Authorization'] = `Bearer ${token}`
+          }
+          
+          response = await axios.get(
+            ENDPOINTS.CONCERN_DETAIL(boardId),
+            {
+              headers,
+              withCredentials: true
+            }
+          )
+        } catch (authError) {
+          // 토큰 관련 에러 (401, 403, U002 등)가 발생하면 토큰 없이 재시도
+          if (axios.isAxiosError(authError)) {
+            const errorCode = authError.response?.data?.code
+            const status = authError.response?.status
+            
+            if (status === 401 || status === 403 || errorCode === 'U002') {
+              console.warn('토큰이 유효하지 않습니다. 비로그인 상태로 조회합니다.')
+              // 유효하지 않은 토큰 제거
+              if (errorCode === 'U002') {
+                localStorage.removeItem('accessToken')
+              }
+              
+              // 토큰 없이 재시도
+              response = await axios.get(
+                ENDPOINTS.CONCERN_DETAIL(boardId),
+                {
+                  withCredentials: true
+                }
+              )
+            } else {
+              throw authError
+            }
+          } else {
+            throw authError
+          }
+        }
+        
         const data = response.data
         
         console.log('🔍 게시글 상세 API 응답:', data) // 디버깅용
@@ -230,8 +291,8 @@ export const ConcernContent: React.FC = () => {
         // equippedItems 파싱
         const { borderImageUrl, nicknameColor } = parseEquippedItems(data.equippedItems)
         
-        // 좋아요 상태 확인 (API 응답에 likedByMe 또는 liked 필드가 있을 수 있음)
-        const isLiked = data.likedByMe || data.liked || false
+        // 좋아요 상태 확인
+        const isLiked = data.likedByMe ?? data.liked ?? false
         
         const concern = {
           id: data.boardId,  // API는 boardId를 사용
