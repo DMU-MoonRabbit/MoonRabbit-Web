@@ -5,6 +5,8 @@ import StarBackground from '../components/StarBackground'
 import PageHeader from '../components/PageHeader'
 import MobileQuestionLayout from '../components/MobileQuestionLayout'
 import DesktopQuestionLayout from '../components/DesktopQuestionLayout'
+import DailyAnswerInput from '../components/DailyAnswerInput'
+import DailyAnswerDisplay from '../components/DailyAnswerDisplay'
 
 const TodayQuestionPage: React.FC = () => {
   const { res } = useResponsiveStore()
@@ -15,7 +17,12 @@ const TodayQuestionPage: React.FC = () => {
     loading, 
     likedCards, 
     handleLikeClick, 
-    questionCards 
+    questionCards,
+    submitAnswer,
+    submitting,
+    myAnswer,
+    isEditing,
+    startEditing
   } = useQuestionCards()
 
   return (
@@ -31,6 +38,24 @@ const TodayQuestionPage: React.FC = () => {
             {loading ? "질문을 불러오는 중..." : (todayQuestion?.content || "자신만의 스트레스 해소법은 뭔가요?")}
           </div>
         </div>
+
+        {/* 내 답변 섹션 */}
+        {!loading && (
+          <div className="mb-8 lg:mb-16 relative z-10">
+            {myAnswer && !isEditing ? (
+              <DailyAnswerDisplay
+                answer={myAnswer}
+                onEdit={startEditing}
+              />
+            ) : (
+              <DailyAnswerInput
+                onSubmit={submitAnswer}
+                submitting={submitting}
+                existingAnswer={myAnswer?.answerContent || ''}
+              />
+            )}
+          </div>
+        )}
 
         {/* 질문답변 카드 섹션 */}
         <div className="mb-8 relative z-10">

@@ -29,18 +29,51 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   const heartSize = isMobile ? "w-6 h-6" : "w-8 h-8"
   const heartPosition = "absolute bottom-1 right-1 z-20"
 
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+    
+    if (diffInHours < 1) {
+      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60))
+      return `${diffInMinutes}분 전`
+    } else if (diffInHours < 24) {
+      return `${diffInHours}시간 전`
+    } else {
+      const diffInDays = Math.floor(diffInHours / 24)
+      return `${diffInDays}일 전`
+    }
+  }
+
   return (
     <div 
       className={cardClasses}
       style={{ 
         backgroundImage: 'url("/images/ConcernBackground.png")',
-        boxShadow: 'rgb(71, 60, 44) 0px 0px 0px 2px inset'
+        boxShadow: card.isMyAnswer 
+          ? 'rgb(139, 92, 246) 0px 0px 0px 3px inset' // 내 답변은 보라색 테두리
+          : 'rgb(71, 60, 44) 0px 0px 0px 2px inset'
       }}
     >
-      <div className="relative z-10 w-full h-full flex items-center justify-center">
+      <div className="relative z-10 w-full h-full flex flex-col items-center justify-center">
         <div className={textClasses}>
           {card.content}
         </div>
+        
+        {/* 닉네임과 시간 표시 */}
+        {card.nickname && (
+          <div className="mt-3 flex items-center gap-2 text-sm font-gothicFont text-gray-600">
+            <span className={card.isMyAnswer ? "text-purple-600 font-semibold" : ""}>
+              {card.nickname}
+            </span>
+            {card.answeredAt && (
+              <>
+                <span>·</span>
+                <span>{formatDate(card.answeredAt)}</span>
+              </>
+            )}
+          </div>
+        )}
       </div>
       
       {/* 하트 좋아요 버튼 */}

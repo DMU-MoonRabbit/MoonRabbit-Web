@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore, useAuthFormStore } from '../stores/useAuthStore'
 import useUserStore from '../stores/useUserStore'
@@ -9,6 +9,7 @@ import GoogleLoginImg from '../assets/images/GoogleLogin.svg'
 import kakaoLoginImg from '../assets/images/KakaoLogin.png'
 import axios from 'axios'
 import { ENDPOINTS } from '../api/endpoints'
+import MiniModal from './MiniModal'
 
 export const LogoPanel = () => {
   const res = useResponsiveStore((state) => state.res)
@@ -43,6 +44,24 @@ export const LoginForm = () => {
 
   const navigate = useNavigate()
 
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean
+    type: 'success' | 'error'
+    message: string
+  }>({
+    isOpen: false,
+    type: 'error',
+    message: ''
+  })
+
+  const showModal = (type: 'success' | 'error', message: string) => {
+    setModalState({ isOpen: true, type, message })
+  }
+
+  const closeModal = () => {
+    setModalState(prev => ({ ...prev, isOpen: false }))
+  }
+
   const handleLogin = async () => {
     try {
       await axios.post(
@@ -65,51 +84,60 @@ export const LoginForm = () => {
       window.location.href = `https://moonrabbit-api.kro.kr/api/users/${platform}`
     } catch (error) {
       console.error('소셜 로그인 오류:', error)
-      alert('소셜 로그인에 실패했습니다.')
+      showModal('error', '소셜 로그인에 실패했습니다.')
     }
   }
 
   return (
-    <div
-      className={clsx(
-        'flex flex-col justify-center p-15 bg-white',
-        isMobile ? 'w-full' : 'w-4/7',
-      )}
-    >
-      <LoginFormHeader />
-
-      <LoginInputField
-        type="email"
-        placeholder="이메일 (e-mail)"
-        value={email}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-      />
-      <LoginInputField
-        type="password"
-        placeholder="비밀번호 (Password)"
-        value={password}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-      />
-      <div className="text-sm ml-[16px] mb-10">아이디 / 비밀번호 찾기</div>
-      <LoginButton onClick={handleLogin} className="mb-4 rounded-[10px]">
-        로그인 (Login)
-      </LoginButton>
+    <>
       <div
         className={clsx(
-          'flex gap-2',
-          isMobile ? 'flex-col' : 'lg:gap-4 px-0 flex-col lg:flex-row lg:px-4',
+          'flex flex-col justify-center p-15 bg-white',
+          isMobile ? 'w-full' : 'w-4/7',
         )}
       >
-        <SocialLogin
-          onClick={handleSNSLogin('google')}
-          SNSLoginImg={GoogleLoginImg}
+        <LoginFormHeader />
+
+        <LoginInputField
+          type="email"
+          placeholder="이메일 (e-mail)"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
         />
-        <SocialLogin
-          onClick={handleSNSLogin('kakao')}
-          SNSLoginImg={kakaoLoginImg}
+        <LoginInputField
+          type="password"
+          placeholder="비밀번호 (Password)"
+          value={password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
         />
+        <div className="text-sm ml-[16px] mb-10">아이디 / 비밀번호 찾기</div>
+        <LoginButton onClick={handleLogin} className="mb-4 rounded-[10px]">
+          로그인 (Login)
+        </LoginButton>
+        <div
+          className={clsx(
+            'flex gap-2',
+            isMobile ? 'flex-col' : 'lg:gap-4 px-0 flex-col lg:flex-row lg:px-4',
+          )}
+        >
+          <SocialLogin
+            onClick={handleSNSLogin('google')}
+            SNSLoginImg={GoogleLoginImg}
+          />
+          <SocialLogin
+            onClick={handleSNSLogin('kakao')}
+            SNSLoginImg={kakaoLoginImg}
+          />
+        </div>
       </div>
-    </div>
+
+      <MiniModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        type={modalState.type}
+        message={modalState.message}
+      />
+    </>
   )
 }
 
@@ -131,19 +159,37 @@ export const SignupForm = () => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean
+    type: 'success' | 'error'
+    message: string
+  }>({
+    isOpen: false,
+    type: 'error',
+    message: ''
+  })
+
+  const showModal = (type: 'success' | 'error', message: string) => {
+    setModalState({ isOpen: true, type, message })
+  }
+
+  const closeModal = () => {
+    setModalState(prev => ({ ...prev, isOpen: false }))
+  }
+
   const handleSignup = async () => {
     // 유효성 검사
     if (!email || !phoneNum || !verification || !password || !passwordConfirm) {
-      alert('모든 정보를 입력해주세요.')
+      showModal('error', '모든 정보를 입력해주세요.')
       return
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      alert('올바른 이메일 형식을 입력해주세요.')
+      showModal('error', '올바른 이메일 형식을 입력해주세요.')
       return
     }
     if (password !== passwordConfirm) {
-      alert('비밀번호가 일치하지 않습니다.')
+      showModal('error', '비밀번호가 일치하지 않습니다.')
       return
     }
 
@@ -158,8 +204,10 @@ export const SignupForm = () => {
           verification,
         },
       )
-      alert('회원가입이 완료되었습니다!')
-      setIsLogin(true)
+      showModal('success', '회원가입이 완료되었습니다!')
+      setTimeout(() => {
+        setIsLogin(true)
+      }, 1500)
     } catch (error) {
       console.error('에러:', error)
     }
@@ -175,62 +223,71 @@ export const SignupForm = () => {
   }
 
   return (
-    <div
-      className={clsx(
-        'flex flex-col justify-center p-15 bg-white',
-        isMobile ? 'w-full' : 'w-4/7',
-      )}
-    >
-      <LoginFormHeader />
+    <>
+      <div
+        className={clsx(
+          'flex flex-col justify-center p-15 bg-white',
+          isMobile ? 'w-full' : 'w-4/7',
+        )}
+      >
+        <LoginFormHeader />
 
-      <LoginInputField
-        type="email"
-        placeholder="이메일"
-        value={email}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-        className="mt-2"
-      />
-      <LoginInputField
-        type="string"
-        placeholder="전화번호"
-        value={phoneNum}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNum(e.target.value)}
-      />
-      <div className="flex gap-2">
+        <LoginInputField
+          type="email"
+          placeholder="이메일"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+          className="mt-2"
+        />
         <LoginInputField
           type="string"
-          placeholder="인증번호 확인"
-          value={verification}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVerification(e.target.value)}
+          placeholder="전화번호"
+          value={phoneNum}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNum(e.target.value)}
         />
+        <div className="flex gap-2">
+          <LoginInputField
+            type="string"
+            placeholder="인증번호 확인"
+            value={verification}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVerification(e.target.value)}
+          />
+          <LoginButton
+            onClick={handleVerification}
+            className="max-h-[42px] rounded-[5px] w-fit px-3 py-2 whitespace-nowrap"
+          >
+            인증번호 전송
+          </LoginButton>
+        </div>
+        <LoginInputField
+          type="password"
+          placeholder="비밀번호"
+          value={password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+        />
+        <LoginInputField
+          type="password"
+          placeholder="비밀번호 확인"
+          value={passwordConfirm}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordConfirm(e.target.value)}
+          className="mb-8"
+        />
+
         <LoginButton
-          onClick={handleVerification}
-          className="max-h-[42px] rounded-[5px] w-fit px-3 py-2 whitespace-nowrap"
+          onClick={handleSignup}
+          className="min-h-[56px] rounded-[10px]"
         >
-          인증번호 전송
+          회원가입
         </LoginButton>
       </div>
-      <LoginInputField
-        type="password"
-        placeholder="비밀번호"
-        value={password}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-      />
-      <LoginInputField
-        type="password"
-        placeholder="비밀번호 확인"
-        value={passwordConfirm}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordConfirm(e.target.value)}
-        className="mb-8"
-      />
 
-      <LoginButton
-        onClick={handleSignup}
-        className="min-h-[56px] rounded-[10px]"
-      >
-        회원가입
-      </LoginButton>
-    </div>
+      <MiniModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        type={modalState.type}
+        message={modalState.message}
+      />
+    </>
   )
 }
 

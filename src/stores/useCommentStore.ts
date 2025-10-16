@@ -62,7 +62,7 @@ interface CommentStore {
   replyContents: { [id: number]: string }
   setReplyContent: (id: number, content: string) => void
   toggleCommentLike: (id: number) => void
-  deleteComment: (commentId: number) => void
+  deleteComment: (commentId: number) => Promise<boolean>
 }
 
 function toggleLikeRecursive(comments: Comment[], id: number): Comment[] {
@@ -188,7 +188,7 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
 
   deleteComment: async (commentId: number) => {
     const token = localStorage.getItem('accessToken')
-    if (!token) return
+    if (!token) return false
 
     try {
       await axios.delete(
@@ -201,9 +201,10 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
       )
       const updatedComments = removeCommentRecursive(get().comments, commentId)
       set({ comments: updatedComments })
-      alert('삭제되었습니다!')
+      return true
     } catch (err) {
       console.error('댓글 삭제 실패', err)
+      return false
     }
   },
 }))
