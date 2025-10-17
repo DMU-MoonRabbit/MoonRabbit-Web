@@ -16,6 +16,8 @@ import { ENDPOINTS } from '../api/endpoints'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import ReportModal from './ReportModal'
 import { ReportCreateRequest } from '../types/report'
+import MiniModal from './MiniModal'
+import { useUserProfileStore } from '../stores/useUserProfileStore'
 
 // equippedItems에서 테두리와 닉네임 색상 추출하는 헬퍼 함수
 const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
@@ -53,6 +55,8 @@ export const ConcernContent: React.FC = () => {
   const getTotalCommentCount = (list: Comment[] = []): number =>
     list.reduce((acc, c) => acc + 1 + getTotalCommentCount(c.replies ?? []), 0)
   const totalCommentCount = getTotalCommentCount(comments)
+  
+  const { userProfile, fetchUserProfile } = useUserProfileStore()
 
   const { pageNumber } = useParams()
   const currentId = Number(pageNumber)
@@ -77,6 +81,25 @@ export const ConcernContent: React.FC = () => {
   // 신고 모달 상태
   const [reportModalOpen, setReportModalOpen] = useState(false)
 
+  // 알림 모달 상태
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean
+    type: 'success' | 'error'
+    message: string
+  }>({
+    isOpen: false,
+    type: 'error',
+    message: ''
+  })
+
+  const showModal = (type: 'success' | 'error', message: string) => {
+    setModalState({ isOpen: true, type, message })
+  }
+
+  const closeModal = () => {
+    setModalState(prev => ({ ...prev, isOpen: false }))
+  }
+
   // 신고 제출 함수
   const handleReportSubmit = async (reportData: ReportCreateRequest) => {
     const token = localStorage.getItem('accessToken')
@@ -100,18 +123,163 @@ export const ConcernContent: React.FC = () => {
     return response.data
   }
 
+  // 좋아요 토글 함수
+  const handleLikeToggle = async () => {
+    if (!concern) return
+
+    const token = localStorage.getItem('accessToken')
+    if (!token) {
+      showModal('error', '로그인 후 좋아요를 누를 수 있습니다.')
+      return
+    }
+
+    try {
+      // userProfile에서 userId 가져오기
+      let userId = userProfile?.id
+      
+      // 프로필이 로드되지 않았으면 먼저 로드
+      if (!userId) {
+        await fetchUserProfile()
+        userId = useUserProfileStore.getState().userProfile?.id
+      }
+
+      if (!userId) {
+        showModal('error', '사용자 정보를 불러올 수 없습니다.')
+        return
+      }
+
+      const isCurrentlyLiked = concern.like
+
+      let response
+      
+      if (isCurrentlyLiked) {
+        // 좋아요 취소
+        response = await axios.delete(
+          ENDPOINTS.BOARD_LIKE(concern.id, userId),
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            withCredentials: true
+          }
+        )
+      } else {
+        // 좋아요 추가
+        response = await axios.post(
+          ENDPOINTS.BOARD_LIKE(concern.id, userId),
+          {},
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            },
+            withCredentials: true
+          }
+        )
+      }
+
+      // API 응답에서 업데이트된 상태 반영
+      // API가 전체 게시글 정보를 반환한다면 그것을 사용
+      if (response.data && typeof response.data === 'object') {
+        const updatedData = response.data
+        
+        // API 응답에 likedByMe나 liked 필드가 있는지 확인
+        const newLikeStatus = updatedData.likedByMe ?? updatedData.liked ?? !isCurrentlyLiked
+        
+        // concern 상태 업데이트
+        setConcern({
+          ...concern,
+          like: newLikeStatus
+        })
+      } else {
+        // 응답이 없으면 토글만 실행
+        toggleConcernLike()
+      }
+    } catch (error) {
+      console.error('❌ 좋아요 처리 실패:', error)
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status
+        const errorData = error.response?.data
+        
+        console.error('에러 상세:', {
+          status,
+          statusText: error.response?.statusText,
+          data: errorData,
+          message: errorData?.message || errorData?.error
+        })
+        
+        if (status === 401 || status === 403) {
+          showModal('error', '로그인이 필요합니다.')
+        } else if (status === 500) {
+          const serverMessage = errorData?.message || errorData?.error
+          const errorCode = errorData?.code
+          const displayMessage = errorCode 
+            ? `${serverMessage} (오류코드: ${errorCode})\n잠시 후 다시 시도해주세요.`
+            : serverMessage || '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.'
+          showModal('error', displayMessage)
+        } else {
+          showModal('error', '좋아요 처리에 실패했습니다.')
+        }
+      }
+    }
+  }
+
   useEffect(() => {
     if (pageNumber) {
       const boardId = Number(pageNumber)
       const fetchConcern = async() => {
       try {
-        const response = await axios.get(
-          ENDPOINTS.CONCERN_DETAIL(boardId),
-        )
+        const token = localStorage.getItem('accessToken')
+        let response
+        
+        try {
+          // 로그인 상태라면 토큰 포함하여 조회 (좋아요 상태 확인을 위해)
+          const headers: Record<string, string> = {}
+          if (token) {
+            headers['Authorization'] = `Bearer ${token}`
+          }
+          
+          response = await axios.get(
+            ENDPOINTS.CONCERN_DETAIL(boardId),
+            {
+              headers,
+              withCredentials: true
+            }
+          )
+        } catch (authError) {
+          // 토큰 관련 에러 (401, 403, U002 등)가 발생하면 토큰 없이 재시도
+          if (axios.isAxiosError(authError)) {
+            const errorCode = authError.response?.data?.code
+            const status = authError.response?.status
+            
+            if (status === 401 || status === 403 || errorCode === 'U002') {
+              console.warn('토큰이 유효하지 않습니다. 비로그인 상태로 조회합니다.')
+              // 유효하지 않은 토큰 제거
+              if (errorCode === 'U002') {
+                localStorage.removeItem('accessToken')
+              }
+              
+              // 토큰 없이 재시도
+              response = await axios.get(
+                ENDPOINTS.CONCERN_DETAIL(boardId),
+                {
+                  withCredentials: true
+                }
+              )
+            } else {
+              throw authError
+            }
+          } else {
+            throw authError
+          }
+        }
+        
         const data = response.data
         
         // equippedItems 파싱
         const { borderImageUrl, nicknameColor } = parseEquippedItems(data.equippedItems)
+        
+        // 좋아요 상태 확인
+        const isLiked = data.likedByMe ?? data.liked ?? false
         
         const concern = {
           id: data.boardId,  // API는 boardId를 사용
@@ -122,7 +290,7 @@ export const ConcernContent: React.FC = () => {
           content: data.content,
           createdAt: data.createdAt || new Date().toISOString(),  // createdAt이 없으면 현재 시간
           answer: data.answers?.[0]?.content || '',  // answers 배열의 첫번째 답변
-          like: false,
+          like: isLiked,
           equippedItems: data.equippedItems || [],
           borderImageUrl,
           nicknameColor,
@@ -207,7 +375,7 @@ export const ConcernContent: React.FC = () => {
               loading="lazy"
               onClick={() => setReportModalOpen(true)}
             />
-              <div onClick={toggleConcernLike}>
+              <div onClick={handleLikeToggle}>
                 <img
                   src={concern?.like ? Liked : Like}
                   className="cursor-pointer h-[25px]"
@@ -234,6 +402,14 @@ export const ConcernContent: React.FC = () => {
         onSubmit={handleReportSubmit}
         targetType="BOARD"
         targetId={currentId}
+      />
+
+      {/* 알림 모달 */}
+      <MiniModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        type={modalState.type}
+        message={modalState.message}
       />
     </>
   )

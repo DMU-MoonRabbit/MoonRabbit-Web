@@ -43,6 +43,7 @@ export interface Comment {
   likeCount: number
   reportCount: number
   like: boolean // 나중에 삭제
+  likedByMe?: boolean  // API에서 제공하는 좋아요 상태
   replies?: Comment[]  // optional로 변경
   equippedItems?: EquippedItem[]  // API에서 제공되는 장착 아이템
   borderImageUrl?: string  // 작성자의 장착 테두리
@@ -62,6 +63,7 @@ interface CommentStore {
   replyContents: { [id: number]: string }
   setReplyContent: (id: number, content: string) => void
   toggleCommentLike: (id: number) => void
+  updateComment: (id: number, updates: Partial<Comment>) => void
   deleteComment: (commentId: number) => Promise<boolean>
 }
 
@@ -102,6 +104,16 @@ function removeCommentRecursive(comments: Comment[], id: number): Comment[] {
       ...comment,
       replies: removeCommentRecursive(comment.replies ?? [], id),
     }))
+}
+
+function updateCommentRecursive(comments: Comment[], id: number, updates: Partial<Comment>): Comment[] {
+  return comments.map((comment) => {
+    if (comment.id === id) {
+      return { ...comment, ...updates }
+    }
+    const updatedReplies = updateCommentRecursive(comment.replies ?? [], id, updates)
+    return { ...comment, replies: updatedReplies }
+  })
 }
 
 // 댓글과 답글 구조 설정
@@ -184,6 +196,11 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
   toggleCommentLike: (id) =>
     set((state) => ({
       comments: toggleLikeRecursive(state.comments, id),
+    })),
+
+  updateComment: (id, updates) =>
+    set((state) => ({
+      comments: updateCommentRecursive(state.comments, id, updates),
     })),
 
   deleteComment: async (commentId: number) => {
