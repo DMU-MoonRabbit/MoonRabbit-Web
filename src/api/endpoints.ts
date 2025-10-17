@@ -48,6 +48,12 @@ export const ENDPOINTS = {
   
   // 기타 필요시 추가
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,
+  
+  // 신고(Report)
+  REPORT_CREATE: `https://moonrabbit-api.kro.kr/reports/api/create`,
+  
+  // 좋아요(Likes) - 게시글
+  BOARD_LIKE: (boardId: number, userId: number) => `${BASE_URL}/likes/${boardId}/board-like?boardId=${boardId}&userId=${userId}`,
 };
 
 export default ENDPOINTS; 
