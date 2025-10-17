@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import { AdminPagination } from './AdminPagination'
 import { Report } from '../types/admin'
@@ -19,11 +20,12 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
   onPageChange,
   type
 }) => {
+  const navigate = useNavigate()
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
   const isBoard = type === 'board'
-  const idLabel = isBoard ? '신고된 게시글 ID' : '신고된 댓글 ID'
+  const idLabel = isBoard ? '게시글 ID' : '댓글 ID'
 
   return (
     <>
@@ -44,7 +46,6 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
                   <th className="text-left py-3 px-4 font-medium text-gray-700">내용</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-700">신고 이유</th>
                   <th className="text-left py-3 px-4 font-medium text-gray-700">신고자 ID</th>
-                  <th className="text-left py-3 px-4 font-medium text-gray-700">상태</th>
                 </tr>
           </thead>
           <tbody>
@@ -59,22 +60,19 @@ export const ReportedBoard: React.FC<ReportedBoardProps> = ({
                 <td className="py-3 px-4 text-gray-800 font-medium">{item.id}</td>
                 <td className="py-3 px-4 text-gray-700">{item.targetId}</td>
                 <td className="py-3 px-4">
-                  <div className="max-w-xs truncate" title={item.targetContent}>
+                  <div 
+                    className={clsx(
+                      "max-w-xs truncate",
+                      isBoard && "cursor-pointer hover:text-mainColor transition-colors"
+                    )}
+                    title={item.targetContent}
+                    onClick={() => isBoard && navigate(`/night-sky/${item.targetId}`)}
+                  >
                     {item.targetContent}
                   </div>
                 </td>
                 <td className="py-3 px-4 text-gray-700">{item.reason}</td>
                 <td className="py-3 px-4 text-gray-700">{item.reporterId}</td>
-                <td className="py-3 px-4">
-                  <span className={clsx(
-                    "px-2 py-1 rounded-full text-xs font-medium",
-                    item.status === 'PENDING' && "bg-yellow-100 text-yellow-800",
-                    item.status === 'APPROVED' && "bg-green-100 text-green-800",
-                    item.status === 'REJECTED' && "bg-red-100 text-red-800"
-                  )}>
-                    {item.status === 'PENDING' ? '대기' : item.status === 'APPROVED' ? '승인' : '거부'}
-                  </span>
-                </td>
               </tr>
             ))}
           </tbody>

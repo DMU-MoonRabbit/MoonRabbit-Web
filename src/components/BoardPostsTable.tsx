@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import { AdminPagination } from './AdminPagination'
 import clsx from 'clsx'
@@ -21,6 +22,7 @@ export const BoardPostsTable: React.FC<BoardPostsTableProps> = ({
   onEdit,
   onDelete,
 }) => {
+  const navigate = useNavigate()
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
@@ -68,7 +70,11 @@ export const BoardPostsTable: React.FC<BoardPostsTableProps> = ({
                 >
                   <td className="py-3 px-4 text-gray-800 font-medium">{post.boardId}</td>
                   <td className="py-3 px-4">
-                    <div className="max-w-xs truncate" title={post.title}>
+                    <div 
+                      className="max-w-xs truncate cursor-pointer hover:text-mainColor transition-colors" 
+                      title={post.title}
+                      onClick={() => navigate(`/night-sky/${post.boardId}`)}
+                    >
                       {post.title}
                     </div>
                   </td>

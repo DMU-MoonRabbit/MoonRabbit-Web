@@ -125,7 +125,7 @@ export const ManageBoard = () => {
               : "text-gray-600 hover:text-gray-800"
           )}
         >
-          신고된 게시글 ({reportedBoardsData?.totalElements || 0})
+          신고된 게시글
         </button>
         <button
           onClick={() => setActiveTab('reportedComments')}
@@ -136,7 +136,7 @@ export const ManageBoard = () => {
               : "text-gray-600 hover:text-gray-800"
           )}
         >
-          신고된 댓글 ({reportedCommentsData?.totalElements || 0})
+          신고된 댓글
         </button>
       </div>
 
