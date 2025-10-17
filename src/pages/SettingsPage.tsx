@@ -30,10 +30,6 @@ const SettingsPage: React.FC = () => {
   const equippedBorder = getEquippedBorder()
   const equippedNicknameColor = getEquippedNicknameColor()
 
-  const handleEmailChange = () => {
-    alert('이메일 변경 기능은 준비 중입니다.')
-  }
-
   const handlePasswordChange = () => {
     alert('비밀번호 변경 기능은 준비 중입니다.')
   }
@@ -302,33 +298,11 @@ const SettingsPage: React.FC = () => {
 
             {/* 이메일 */}
             <div className={clsx(isMobile ? 'mb-3' : 'mb-4')}>
-              <div className={clsx(
-                'flex gap-3',
-                isMobile ? 'flex-col' : 'items-center justify-between'
-              )}>
-                <div className="flex-1">
-                  <div className={clsx(
-                    'text-zinc-900 mb-1 font-gothicFont',
-                    isMobile ? 'text-sm' : 'text-sm'
-                  )}>
-                    이메일
-                  </div>
-                  <div className={clsx(
-                    'text-neutral-400 font-gothicFont break-all',
-                    isMobile ? 'text-xs' : 'text-xs'
-                  )}>
-                    {userProfile?.email || 'user@example.com'}
-                  </div>
-                </div>
-                <button
-                  onClick={handleEmailChange}
-                  className={clsx(
-                    'bg-mainColor hover:bg-orange-600 text-neutral-100 font-gothicFont rounded-[10px] border border-mainColor transition-colors',
-                    isMobile ? 'text-sm px-4 py-2.5 w-full' : 'text-sm px-5 py-2'
-                  )}
-                >
-                  이메일 변경
-                </button>
+              <div className="text-sm text-zinc-900 mb-1 font-gothicFont">
+                이메일
+              </div>
+              <div className="text-xs text-neutral-400 font-gothicFont break-all">
+                {userProfile?.email || 'user@example.com'}
               </div>
             </div>
 
