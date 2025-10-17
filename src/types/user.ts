@@ -5,7 +5,8 @@ export interface UserProfile {
   nickname: string
   email: string
   password?: string
-  profileImage?: string
+  profileImg?: string  // 백엔드 API 응답 필드명
+  profileImage?: string  // 프론트엔드 호환성을 위한 별칭
   level: number
   point: number
   trustPoint: number

@@ -92,7 +92,7 @@ const MypageProfile: React.FC = memo(() => {
             {/* 프로필 이미지 + 테두리 */}
             <div className={clsx("relative flex-shrink-0", isMobile ? "w-[60px] h-[60px]" : "w-[120px] h-[120px]")}>
               <img 
-                src={userProfile?.profileImage || "/images/MoonRabbitSleep2.png"} 
+                src={userProfile?.profileImage || userProfile?.profileImg || "/images/MoonRabbitSleep2.png"} 
                 alt="프로필 이미지" 
                 className={clsx("object-cover rounded-full w-full h-full")}
                 loading="lazy"
