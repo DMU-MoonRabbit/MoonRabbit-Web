@@ -150,13 +150,6 @@ export const ConcernContent: React.FC = () => {
 
       const isCurrentlyLiked = concern.like
 
-      console.log('🔍 좋아요 요청:', {
-        boardId: concern.id,
-        userId,
-        isCurrentlyLiked,
-        url: ENDPOINTS.BOARD_LIKE(concern.id, userId)
-      })
-
       let response
       
       if (isCurrentlyLiked) {
@@ -170,7 +163,6 @@ export const ConcernContent: React.FC = () => {
             withCredentials: true
           }
         )
-        console.log('✅ 좋아요 취소 성공:', response.data)
       } else {
         // 좋아요 추가
         response = await axios.post(
@@ -183,7 +175,6 @@ export const ConcernContent: React.FC = () => {
             withCredentials: true
           }
         )
-        console.log('✅ 좋아요 추가 성공:', response.data)
       }
 
       // API 응답에서 업데이트된 상태 반영
@@ -199,8 +190,6 @@ export const ConcernContent: React.FC = () => {
           ...concern,
           like: newLikeStatus
         })
-        
-        console.log('📌 좋아요 상태 업데이트:', newLikeStatus)
       } else {
         // 응답이 없으면 토글만 실행
         toggleConcernLike()
@@ -285,8 +274,6 @@ export const ConcernContent: React.FC = () => {
         }
         
         const data = response.data
-        
-        console.log('🔍 게시글 상세 API 응답:', data) // 디버깅용
         
         // equippedItems 파싱
         const { borderImageUrl, nicknameColor } = parseEquippedItems(data.equippedItems)

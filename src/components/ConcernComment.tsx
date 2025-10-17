@@ -38,17 +38,6 @@ export const ConcernComment: React.FC = () => {
           }
         )
         const answers = await response.data
-        console.log('📋 댓글 목록 조회:', answers)
-        
-        // likedByMe 상태 확인 로그
-        if (answers && answers.length > 0) {
-          console.log('💗 댓글 좋아요 상태:', answers.map((a: any) => ({
-            id: a.id,
-            likedByMe: a.likedByMe,
-            likeCount: a.likeCount
-          })))
-        }
-        
         setComments(answers)
       } catch (error) {
         console.error('댓글 조회 실패', error)

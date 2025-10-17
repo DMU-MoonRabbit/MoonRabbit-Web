@@ -42,13 +42,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   // comment가 변경되면 좋아요 상태도 업데이트
   useEffect(() => {
-    console.log(`💗 댓글 ${comment.id} 좋아요 상태 초기화:`, {
-      likedByMe: comment.likedByMe,
-      like: comment.like,
-      likeCount: comment.likeCount,
-      finalStatus: comment.likedByMe ?? comment.like ?? false
-    })
-    
     setCommentLikeState({
       likedByMe: comment.likedByMe ?? comment.like ?? false,
       likeCount: comment.likeCount
@@ -137,12 +130,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
       const isCurrentlyLiked = commentLikeState.likedByMe
 
-      console.log('🔍 댓글 좋아요 요청:', {
-        answerId: comment.id,
-        userId: currentUserId,
-        isCurrentlyLiked
-      })
-
       let response
 
       if (isCurrentlyLiked) {
@@ -156,7 +143,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             withCredentials: true
           }
         )
-        console.log('✅ 댓글 좋아요 취소 성공:', response.data)
       } else {
         // 좋아요 추가
         response = await axios.post(
@@ -169,7 +155,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             withCredentials: true
           }
         )
-        console.log('✅ 댓글 좋아요 추가 성공:', response.data)
       }
 
       // API 응답에서 업데이트된 상태 반영
@@ -177,11 +162,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         const updatedComment = response.data
         const newLikeStatus = updatedComment.likedByMe ?? !isCurrentlyLiked
         const newLikeCount = updatedComment.likeCount ?? commentLikeState.likeCount
-
-        console.log('📌 댓글 좋아요 상태 업데이트:', {
-          likedByMe: newLikeStatus,
-          likeCount: newLikeCount
-        })
 
         // 로컬 상태 업데이트
         setCommentLikeState({
@@ -208,8 +188,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
           
           // "이미 좋아요를 눌렀습니다" 에러 처리
           if (serverMessage?.includes('이미 좋아요')) {
-            console.log('🔄 서버에 이미 좋아요가 있음 - 클라이언트 상태 동기화')
-            
             // 클라이언트 상태를 서버와 동기화
             setCommentLikeState({
               likedByMe: true,
