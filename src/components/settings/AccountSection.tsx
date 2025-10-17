@@ -4,6 +4,7 @@ import { useResponsiveStore } from '../../stores/useResponsiveStore'
 import clsx from 'clsx'
 import axios from 'axios'
 import { ENDPOINTS } from '../../api/endpoints'
+import MiniModal from '../MiniModal'
 
 const AccountSection: React.FC = () => {
   const { 
@@ -19,6 +20,25 @@ const AccountSection: React.FC = () => {
   const [newNickname, setNewNickname] = useState('')
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  
+  // 모달 상태 관리
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean
+    type: 'success' | 'error'
+    message: string
+  }>({
+    isOpen: false,
+    type: 'success',
+    message: ''
+  })
+
+  const showModal = (type: 'success' | 'error', message: string) => {
+    setModalState({ isOpen: true, type, message })
+  }
+
+  const closeModal = () => {
+    setModalState({ ...modalState, isOpen: false })
+  }
 
   const equippedBorder = getEquippedBorder()
   const equippedNicknameColor = getEquippedNicknameColor()
@@ -35,14 +55,14 @@ const AccountSection: React.FC = () => {
 
   const handleSaveNickname = async () => {
     if (!newNickname.trim()) {
-      alert('닉네임을 입력해주세요.')
+      showModal('error', '닉네임을 입력해주세요.')
       return
     }
 
     try {
       const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
-        alert('로그인이 필요합니다.')
+        showModal('error', '로그인이 필요합니다.')
         return
       }
 
@@ -59,10 +79,10 @@ const AccountSection: React.FC = () => {
       await fetchUserProfile(true)
       setIsEditingNickname(false)
       setNewNickname('')
-      alert('닉네임이 변경되었습니다.')
+      showModal('success', '닉네임이 변경되었습니다.')
     } catch (error) {
       console.error('닉네임 변경 실패:', error)
-      alert('닉네임 변경에 실패했습니다.')
+      showModal('error', '닉네임 변경에 실패했습니다.')
     }
   }
 
@@ -76,13 +96,13 @@ const AccountSection: React.FC = () => {
 
     // 이미지 파일 검증
     if (!file.type.startsWith('image/')) {
-      alert('이미지 파일만 업로드 가능합니다.')
+      showModal('error', '이미지 파일만 업로드 가능합니다.')
       return
     }
 
     // 파일 크기 검증 (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('파일 크기는 5MB 이하여야 합니다.')
+      showModal('error', '파일 크기는 5MB 이하여야 합니다.')
       return
     }
 
@@ -90,36 +110,78 @@ const AccountSection: React.FC = () => {
       setIsUploadingImage(true)
       const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
-        alert('로그인이 필요합니다.')
+        showModal('error', '로그인이 필요합니다.')
         return
       }
 
+      // 파일명을 안전한 형식으로 변환 (한글, 특수문자, 공백 제거)
+      const timestamp = Date.now()
+      const fileExtension = file.name.split('.').pop() || 'jpg'
+      const safeFileName = `profile_${timestamp}.${fileExtension}`
+      
+      // 새로운 File 객체 생성 (안전한 파일명으로)
+      const safeFile = new File([file], safeFileName, { type: file.type })
+
       const formData = new FormData()
-      formData.append('file', file)
+      formData.append('file', safeFile)
+
+      // 디버깅: FormData 내용 확인
+      console.log('=== 프로필 이미지 업로드 시작 ===')
+      console.log('원본 파일명:', file.name)
+      console.log('변환된 파일명:', safeFileName)
+      console.log('파일 크기:', file.size, 'bytes')
+      console.log('파일 타입:', file.type)
+      console.log('API 엔드포인트:', ENDPOINTS.USER_PROFILE_IMAGE)
+      console.log('토큰 존재:', !!accessToken)
 
       // 새로운 통합 API 사용 - 업로드와 프로필 업데이트를 한 번에 처리
+      // Content-Type은 브라우저가 자동으로 설정 (boundary 포함)
       const response = await axios.post(
         ENDPOINTS.USER_PROFILE_IMAGE,
         formData,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'multipart/form-data',
           },
         }
       )
 
       console.log('프로필 이미지 업데이트 성공:', response.data)
+      console.log('=== 프로필 이미지 업로드 완료 ===')
 
       // 프로필 새로고침
       await fetchUserProfile(true)
-      alert('프로필 이미지가 변경되었습니다.')
+      showModal('success', '프로필 이미지가 변경되었습니다.')
     } catch (error) {
-      console.error('이미지 업로드 실패:', error)
-      if (axios.isAxiosError(error) && error.response) {
-        alert(`이미지 업로드에 실패했습니다: ${error.response.data.message || '서버 오류'}`)
+      console.error('=== 이미지 업로드 실패 ===')
+      console.error('에러 객체:', error)
+      
+      if (axios.isAxiosError(error)) {
+        if (error.response) {
+          console.error('서버 응답 상태:', error.response.status)
+          console.error('서버 응답 데이터:', error.response.data)
+          console.error('서버 응답 헤더:', error.response.headers)
+          
+          const errorData = error.response.data
+          const errorMessage = errorData?.message || errorData?.error || '서버 오류'
+          
+          // 데이터베이스 컬럼 크기 문제 감지
+          if (errorMessage.includes('Data too long') || errorMessage.includes('profile_img')) {
+            showModal('error', '이미지 URL이 너무 깁니다. 관리자에게 문의해주세요.')
+            console.error('⚠️ 데이터베이스 스키마 오류: profile_img 컬럼 크기를 늘려야 합니다 (VARCHAR(500) 또는 TEXT 권장)')
+          } else {
+            showModal('error', `이미지 업로드에 실패했습니다: ${errorMessage}`)
+          }
+        } else if (error.request) {
+          console.error('요청은 전송되었으나 응답이 없음:', error.request)
+          showModal('error', '서버 응답이 없습니다. 네트워크를 확인해주세요.')
+        } else {
+          console.error('요청 설정 중 오류:', error.message)
+          showModal('error', '요청 설정 중 오류가 발생했습니다.')
+        }
       } else {
-        alert('이미지 업로드에 실패했습니다.')
+        console.error('알 수 없는 에러:', error)
+        showModal('error', '이미지 업로드에 실패했습니다.')
       }
     } finally {
       setIsUploadingImage(false)
@@ -149,17 +211,20 @@ const AccountSection: React.FC = () => {
           <div
             className={clsx(
               'relative flex-shrink-0 cursor-pointer',
-              isMobile ? 'w-20 h-20' : 'w-14 h-14'
+              isMobile ? 'w-24 h-24' : 'w-20 h-20'
             )}
             onClick={handleProfileImageClick}
+            style={{ aspectRatio: '1 / 1' }}
+            title={userProfile?.profileImage || userProfile?.profileImg ? '프로필 이미지 변경' : '프로필 이미지 업로드'}
           >
             <img 
               src={userProfile?.profileImage || userProfile?.profileImg || "/images/MoonRabbitSleep2.png"} 
               alt="프로필 이미지" 
               className={clsx(
-                'w-full h-full object-cover rounded-full bg-zinc-900 transition-opacity',
+                'absolute inset-0 w-full h-full object-cover rounded-full bg-zinc-900 transition-opacity',
                 isUploadingImage ? 'opacity-50' : 'group-hover:opacity-80'
               )}
+              style={{ aspectRatio: '1 / 1' }}
               onError={(e) => {
                 e.currentTarget.src = '/images/MoonRabbitSleep2.png'
               }}
@@ -168,7 +233,8 @@ const AccountSection: React.FC = () => {
               <img
                 src={equippedBorder.imageUrl}
                 alt="프로필 테두리"
-                className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                style={{ aspectRatio: '1 / 1' }}
               />
             )}
             
@@ -176,7 +242,7 @@ const AccountSection: React.FC = () => {
             {!isUploadingImage && (
               <div className="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
                 <svg 
-                  className="w-6 h-6 text-white" 
+                  className="w-8 h-8 text-white" 
                   fill="none" 
                   stroke="currentColor" 
                   viewBox="0 0 24 24"
@@ -200,7 +266,7 @@ const AccountSection: React.FC = () => {
             {/* 로딩 스피너 */}
             {isUploadingImage && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
               </div>
             )}
           </div>
@@ -213,6 +279,13 @@ const AccountSection: React.FC = () => {
             onChange={handleImageUpload}
             className="hidden"
           />
+          
+          {/* 안내 텍스트 */}
+          {isMobile && (
+            <div className="text-xs text-neutral-500 text-center mt-2 font-gothicFont">
+              {userProfile?.profileImage || userProfile?.profileImg ? '클릭하여 이미지 변경' : '클릭하여 이미지 업로드'}
+            </div>
+          )}
         </div>
 
         {/* 닉네임 */}
@@ -305,6 +378,14 @@ const AccountSection: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* MiniModal */}
+      <MiniModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        type={modalState.type}
+        message={modalState.message}
+      />
     </section>
   )
 }

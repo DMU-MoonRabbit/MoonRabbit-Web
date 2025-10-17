@@ -1,15 +1,35 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useUserProfileStore } from '../../stores/useUserProfileStore'
 import { useResponsiveStore } from '../../stores/useResponsiveStore'
 import clsx from 'clsx'
+import MiniModal from '../MiniModal'
 
 const SecuritySection: React.FC = () => {
   const { userProfile } = useUserProfileStore()
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
+  // 모달 상태 관리
+  const [modalState, setModalState] = useState<{
+    isOpen: boolean
+    type: 'success' | 'error'
+    message: string
+  }>({
+    isOpen: false,
+    type: 'success',
+    message: ''
+  })
+
+  const showModal = (type: 'success' | 'error', message: string) => {
+    setModalState({ isOpen: true, type, message })
+  }
+
+  const closeModal = () => {
+    setModalState({ ...modalState, isOpen: false })
+  }
+
   const handlePasswordChange = () => {
-    alert('비밀번호 변경 기능은 준비 중입니다.')
+    showModal('error', '비밀번호 변경 기능은 준비 중입니다.')
   }
 
   return (
@@ -44,6 +64,14 @@ const SecuritySection: React.FC = () => {
           비밀번호 변경
         </button>
       </div>
+
+      {/* MiniModal */}
+      <MiniModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        type={modalState.type}
+        message={modalState.message}
+      />
     </section>
   )
 }
