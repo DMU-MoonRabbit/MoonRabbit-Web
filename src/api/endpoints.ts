@@ -42,6 +42,7 @@ export const ENDPOINTS = {
   // 좋아요(Likes)
   BOARD_LIKES_MY: `${BASE_URL}/likes/board-my`,
   BOARD_LIKE: (boardId: number, userId: number) => `${BASE_URL}/likes/${boardId}/board-like?boardId=${boardId}&userId=${userId}`,
+  ANSWER_LIKE: (answerId: number, userId: number) => `${BASE_URL}/likes/${answerId}/answer-like?answerId=${answerId}&userId=${userId}`,
 
   // 상점(Shop)
   ITEM_LIST: `${BASE_URL}/items`,

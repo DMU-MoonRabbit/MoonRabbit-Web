@@ -22,14 +22,65 @@ export const ConcernComment: React.FC = () => {
       }
       
       try {
+        const token = localStorage.getItem('accessToken')
+        const headers: Record<string, string> = {}
+        
+        // 로그인 상태라면 토큰 포함 (좋아요 상태 확인을 위해)
+        if (token) {
+          headers['Authorization'] = `Bearer ${token}`
+        }
+        
         const response = await axios.get(
           ENDPOINTS.COMMENT_LIST(boardId),
+          {
+            headers,
+            withCredentials: true
+          }
         )
         const answers = await response.data
-        console.log(answers)
+        console.log('📋 댓글 목록 조회:', answers)
+        
+        // likedByMe 상태 확인 로그
+        if (answers && answers.length > 0) {
+          console.log('💗 댓글 좋아요 상태:', answers.map((a: any) => ({
+            id: a.id,
+            likedByMe: a.likedByMe,
+            likeCount: a.likeCount
+          })))
+        }
+        
         setComments(answers)
       } catch (error) {
         console.error('댓글 조회 실패', error)
+        
+        // 토큰 에러 시 토큰 없이 재시도
+        if (axios.isAxiosError(error)) {
+          const errorCode = error.response?.data?.code
+          const status = error.response?.status
+          
+          if (status === 401 || status === 403 || errorCode === 'U002') {
+            console.warn('토큰이 유효하지 않습니다. 비로그인 상태로 댓글을 조회합니다.')
+            
+            // 유효하지 않은 토큰 제거
+            if (errorCode === 'U002') {
+              localStorage.removeItem('accessToken')
+            }
+            
+            // 토큰 없이 재시도
+            try {
+              const response = await axios.get(
+                ENDPOINTS.COMMENT_LIST(boardId),
+                {
+                  withCredentials: true
+                }
+              )
+              const answers = await response.data
+              setComments(answers)
+            } catch (retryError) {
+              console.error('토큰 없이 댓글 조회 재시도 실패:', retryError)
+            }
+          }
+        }
       }
     }
     getComments()
