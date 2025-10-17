@@ -89,32 +89,38 @@ const SettingsPage: React.FC = () => {
   return (
     <div
       style={{ backgroundImage: `url('${MoonRabbitStarsDark}')` }}
-      className="w-full min-h-screen bg-mainBlack bg-repeat flex items-center justify-center py-10"
+      className={clsx(
+        'w-full min-h-screen bg-mainBlack bg-repeat flex items-center justify-center',
+        isMobile ? 'py-4' : 'py-10'
+      )}
     >
       <div
         className={clsx(
-          'flex w-full m-10',
+          'flex w-full',
           isMobile
-            ? 'items-center justify-center flex-col'
-            : 'max-w-[1200px] h-full max-h-[600px]',
+            ? 'items-center justify-center flex-col m-4'
+            : 'max-w-[1200px] h-full max-h-[600px] m-10',
         )}
       >
         {/* 좌측 로고 패널 */}
         <div
           className={clsx(
-            'flex flex-col justify-center items-center font-mainFont text-darkWalnut bg-lightBeige p-10',
-            isMobile ? 'w-full' : 'w-3/7',
+            'flex flex-col justify-center items-center font-mainFont text-darkWalnut bg-lightBeige',
+            isMobile ? 'w-full py-8 px-6' : 'w-3/7 p-10',
           )}
         >
           <img
             src={LogoImg}
             alt="logo"
-            className={clsx(isMobile ? 'w-[140px] pb-[10px]' : 'w-[70%] pb-[10px]')}
+            className={clsx(isMobile ? 'w-[100px] pb-2' : 'w-[70%] pb-[10px]')}
           />
-          <p className="text-[4vw] xl:text-[48px]">
+          <p className={clsx(isMobile ? 'text-[32px]' : 'text-[4vw] xl:text-[48px]')}>
             <span className="text-lightCaramel">달</span>토끼
           </p>
-          <p className="text-[8px] sm:text-[1.2vw] xl:text-[16px] leading-[0.6]">
+          <p className={clsx(
+            'leading-[0.6]',
+            isMobile ? 'text-[12px]' : 'text-[8px] sm:text-[1.2vw] xl:text-[16px]'
+          )}>
             <span className="text-lightCaramel">Moon</span>Rabbit
           </p>
         </div>
@@ -123,39 +129,58 @@ const SettingsPage: React.FC = () => {
         <div
           className={clsx(
             'flex flex-col justify-start bg-white overflow-y-auto hide-scrollbar',
-            isMobile ? 'w-full p-6' : 'w-4/7 p-10',
+            isMobile ? 'w-full p-5' : 'w-4/7 p-10',
           )}
         >
           {/* 헤더 */}
-          <div className="mb-6 flex items-center">
-            <img
-              src={LogoImg}
-              alt="logo"
-              className="w-15 -ml-5 lg:w-20 mr-5 inline"
-            />
-            <div className="flex flex-col items-center font-mainFont text-darkWalnut -ml-2 mt-auto mb-2.5 lg:mb-4">
-              <span className="text-[2.5vw] lg:text-[30px]">
-                <span className="text-lightCaramel">달</span>토끼
-              </span>
-              <span className="text-[1vw] lg:text-[12px] leading-[0.6]">
-                <span className="text-lightCaramel">Moon</span>Rabbit
-              </span>
-            </div>
-            <div className="flex items-end font-bold ml-auto text-[14px]">
+          <div className={clsx(
+            'flex items-center',
+            isMobile ? 'mb-5' : 'mb-6'
+          )}>
+            {!isMobile && (
+              <>
+                <img
+                  src={LogoImg}
+                  alt="logo"
+                  className="w-15 -ml-5 lg:w-20 mr-5 inline"
+                />
+                <div className="flex flex-col items-center font-mainFont text-darkWalnut -ml-2 mt-auto mb-2.5 lg:mb-4">
+                  <span className="text-[2.5vw] lg:text-[30px]">
+                    <span className="text-lightCaramel">달</span>토끼
+                  </span>
+                  <span className="text-[1vw] lg:text-[12px] leading-[0.6]">
+                    <span className="text-lightCaramel">Moon</span>Rabbit
+                  </span>
+                </div>
+              </>
+            )}
+            <div className={clsx(
+              'flex items-end font-bold text-[14px]',
+              isMobile ? 'w-full justify-center' : 'ml-auto'
+            )}>
               <span className="text-darkWalnut">설정</span>
             </div>
           </div>
 
           {/* 계정 섹션 */}
-          <section className="mb-6">
-            <h2 className="text-lg lg:text-xl font-bold text-zinc-900 mb-3 font-gothicFont">
+          <section className={clsx(isMobile ? 'mb-5' : 'mb-6')}>
+            <h2 className={clsx(
+              'font-bold text-zinc-900 font-gothicFont',
+              isMobile ? 'text-base mb-2' : 'text-lg lg:text-xl mb-3'
+            )}>
               계정
             </h2>
             <div className="w-full h-[1px] bg-zinc-900 mb-4"></div>
             
-            <div className="flex gap-4 items-center mb-4">
+            <div className={clsx(
+              'flex gap-4 mb-4',
+              isMobile ? 'flex-col items-center' : 'items-center'
+            )}>
               {/* 프로필 이미지 */}
-              <div className="relative w-14 h-14 flex-shrink-0">
+              <div className={clsx(
+                'relative flex-shrink-0',
+                isMobile ? 'w-20 h-20' : 'w-14 h-14'
+              )}>
                 <img 
                   src={userProfile?.profileImage || "/images/MoonRabbitSleep2.png"} 
                   alt="프로필 이미지" 
@@ -174,40 +199,66 @@ const SettingsPage: React.FC = () => {
               </div>
 
               {/* 닉네임 */}
-              <div className="flex-1">
-                <div className="text-sm font-medium text-zinc-900 mb-1 font-gothicFont">
+              <div className={clsx('flex-1', isMobile && 'w-full')}>
+                <div className={clsx(
+                  'font-medium text-zinc-900 mb-1 font-gothicFont',
+                  isMobile ? 'text-center text-sm' : 'text-sm'
+                )}>
                   닉네임
                 </div>
                 {isEditingNickname ? (
-                  <div className="flex gap-2 items-center">
+                  <div className={clsx(
+                    'flex gap-2',
+                    isMobile ? 'flex-col' : 'items-center'
+                  )}>
                     <input
                       type="text"
                       value={newNickname}
                       onChange={(e) => setNewNickname(e.target.value)}
-                      className="px-3 py-1.5 border border-mainColor rounded-[5px] text-xs font-gothicFont focus:outline-none focus:ring-2 focus:ring-mainColor/30"
+                      className={clsx(
+                        'border border-mainColor rounded-[5px] font-gothicFont focus:outline-none focus:ring-2 focus:ring-mainColor/30',
+                        isMobile ? 'w-full px-4 py-2 text-sm' : 'px-3 py-1.5 text-xs'
+                      )}
                       style={{ color: equippedNicknameColor || '#473c2c' }}
                       autoFocus
                     />
-                    <button
-                      onClick={handleSaveNickname}
-                      className="px-3 py-1.5 bg-mainColor text-white text-xs rounded hover:bg-orange-600 transition-colors whitespace-nowrap"
-                    >
-                      저장
-                    </button>
-                    <button
-                      onClick={handleCancelEditNickname}
-                      className="px-3 py-1.5 bg-gray-200 text-zinc-900 text-xs rounded hover:bg-gray-300 transition-colors whitespace-nowrap"
-                    >
-                      취소
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleSaveNickname}
+                        className={clsx(
+                          'bg-mainColor text-white rounded hover:bg-orange-600 transition-colors whitespace-nowrap flex-1',
+                          isMobile ? 'px-4 py-2 text-sm' : 'px-3 py-1.5 text-xs'
+                        )}
+                      >
+                        저장
+                      </button>
+                      <button
+                        onClick={handleCancelEditNickname}
+                        className={clsx(
+                          'bg-gray-200 text-zinc-900 rounded hover:bg-gray-300 transition-colors whitespace-nowrap flex-1',
+                          isMobile ? 'px-4 py-2 text-sm' : 'px-3 py-1.5 text-xs'
+                        )}
+                      >
+                        취소
+                      </button>
+                    </div>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2">
+                  <div className={clsx(
+                    'flex items-center gap-2',
+                    isMobile && 'justify-center'
+                  )}>
                     <div 
-                      className="px-3 py-1.5 border border-mainColor rounded-[5px]"
+                      className={clsx(
+                        'border border-mainColor rounded-[5px]',
+                        isMobile ? 'px-4 py-2' : 'px-3 py-1.5'
+                      )}
                       style={{ color: equippedNicknameColor || '#473c2c' }}
                     >
-                      <span className="text-xs font-gothicFont">
+                      <span className={clsx(
+                        'font-gothicFont',
+                        isMobile ? 'text-sm' : 'text-xs'
+                      )}>
                         {userProfile?.nickname || '사용자'}
                       </span>
                     </div>
@@ -217,7 +268,10 @@ const SettingsPage: React.FC = () => {
                       title="닉네임 수정"
                     >
                       <svg 
-                        className="w-4 h-4 text-zinc-600 group-hover:text-mainColor transition-colors" 
+                        className={clsx(
+                          'text-zinc-600 group-hover:text-mainColor transition-colors',
+                          isMobile ? 'w-5 h-5' : 'w-4 h-4'
+                        )}
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
@@ -237,23 +291,32 @@ const SettingsPage: React.FC = () => {
           </section>
 
           {/* 보안 섹션 */}
-          <section className="mb-6">
-            <h2 className="text-lg lg:text-xl font-bold text-zinc-900 mb-3 font-gothicFont">
+          <section className={clsx(isMobile ? 'mb-5' : 'mb-6')}>
+            <h2 className={clsx(
+              'font-bold text-zinc-900 font-gothicFont',
+              isMobile ? 'text-base mb-2' : 'text-lg lg:text-xl mb-3'
+            )}>
               보안
             </h2>
             <div className="w-full h-[1px] bg-zinc-900 mb-4"></div>
 
             {/* 이메일 */}
-            <div className="mb-4">
+            <div className={clsx(isMobile ? 'mb-3' : 'mb-4')}>
               <div className={clsx(
                 'flex gap-3',
                 isMobile ? 'flex-col' : 'items-center justify-between'
               )}>
                 <div className="flex-1">
-                  <div className="text-sm text-zinc-900 mb-1 font-gothicFont">
+                  <div className={clsx(
+                    'text-zinc-900 mb-1 font-gothicFont',
+                    isMobile ? 'text-sm' : 'text-sm'
+                  )}>
                     이메일
                   </div>
-                  <div className="text-xs text-neutral-400 font-gothicFont">
+                  <div className={clsx(
+                    'text-neutral-400 font-gothicFont break-all',
+                    isMobile ? 'text-xs' : 'text-xs'
+                  )}>
                     {userProfile?.email || 'user@example.com'}
                   </div>
                 </div>
@@ -261,7 +324,7 @@ const SettingsPage: React.FC = () => {
                   onClick={handleEmailChange}
                   className={clsx(
                     'bg-mainColor hover:bg-orange-600 text-neutral-100 font-gothicFont rounded-[10px] border border-mainColor transition-colors',
-                    isMobile ? 'text-sm px-4 py-2 w-full' : 'text-sm px-5 py-2'
+                    isMobile ? 'text-sm px-4 py-2.5 w-full' : 'text-sm px-5 py-2'
                   )}
                 >
                   이메일 변경
@@ -273,7 +336,10 @@ const SettingsPage: React.FC = () => {
             <div className="mb-3">
               <button
                 onClick={handlePasswordChange}
-                className="text-sm font-gothicFont text-zinc-900 hover:text-mainColor transition-colors"
+                className={clsx(
+                  'font-gothicFont text-zinc-900 hover:text-mainColor transition-colors',
+                  isMobile ? 'text-sm' : 'text-sm'
+                )}
               >
                 비밀번호 변경
               </button>
@@ -281,18 +347,27 @@ const SettingsPage: React.FC = () => {
           </section>
 
           {/* 기타 섹션 */}
-          <section className="mb-6">
-            <h2 className="text-lg lg:text-xl font-bold text-zinc-900 mb-3 font-gothicFont">
+          <section className={clsx(isMobile ? 'mb-5' : 'mb-6')}>
+            <h2 className={clsx(
+              'font-bold text-zinc-900 font-gothicFont',
+              isMobile ? 'text-base mb-2' : 'text-lg lg:text-xl mb-3'
+            )}>
               기타
             </h2>
             <div className="w-full h-[1px] bg-zinc-900 mb-4"></div>
 
             {/* 언어 */}
-            <div className="mb-4">
-              <div className="text-sm text-zinc-900 mb-1 font-gothicFont">
+            <div className={clsx(isMobile ? 'mb-3' : 'mb-4')}>
+              <div className={clsx(
+                'text-zinc-900 mb-1 font-gothicFont',
+                isMobile ? 'text-sm' : 'text-sm'
+              )}>
                 언어
               </div>
-              <div className="text-xs text-neutral-400 font-gothicFont">
+              <div className={clsx(
+                'text-neutral-400 font-gothicFont',
+                isMobile ? 'text-xs' : 'text-xs'
+              )}>
                 {language}
               </div>
             </div>
@@ -300,7 +375,10 @@ const SettingsPage: React.FC = () => {
             {/* 다크모드 */}
             <div className="mb-4">
               <div className="flex items-center justify-between">
-                <div className="text-sm text-zinc-900 font-gothicFont">
+                <div className={clsx(
+                  'text-zinc-900 font-gothicFont',
+                  isMobile ? 'text-sm' : 'text-sm'
+                )}>
                   다크모드
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -310,7 +388,10 @@ const SettingsPage: React.FC = () => {
                     onChange={(e) => setIsDarkMode(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-mainColor/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-mainColor"></div>
+                  <div className={clsx(
+                    'bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-mainColor/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[\'\'] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:transition-all peer-checked:bg-mainColor',
+                    isMobile ? 'w-12 h-7 after:h-6 after:w-6' : 'w-11 h-6 after:h-5 after:w-5'
+                  )}></div>
                 </label>
               </div>
             </div>
@@ -318,17 +399,26 @@ const SettingsPage: React.FC = () => {
 
           {/* 앱 정보 섹션 */}
           <section>
-            <h2 className="text-lg lg:text-xl font-bold text-black mb-3 font-gothicFont">
+            <h2 className={clsx(
+              'font-bold text-black font-gothicFont',
+              isMobile ? 'text-base mb-2' : 'text-lg lg:text-xl mb-3'
+            )}>
               앱 정보
             </h2>
             <div className="w-full h-[1px] bg-black mb-4"></div>
 
             {/* 달토끼에 대해서 */}
             <div className="mb-3">
-              <div className="text-sm text-black font-gothicFont">
+              <div className={clsx(
+                'text-black font-gothicFont',
+                isMobile ? 'text-sm' : 'text-sm'
+              )}>
                 달토끼에 대해서
               </div>
-              <div className="text-xs text-black mt-1 font-gothicFont">
+              <div className={clsx(
+                'text-black mt-1 font-gothicFont',
+                isMobile ? 'text-xs' : 'text-xs'
+              )}>
                 v. 1.0.0
               </div>
             </div>
@@ -337,7 +427,10 @@ const SettingsPage: React.FC = () => {
             <div className="mb-3">
               <button
                 onClick={handleInstagramClick}
-                className="text-sm font-gothicFont text-black hover:text-mainColor transition-colors"
+                className={clsx(
+                  'font-gothicFont text-black hover:text-mainColor transition-colors',
+                  isMobile ? 'text-sm' : 'text-sm'
+                )}
               >
                 달토끼 인스타그램
               </button>
