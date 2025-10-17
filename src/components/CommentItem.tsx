@@ -112,7 +112,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     return response.data
   }
 
-<<<<<<< HEAD
   // 댓글 좋아요 토글 함수
   const handleCommentLikeToggle = async () => {
     const token = localStorage.getItem('accessToken')
@@ -233,8 +232,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     }
   }
 
-=======
->>>>>>> origin/main
   useEffect(() => {
     if( isLoggedIn ) {
       const token = localStorage.getItem('accessToken')
@@ -319,24 +316,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               신고하기
             </div>
           )}
-<<<<<<< HEAD
           <div onClick={handleCommentLikeToggle} className="mr-2">
             <img
               src={commentLikeState.likedByMe ? Liked : Like}
-=======
-          <div onClick={() => toggleCommentLike(comment.id)} className="mr-2">
-            <img
-              src={comment.like ? Liked : Like}
->>>>>>> origin/main
               alt="좋아요아이콘"
               className="cursor-pointer"
             />
           </div>
-<<<<<<< HEAD
           <div>{commentLikeState.likeCount}</div>
-=======
-          <div>{comment.likeCount}</div>
->>>>>>> origin/main
         </div>
         {/* 답글Input */}
         {showReplyInput && (

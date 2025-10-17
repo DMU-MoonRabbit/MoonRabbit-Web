@@ -52,14 +52,7 @@ export const ENDPOINTS = {
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,
   
   // 신고(Report)
-<<<<<<< HEAD
-  REPORT_CREATE: `https://moonrabbit-api.kro.kr/reports/create`,
-=======
   REPORT_CREATE: `https://moonrabbit-api.kro.kr/reports/api/create`,
-  
-  // 좋아요(Likes) - 게시글/댓글
-  BOARD_LIKE: (boardId: number, userId: number) => `${BASE_URL}/likes/${boardId}/board-like?boardId=${boardId}&userId=${userId}`,
-  ANSWER_LIKE: (answerId: number, userId: number) => `${BASE_URL}/likes/${answerId}/answer-like?answerId=${answerId}&userId=${userId}`,
 };
 
 export default ENDPOINTS; 
