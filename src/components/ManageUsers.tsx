@@ -40,14 +40,14 @@ export const ManageUsers = () => {
     }
   }, [isSearching, searchTerm])
 
-  const handleSave = async (newValue: number) => {
+  const handleSave = async (changeValue: number) => {
     if (!editModalState.userId || !editModalState.type) return
     
     try {
       if (editModalState.type === 'point') {
-        await updatePoint(editModalState.userId, newValue)
+        await updatePoint(editModalState.userId, changeValue)
       } else if (editModalState.type === 'trust') {
-        await updateTrust(editModalState.userId, newValue)
+        await updateTrust(editModalState.userId, changeValue)
       }
       
       // 성공 후 현재 페이지 데이터 새로고침
@@ -57,8 +57,28 @@ export const ManageUsers = () => {
         await fetchUsers(usersPage)
       }
       
+      // 모달 닫기
+      closeEditModal()
+      
     } catch (error) {
-      alert('저장에 실패했습니다. 다시 시도해주세요.')
+      console.error('저장 실패:', error)
+      
+      let errorMessage = '저장에 실패했습니다. 다시 시도해주세요.'
+      
+      if (error instanceof Error) {
+        if (error.message.includes('로그인이 필요')) {
+          errorMessage = '로그인이 필요합니다. 다시 로그인해주세요.'
+          // 로그인 페이지로 리다이렉트
+          window.location.href = '/login'
+          return
+        } else if (error.message.includes('관리자 권한')) {
+          errorMessage = '관리자 권한이 필요합니다.'
+        } else {
+          errorMessage = error.message
+        }
+      }
+      
+      alert(errorMessage)
     }
   }
 
@@ -112,8 +132,9 @@ export const ManageUsers = () => {
         isOpen={editModalState.isOpen}
         onClose={closeEditModal}
         onSave={handleSave}
-        title={`${editModalState.userName}님의 ${editModalState.type === 'point' ? '포인트' : '신뢰도'} 수정`}
+        title={`${editModalState.userName}님의 ${editModalState.type === 'point' ? '포인트' : '신뢰도'} ${editModalState.type === 'point' ? '지급/차감' : '증가/감소'}`}
         initialValue={editModalState.currentValue}
+        type={editModalState.type || 'point'}
       />
     </div>
   )

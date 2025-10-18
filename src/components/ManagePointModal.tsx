@@ -5,9 +5,10 @@ import clsx from 'clsx';
 interface ManagePointModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (newValue: number) => void;
+  onSave: (changeValue: number) => void;
   title: string;
   initialValue: number;
+  type: 'point' | 'trust';
 }
 
 export const ManagePointModal: React.FC<ManagePointModalProps> = ({
@@ -16,20 +17,41 @@ export const ManagePointModal: React.FC<ManagePointModalProps> = ({
   onSave,
   title,
   initialValue,
+  type,
 }) => {
-  const [value, setValue] = useState(initialValue);
+  const [changeValue, setChangeValue] = useState(0);
 
   useEffect(() => {
-    setValue(initialValue);
-  }, [initialValue]);
+    setChangeValue(0); // 모달이 열릴 때마다 0으로 초기화
+  }, [isOpen]);
 
   if (!isOpen) {
     return null;
   }
 
   const handleSave = () => {
-    onSave(Number(value));
+    if (changeValue === 0) {
+      alert('변경할 값을 입력해주세요.');
+      return;
+    }
+    onSave(Number(changeValue));
     onClose();
+  };
+
+  const getPreviewValue = () => {
+    return initialValue + changeValue;
+  };
+
+  const getChangeType = () => {
+    if (changeValue > 0) return '증가';
+    if (changeValue < 0) return '감소';
+    return '변경 없음';
+  };
+
+  const getChangeColor = () => {
+    if (changeValue > 0) return 'text-green-600';
+    if (changeValue < 0) return 'text-red-600';
+    return 'text-gray-500';
   };
 
   return (
@@ -66,18 +88,50 @@ export const ManagePointModal: React.FC<ManagePointModalProps> = ({
         {/* 타이틀 */}
         <h3 className="text-xl font-mainFont text-darkWalnut mb-6">{title}</h3>
         
-        {/* 숫자 입력 필드 */}
-        <div className="mb-6">
+        {/* 현재 값 표시 */}
+        <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+          <div className="text-sm text-gray-600 mb-1">현재 {type === 'point' ? '포인트' : '신뢰도'}</div>
+          <div className="text-lg font-bold text-darkWalnut">{initialValue.toLocaleString()}</div>
+        </div>
+        
+        {/* 변경 값 입력 필드 */}
+        <div className="mb-4">
           <label className="block text-sm font-mainFont text-darkWalnut mb-2">
-            새로운 값
+            {type === 'point' ? '포인트' : '신뢰도'} 변경량
           </label>
-          <input
-            type="number"
-            value={value}
-            onChange={(e) => setValue(Number(e.target.value))}
-            className="w-full border-2 border-lightBeige rounded-lg px-4 py-3 focus:outline-none focus:border-mainColor transition-colors font-gothicFont text-darkWalnut"
-            autoFocus
-          />
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setChangeValue(changeValue - 1)}
+              className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-lg font-bold"
+            >
+              -
+            </button>
+            <input
+              type="number"
+              value={changeValue}
+              onChange={(e) => setChangeValue(Number(e.target.value))}
+              className="flex-1 border-2 border-lightBeige rounded-lg px-4 py-3 focus:outline-none focus:border-mainColor transition-colors font-gothicFont text-darkWalnut text-center"
+              placeholder="변경할 값"
+              autoFocus
+            />
+            <button
+              onClick={() => setChangeValue(changeValue + 1)}
+              className="w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center text-lg font-bold"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        {/* 미리보기 */}
+        <div className="mb-6 p-3 bg-blue-50 rounded-lg">
+          <div className="text-sm text-gray-600 mb-1">변경 후 {type === 'point' ? '포인트' : '신뢰도'}</div>
+          <div className="text-lg font-bold text-darkWalnut">
+            {getPreviewValue().toLocaleString()}
+            <span className={`ml-2 text-sm ${getChangeColor()}`}>
+              ({changeValue > 0 ? '+' : ''}{changeValue} {getChangeType()})
+            </span>
+          </div>
         </div>
         
         {/* 버튼 */}

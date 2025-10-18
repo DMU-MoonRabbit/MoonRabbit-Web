@@ -60,7 +60,7 @@ export const ENDPOINTS = {
   // 관리자(Admin)
   ADMIN_USERS: (page = 0, size = 10) => `${BASE_URL}/admin/users?page=${page}&size=${size}`,
   ADMIN_USER_UPDATE_POINT: (userId: number, newPoint: number) => `${BASE_URL}/admin/users/${userId}/point?point=${newPoint}`,
-  ADMIN_USER_UPDATE_TRUST: (userId: number, newPoint: number) => `${BASE_URL}/admin/users/${userId}/trust?point=${newPoint}`,
+  ADMIN_USER_UPDATE_TRUST: (userId: number, newTrust: number) => `${BASE_URL}/admin/users/${userId}/trust?point=${newTrust}`,
   ADMIN_REPORTS_TARGET: (targetId: number, page = 0, size = 10) => `https://moonrabbit-api.kro.kr/reports/${targetId}?page=${page}&size=${size}`,
   ADMIN_REPORTS_LIST: (type: 'BOARD' | 'ANSWER', page = 0, size = 10) => `https://moonrabbit-api.kro.kr/reports/list?type=${type}&page=${page}&size=${size}`,
   ADMIN_BOARD_UPDATE: (boardId: number) => `${BASE_URL}/admin/boards/${boardId}`,
