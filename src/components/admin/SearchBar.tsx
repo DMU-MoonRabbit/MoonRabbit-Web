@@ -1,8 +1,12 @@
 import React from 'react'
-import { useAdminStore } from '../stores/useAdminStore'
+import { useAdminStore } from '../../stores/useAdminStore'
+import clsx from 'clsx'
+import { useResponsiveStore } from '../../stores/useResponsiveStore'
 
 export const SearchBar = () => {
   const { searchTerm, setSearchTerm, handleSearch, activeTab, clearSearch } = useAdminStore()
+  const res = useResponsiveStore((state) => state.res)
+  const isMobile = res === 'mo'
 
   const placeholder = activeTab === 'members' ? '닉네임으로 검색' : '제목으로 검색'
 
@@ -20,8 +24,13 @@ export const SearchBar = () => {
     }
   }
 
+  // 오늘의질문과 상점아이템 탭에서는 검색창 숨김
+  if (activeTab === 'dailyQuestion' || activeTab === 'shopItems') {
+    return null
+  }
+
   return (
-    <div className="flex justify-between items-center bg-white pl-4 pr-1 py-1 rounded-full shadow-md w-1/2">
+    <div className={clsx(`flex justify-between items-center bg-white pl-4 pr-1 py-1 rounded-full shadow-md`, isMobile ? 'w-full' : 'w-1/2')}>
       <input
         type="text"
         placeholder={placeholder}
@@ -39,3 +48,4 @@ export const SearchBar = () => {
     </div>
   )
 }
+

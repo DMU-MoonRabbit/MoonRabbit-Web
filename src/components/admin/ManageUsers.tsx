@@ -1,8 +1,8 @@
 import React, { useEffect } from "react"
-import { useManageUsersStore } from "../stores/useManageUsersStore"
-import { usePaginationStore } from "../stores/usePaginationStore"
-import { useAdminStore } from "../stores/useAdminStore"
-import { useManageUsersAPI } from "../hooks/useManageUsersAPI"
+import { useManageUsersStore } from "../../stores/useManageUsersStore"
+import { usePaginationStore } from "../../stores/usePaginationStore"
+import { useAdminStore } from "../../stores/useAdminStore"
+import { useManageUsersAPI } from "../../hooks/useManageUsersAPI"
 import { ManagePointModal } from "./ManagePointModal"
 import { UsersTable } from "./UsersTable"
 
@@ -39,7 +39,6 @@ export const ManageUsers = () => {
       fetchUsers(0)
     }
   }, [isSearching, searchTerm])
-
   const handleSave = async (changeValue: number) => {
     if (!editModalState.userId || !editModalState.type) return
     
@@ -56,7 +55,6 @@ export const ManageUsers = () => {
       } else {
         await fetchUsers(usersPage)
       }
-      
       // 모달 닫기
       closeEditModal()
       

@@ -1,9 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
+import { useResponsiveStore } from '../../stores/useResponsiveStore'
 import { AdminPagination } from './AdminPagination'
 import clsx from 'clsx'
-import { BoardPageData } from '../types/board'
+import { BoardPageData } from '../../types/board'
 
 interface BoardPostsTableProps {
   boardData: BoardPageData | null

@@ -1,8 +1,8 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
+import { useResponsiveStore } from '../../stores/useResponsiveStore'
 import { AdminPagination } from './AdminPagination'
-import { Report } from '../types/admin'
+import { Report } from '../../types/admin'
 import clsx from 'clsx'
 
 interface ReportedBoardProps {

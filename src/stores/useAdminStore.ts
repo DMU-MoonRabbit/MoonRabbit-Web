@@ -4,12 +4,12 @@ import { ENDPOINTS } from '../api/endpoints'
 import axios from 'axios'
 
 interface AdminState {
-  activeTab: 'members' | 'posts'
+  activeTab: 'members' | 'posts' | 'dailyQuestion' | 'shopItems'
   searchTerm: string
   pageData: AdminUserResponse | null
   loading: boolean
   isSearching: boolean
-  setActiveTab: (tab: 'members' | 'posts') => void
+  setActiveTab: (tab: 'members' | 'posts' | 'dailyQuestion' | 'shopItems') => void
   setSearchTerm: (term: string) => void
   setPageData: (data: AdminUserResponse | null) => void
   setLoading: (loading: boolean) => void
@@ -130,7 +130,6 @@ export const updateUserPoint = async (userId: number, newPoint: number) => {
 export const updateUserTrust = async (userId: number, newTrust: number) => {
   try {
     const token = localStorage.getItem('accessToken')
-    
     if (!token) {
       throw new Error('로그인이 필요합니다.')
     }
