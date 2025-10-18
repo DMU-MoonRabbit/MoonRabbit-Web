@@ -4,7 +4,7 @@ export interface ShopItem {
   id: number
   name: string
   price: number
-  type: 'BANNER' | 'BORDER' | 'NICKNAME_COLOR'
+  type: 'BANNER' | 'BORDER' | 'NAME_COLOR'
   equippable: boolean
   imageUrl: string  // S3 URL
 }

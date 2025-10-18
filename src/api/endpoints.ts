@@ -73,6 +73,8 @@ export const ENDPOINTS = {
   ADMIN_BOARD_UPDATE: (boardId: number) => `${BASE_URL}/admin/boards/${boardId}`,
   ADMIN_BOARD_DELETE: (boardId: number) => `${BASE_URL}/admin/boards/${boardId}`,
   ADMIN_DAILY_QUESTION_CREATE: `${BASE_URL}/admin/daily-question/create`,
+  ADMIN_ITEM_UPDATE: (itemId: number) => `${BASE_URL}/admin/items/${itemId}`,
+  ADMIN_ITEM_DELETE: (itemId: number) => `${BASE_URL}/admin/items/${itemId}`,
 };
 
 export default ENDPOINTS; 

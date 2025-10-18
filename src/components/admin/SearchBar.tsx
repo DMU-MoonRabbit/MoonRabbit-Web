@@ -1,5 +1,7 @@
 import React from 'react'
 import { useAdminStore } from '../../stores/useAdminStore'
+import clsx from 'clsx'
+import { useResponsiveStore } from '../../stores/useResponsiveStore'
 
 export const SearchBar = () => {
   const { searchTerm, setSearchTerm, handleSearch, activeTab, clearSearch } = useAdminStore()
@@ -20,8 +22,11 @@ export const SearchBar = () => {
     }
   }
 
+  const res = useResponsiveStore((state) => state.res)
+  const isMobile = res === 'mo'
+
   return (
-    <div className="flex justify-between items-center bg-white pl-4 pr-1 py-1 rounded-full shadow-md w-1/2">
+    <div className={clsx(`flex justify-between items-center bg-white pl-4 pr-1 py-1 rounded-full shadow-md`, isMobile ? 'w-full' : 'w-1/2')}>
       <input
         type="text"
         placeholder={placeholder}
