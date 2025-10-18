@@ -3,6 +3,10 @@ export type QuestionCardType = 'text' | 'challenge' | 'support' | 'quote' | 'con
 export interface QuestionCard {
   type: QuestionCardType
   content: string
+  answerId?: number
+  nickname?: string
+  answeredAt?: string
+  isMyAnswer?: boolean
 }
 
 export const mockQuestionCards: QuestionCard[] = [

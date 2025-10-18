@@ -32,9 +32,17 @@ export const ENDPOINTS = {
   // 오늘의 질문(Today Question)
   TODAY_QUESTION: `${BASE_URL}/questions/today`,
   QUESTION_ANSWER: (questionId: number) => `${BASE_URL}/questions/${questionId}/answer`,
+  
+  // 오늘의 질문 (Daily Question) - 새로운 API
+  DAILY_QUESTION: `${BASE_URL}/daily/question`,
+  DAILY_ANSWER: `${BASE_URL}/daily/answer`,
+  DAILY_ANSWER_ME: `${BASE_URL}/daily/answer/me`,
+  DAILY_HISTORY: (page = 0, size = 10) => `${BASE_URL}/daily/history?page=${page}&size=${size}`,
 
   // 좋아요(Likes)
   BOARD_LIKES_MY: `${BASE_URL}/likes/board-my`,
+  BOARD_LIKE: (boardId: number, userId: number) => `${BASE_URL}/likes/${boardId}/board-like?boardId=${boardId}&userId=${userId}`,
+  ANSWER_LIKE: (answerId: number, userId: number) => `${BASE_URL}/likes/${answerId}/answer-like?answerId=${answerId}&userId=${userId}`,
 
   // 상점(Shop)
   ITEM_LIST: `${BASE_URL}/items`,
@@ -43,7 +51,6 @@ export const ENDPOINTS = {
   // 기타 필요시 추가
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,
   
-  // 신고(Report) - /api prefix 없음
   REPORT_CREATE: `https://moonrabbit-api.kro.kr/reports/create`,
   REPORT_LIST_BY_TARGET: (targetId: number, type: 'BOARD' | 'ANSWER', page = 0, size = 10) => 
     `https://moonrabbit-api.kro.kr/reports/${targetId}?type=${type}&page=${page}&size=${size}`,
