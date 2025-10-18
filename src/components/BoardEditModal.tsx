@@ -135,7 +135,6 @@ export const BoardEditModal: React.FC<BoardEditModalProps> = ({
             </span>
           </label>
         </div>
-
       {/* 버튼 영역 */}
       <div className="flex justify-center gap-3">
         <button

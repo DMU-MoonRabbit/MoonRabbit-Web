@@ -17,6 +17,7 @@ export const AdminCategoryBar = () => {
       <button
         key={category.id}
         onClick={() => setActiveTab(category.id as 'members' | 'posts' | 'dailyQuestion')}
+
         className={clsx(
           'min-w-fit h-8 rounded-full font-semibold text-xs sm:text-sm shadow-md transition-transform duration-200 ease-in-out transform hover:-translate-y-0.5 whitespace-nowrap px-3 sm:px-4',
           (activeTab === category.id)

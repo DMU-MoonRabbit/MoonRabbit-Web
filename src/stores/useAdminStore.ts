@@ -89,12 +89,23 @@ export const updateUserPoint = async (userId: number, newPoint: number) => {
   try {
     const token = localStorage.getItem('accessToken')
     
+    if (!token) {
+      throw new Error('로그인이 필요합니다.')
+    }
+    
+    console.log('=== 포인트 수정 요청 시작 ===')
+    console.log('사용자 ID:', userId)
+    console.log('포인트 변경량:', newPoint)
+    console.log('API 엔드포인트:', ENDPOINTS.ADMIN_USER_UPDATE_POINT(userId, newPoint))
+    console.log('토큰 존재:', !!token)
+    
     const response = await axios.put(
       ENDPOINTS.ADMIN_USER_UPDATE_POINT(userId, newPoint),
+      {}, // 빈 body
       {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json; charset=utf-8'
         },
         withCredentials: true
       }
@@ -105,6 +116,13 @@ export const updateUserPoint = async (userId: number, newPoint: number) => {
     
   } catch (error) {
     console.error('포인트 수정 실패:', error)
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 403) {
+        throw new Error('관리자 권한이 필요합니다.')
+      } else if (error.response?.status === 401) {
+        throw new Error('로그인이 필요합니다.')
+      }
+    }
     throw error
   }
 }
@@ -112,13 +130,23 @@ export const updateUserPoint = async (userId: number, newPoint: number) => {
 export const updateUserTrust = async (userId: number, newTrust: number) => {
   try {
     const token = localStorage.getItem('accessToken')
+    if (!token) {
+      throw new Error('로그인이 필요합니다.')
+    }
+    
+    console.log('=== 신뢰도 수정 요청 시작 ===')
+    console.log('사용자 ID:', userId)
+    console.log('신뢰도 변경량:', newTrust)
+    console.log('API 엔드포인트:', ENDPOINTS.ADMIN_USER_UPDATE_TRUST(userId, newTrust))
+    console.log('토큰 존재:', !!token)
     
     const response = await axios.put(
       ENDPOINTS.ADMIN_USER_UPDATE_TRUST(userId, newTrust),
+      {}, // 빈 body
       {
         headers: {
           'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json; charset=utf-8'
         },
         withCredentials: true
       }
@@ -129,6 +157,13 @@ export const updateUserTrust = async (userId: number, newTrust: number) => {
 
   } catch (error) {
     console.error('신뢰도 수정 실패:', error)
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 403) {
+        throw new Error('관리자 권한이 필요합니다.')
+      } else if (error.response?.status === 401) {
+        throw new Error('로그인이 필요합니다.')
+      }
+    }
     throw error
   }
 }
