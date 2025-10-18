@@ -17,6 +17,7 @@ import FAQPage from './pages/FAQPage'
 import PrivacyPage from './pages/PrivacyPage'
 import AdminPage from './pages/AdminPage'
 import ShopPage from './pages/ShopPage'
+import SettingsPage from './pages/SettingsPage'
 
 function App() {
   const setRes = useResponsiveStore((state) => state.setRes)
@@ -55,6 +56,7 @@ function App() {
           <Route path="/question" element={<TodayQuestionPage />} />
           <Route path="/mypage" element={<MypagePage />} />
           <Route path="/shop" element={<ShopPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />

@@ -331,11 +331,12 @@ export const ConcernContent: React.FC = () => {
           <p className={clsx(isMobile ? "text-[24px]" : "text-[30px]")}>{title}</p>
           <div className={clsx("flex items-center", isMobile ? "my-4" : "my-5")}>
             {/* 프로필 이미지 + 테두리 */}
-            <div className="relative w-[30px] h-[30px] mr-[12px]">
+            <div className="relative w-[30px] h-[30px] mr-[12px]" style={{ aspectRatio: '1 / 1' }}>
               <img
                 src={profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
                 alt="프로필이미지"
-                className="w-full h-full rounded-full object-cover"
+                className="absolute inset-0 w-full h-full rounded-full object-cover"
+                style={{ aspectRatio: '1 / 1' }}
                 loading="lazy"
                 onError={(e) => {
                   e.currentTarget.src = '/images/MoonRabbitSleep2.png'
@@ -346,7 +347,8 @@ export const ConcernContent: React.FC = () => {
                 <img
                   src={borderImageUrl}
                   alt="프로필 테두리"
-                  className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                  className="absolute inset-0 w-full h-full pointer-events-none"
+                  style={{ aspectRatio: '1 / 1' }}
                 />
               )}
             </div>

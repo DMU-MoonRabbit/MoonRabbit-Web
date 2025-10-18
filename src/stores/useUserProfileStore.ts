@@ -59,8 +59,14 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
 
       console.log('사용자 프로필 API 응답:', response.data)
 
+      // 백엔드 응답의 profileImg를 profileImage로도 매핑
+      const userProfile = {
+        ...response.data,
+        profileImage: response.data.profileImg || response.data.profileImage
+      }
+
       set({ 
-        userProfile: response.data,
+        userProfile,
         loading: false,
         isProfileLoaded: true
       })

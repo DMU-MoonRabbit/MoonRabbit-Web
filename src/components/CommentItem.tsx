@@ -237,10 +237,11 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       <div className="mt-12">
         <div className="flex items-center">
           {/* 프로필 이미지 + 테두리 */}
-          <div className="relative w-[30px] h-[30px] md:w-[50px] md:h-[50px] mr-[8px]">
+          <div className="relative w-[30px] h-[30px] md:w-[50px] md:h-[50px] mr-[8px]" style={{ aspectRatio: '1 / 1' }}>
             <img
               src={comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
-              className="w-full h-full rounded-full object-cover"
+              className="absolute inset-0 w-full h-full rounded-full object-cover"
+              style={{ aspectRatio: '1 / 1' }}
               onError={(e) => {
                 e.currentTarget.src = '/images/MoonRabbitSleep2.png'
               }}
@@ -250,7 +251,8 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               <img
                 src={borderImageUrl}
                 alt="프로필 테두리"
-                className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                style={{ aspectRatio: '1 / 1' }}
               />
             )}
           </div>
