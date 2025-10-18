@@ -1,6 +1,7 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { useManageUsersStore } from "../stores/useManageUsersStore"
 import { usePaginationStore } from "../stores/usePaginationStore"
+import { useAdminStore } from "../stores/useAdminStore"
 import { useManageUsersAPI } from "../hooks/useManageUsersAPI"
 import { ManagePointModal } from "./ManagePointModal"
 import { UsersTable } from "./UsersTable"
@@ -9,13 +10,35 @@ export const ManageUsers = () => {
   const {
     pageData,
     loading,
+    filteredUsers,
     editModalState,
     openEditModal,
     closeEditModal,
+    setPageData,
+    setFilteredUsers,
   } = useManageUsersStore()
   
   const { usersPage, setUsersPage } = usePaginationStore()
-  const { fetchUsers, updatePoint, updateTrust } = useManageUsersAPI()
+  const { searchTerm, isSearching, clearSearch } = useAdminStore()
+  const { fetchUsers, searchUsers, updatePoint, updateTrust } = useManageUsersAPI()
+
+  // 초기 데이터 로딩
+  useEffect(() => {
+    if (!isSearching) {
+      fetchUsers(usersPage)
+    }
+  }, [usersPage])
+
+  useEffect(() => {
+    if (isSearching && searchTerm.trim()) {
+      searchUsers(searchTerm)
+      setUsersPage(0)
+    } else if (!isSearching && !searchTerm.trim()) {
+      setFilteredUsers([])
+      setUsersPage(0)
+      fetchUsers(0)
+    }
+  }, [isSearching, searchTerm])
 
   const handleSave = async (newValue: number) => {
     if (!editModalState.userId || !editModalState.type) return
@@ -28,7 +51,11 @@ export const ManageUsers = () => {
       }
       
       // 성공 후 현재 페이지 데이터 새로고침
-      await fetchUsers(usersPage)
+      if (isSearching && searchTerm.trim()) {
+        await searchUsers(searchTerm)
+      } else {
+        await fetchUsers(usersPage)
+      }
       
     } catch (error) {
       alert('저장에 실패했습니다. 다시 시도해주세요.')
@@ -38,6 +65,26 @@ export const ManageUsers = () => {
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < (pageData?.totalPages || 0)) {
       setUsersPage(newPage)
+      
+      // 검색 중이면 클라이언트 사이드 페이지네이션
+      if (isSearching && searchTerm.trim() && filteredUsers.length > 0) {
+        const pageSize = 10
+        const start = newPage * pageSize
+        const end = start + pageSize
+        const totalElements = filteredUsers.length
+        const totalPages = Math.ceil(totalElements / pageSize)
+        
+        setPageData({
+          ...pageData!,
+          content: filteredUsers.slice(start, end),
+          number: newPage,
+          numberOfElements: Math.min(pageSize, totalElements - start),
+          first: newPage === 0,
+          last: newPage === totalPages - 1,
+        })
+      } else {
+        fetchUsers(newPage)
+      }
     }
   }
 

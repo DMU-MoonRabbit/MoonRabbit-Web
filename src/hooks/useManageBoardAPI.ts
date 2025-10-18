@@ -12,6 +12,7 @@ export const useManageBoardAPI = () => {
     setReportedCommentsData,
     setLoading,
     setReportsLoading,
+    setFilteredBoards,
   } = useManageBoardStore()
 
   const {
@@ -46,6 +47,58 @@ export const useManageBoardAPI = () => {
       
     } catch (error) {
       console.error('게시글 목록 조회 실패:', error)
+      setBoardData(null)
+      setLoading(false)
+    }
+  }
+
+  // 게시글 검색 (클라이언트 사이드 필터링)
+  const searchBoardPosts = async (title: string) => {
+    setLoading(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      // 전체 데이터 가져오기 (큰 size로)
+      const response = await axios.get(
+        ENDPOINTS.CONCERN_LIST(0, 1000),
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          withCredentials: true
+        }
+      )
+      
+      // 제목으로 필터링
+      const filteredContent = response.data.content.filter((board: any) => 
+        board.title.toLowerCase().includes(title.toLowerCase())
+      )
+      
+      // 필터링된 전체 데이터 저장
+      setFilteredBoards(filteredContent)
+      
+      // 페이지네이션 정보 재계산
+      const totalElements = filteredContent.length
+      const totalPages = Math.ceil(totalElements / pageSize)
+      
+      console.log('게시글 검색 결과:', filteredContent.length)
+      setBoardData({
+        ...response.data,
+        content: filteredContent.slice(0, pageSize),
+        totalElements,
+        totalPages,
+        numberOfElements: Math.min(pageSize, totalElements),
+        number: 0,
+        first: true,
+        last: totalPages <= 1,
+        empty: filteredContent.length === 0
+      })
+      setLoading(false)
+      
+    } catch (error) {
+      console.error('게시글 검색 실패:', error)
+      setFilteredBoards([])
       setBoardData(null)
       setLoading(false)
     }
@@ -206,9 +259,9 @@ export const useManageBoardAPI = () => {
     }
   }
 
-  // 자동 데이터 로딩
+  // 자동 데이터 로딩 (ManageBoard 컴포넌트에서 처리)
   useEffect(() => {
-    fetchBoardPosts(boardPostsPage)
+    // ManageBoard 컴포넌트에서 검색 로직을 처리하므로 여기서는 제거
   }, [boardPostsPage])
 
   useEffect(() => {
@@ -255,6 +308,7 @@ export const useManageBoardAPI = () => {
 
   return {
     fetchBoardPosts,
+    searchBoardPosts,
     fetchReportedBoards,
     fetchReportedComments,
     updateBoard,

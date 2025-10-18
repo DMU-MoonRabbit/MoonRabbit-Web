@@ -8,11 +8,13 @@ interface AdminState {
   searchTerm: string
   pageData: AdminUserResponse | null
   loading: boolean
+  isSearching: boolean
   setActiveTab: (tab: 'members' | 'posts') => void
   setSearchTerm: (term: string) => void
   setPageData: (data: AdminUserResponse | null) => void
   setLoading: (loading: boolean) => void
   handleSearch: () => Promise<void>
+  clearSearch: () => void
 }
 
 export const useAdminStore = create<AdminState>((set, get) => ({
@@ -20,14 +22,22 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   searchTerm: '',
   pageData: null,
   loading: false,
-  setActiveTab: (tab) => set({ activeTab: tab }),
+  isSearching: false,
+  setActiveTab: (tab) => set({ activeTab: tab, searchTerm: '', isSearching: false }),
   setSearchTerm: (term) => set({ searchTerm: term }),
   setPageData: (data) => set({ pageData: data }),
   setLoading: (loading) => set({ loading }),
   handleSearch: async () => {
     const { searchTerm } = get()
-    set({ loading: true })
-  }
+    if (!searchTerm.trim()) {
+      // 검색어가 비어있으면 검색 상태 해제
+      set({ isSearching: false })
+      return
+    }
+    // 검색 상태 설정 (컴포넌트가 이를 감지하여 검색 실행)
+    set({ isSearching: true })
+  },
+  clearSearch: () => set({ searchTerm: '', isSearching: false })
 }))
 
 export const getAdminUsers = async (page = 0, size = 10) => {

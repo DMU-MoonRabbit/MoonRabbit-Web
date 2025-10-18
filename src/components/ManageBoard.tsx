@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useResponsiveStore } from '../stores/useResponsiveStore'
 import { useManageBoardStore } from '../stores/useManageBoardStore'
 import { usePaginationStore } from '../stores/usePaginationStore'
+import { useAdminStore } from '../stores/useAdminStore'
 import { useManageBoardAPI } from '../hooks/useManageBoardAPI'
 import { ReportedBoard } from './ReportedBoard'
 import { BoardPostsTable } from './BoardPostsTable'
@@ -21,9 +22,12 @@ export const ManageBoard = () => {
     loading,
     reportsLoading,
     editModalState,
+    filteredBoards,
     setActiveTab,
     openEditModal,
     closeEditModal,
+    setBoardData,
+    setFilteredBoards,
   } = useManageBoardStore()
   
   const {
@@ -35,12 +39,54 @@ export const ManageBoard = () => {
     setReportedCommentsPage,
   } = usePaginationStore()
   
-  // API Hook 사용
-  const { fetchBoardPosts, updateBoard, deleteBoard } = useManageBoardAPI()
+  const { searchTerm, isSearching } = useAdminStore()
+  
+  const { fetchBoardPosts, searchBoardPosts, updateBoard, deleteBoard } = useManageBoardAPI()
+
+  // 초기 데이터 로딩
+  useEffect(() => {
+    if (activeTab === 'posts' && !isSearching) {
+      fetchBoardPosts(boardPostsPage)
+    }
+  }, [boardPostsPage, activeTab])
+
+  // 검색 실행
+  useEffect(() => {
+    if (activeTab === 'posts') {
+      if (isSearching && searchTerm.trim()) {
+        searchBoardPosts(searchTerm)
+        setBoardPostsPage(0)
+      } else if (!isSearching && !searchTerm.trim()) {
+        setFilteredBoards([])
+        setBoardPostsPage(0)
+        fetchBoardPosts(0)
+      }
+    }
+  }, [isSearching, searchTerm, activeTab])
 
   const handlePostPageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < (boardData?.totalPages || 0)) {
       setBoardPostsPage(newPage)
+      
+      // 검색 중일 때
+      if (isSearching && searchTerm.trim() && filteredBoards.length > 0) {
+        const pageSize = 9
+        const start = newPage * pageSize
+        const end = start + pageSize
+        const totalElements = filteredBoards.length
+        const totalPages = Math.ceil(totalElements / pageSize)
+        
+        setBoardData({
+          ...boardData!,
+          content: filteredBoards.slice(start, end),
+          number: newPage,
+          numberOfElements: Math.min(pageSize, totalElements - start),
+          first: newPage === 0,
+          last: newPage === totalPages - 1,
+        })
+      } else {
+        fetchBoardPosts(newPage)
+      }
     }
   }
 
@@ -75,7 +121,11 @@ export const ManageBoard = () => {
       alert('게시글이 성공적으로 수정되었습니다.')
       
       // 현재 페이지 데이터 새로고침
-      fetchBoardPosts(boardPostsPage)
+      if (isSearching && searchTerm.trim()) {
+        searchBoardPosts(searchTerm)
+      } else {
+        fetchBoardPosts(boardPostsPage)
+      }
       closeEditModal()
       
     } catch (error) {
@@ -94,7 +144,11 @@ export const ManageBoard = () => {
       alert('게시글이 성공적으로 삭제되었습니다.')
       
       // 현재 페이지 데이터 새로고침
-      fetchBoardPosts(boardPostsPage)
+      if (isSearching && searchTerm.trim()) {
+        searchBoardPosts(searchTerm)
+      } else {
+        fetchBoardPosts(boardPostsPage)
+      }
       
     } catch (error) {
       alert('게시글 삭제에 실패했습니다.')

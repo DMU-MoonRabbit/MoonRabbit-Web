@@ -11,9 +11,11 @@ interface ManageBoardState {
   boardData: BoardPageData | null
   reportedBoardsData: AdminReportsResponse | null
   reportedCommentsData: AdminReportsResponse | null
+  filteredBoards: any[] // 필터링된 전체 게시글 목록 (클라이언트 사이드 페이지네이션용)
   setBoardData: (data: BoardPageData | null) => void
   setReportedBoardsData: (data: AdminReportsResponse | null) => void
   setReportedCommentsData: (data: AdminReportsResponse | null) => void
+  setFilteredBoards: (boards: any[]) => void
 
   // 로딩 상태
   loading: boolean
@@ -63,9 +65,11 @@ export const useManageBoardStore = create<ManageBoardState>((set, get) => ({
   boardData: null,
   reportedBoardsData: null,
   reportedCommentsData: null,
+  filteredBoards: [],
   setBoardData: (data) => set({ boardData: data }),
   setReportedBoardsData: (data) => set({ reportedBoardsData: data }),
   setReportedCommentsData: (data) => set({ reportedCommentsData: data }),
+  setFilteredBoards: (boards) => set({ filteredBoards: boards }),
 
   // 로딩 상태
   loading: false,
@@ -101,6 +105,7 @@ export const useManageBoardStore = create<ManageBoardState>((set, get) => ({
     boardData: null,
     reportedBoardsData: null,
     reportedCommentsData: null,
+    filteredBoards: [],
     loading: false,
     reportsLoading: false,
     editModalState: {

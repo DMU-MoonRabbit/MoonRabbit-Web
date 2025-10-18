@@ -7,7 +7,7 @@ import axios from 'axios'
 
 export const useManageUsersAPI = () => {
   const { usersPage } = usePaginationStore()
-  const { setPageData, setLoading } = useManageUsersStore()
+  const { setPageData, setLoading, setFilteredUsers } = useManageUsersStore()
 
   // 회원 목록 조회
   const fetchUsers = async (page: number) => {
@@ -52,6 +52,72 @@ export const useManageUsersAPI = () => {
     }
   }
 
+  // 회원 검색
+  const searchUsers = async (nickname: string) => {
+    setLoading(true)
+    try {
+      const token = localStorage.getItem('accessToken')
+      
+      // 전체 데이터 가져오기
+      const response = await axios.get(ENDPOINTS.ADMIN_USERS(0, 1000), {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      })
+      
+      // 닉네임으로 필터링
+      const filteredContent = response.data.content.filter((user: any) => 
+        user.nickname.toLowerCase().includes(nickname.toLowerCase())
+      )
+      setFilteredUsers(filteredContent)
+      
+      // 페이지네이션
+      const pageSize = 10
+      const totalElements = filteredContent.length
+      const totalPages = Math.ceil(totalElements / pageSize)
+      
+      setPageData({
+        ...response.data,
+        content: filteredContent.slice(0, pageSize),
+        totalElements,
+        totalPages,
+        numberOfElements: Math.min(pageSize, totalElements),
+        number: 0,
+        first: true,
+        last: totalPages <= 1,
+        empty: filteredContent.length === 0
+      })
+      setLoading(false)
+
+    } catch (error) {
+      console.error('회원 검색 실패:', error)
+      setFilteredUsers([])
+      setPageData({
+        totalElements: 0,
+        totalPages: 0,
+        first: true,
+        last: true,
+        size: 10,
+        content: [],
+        number: 0,
+        sort: [],
+        numberOfElements: 0,
+        pageable: {
+          offset: 0,
+          sort: [],
+          pageNumber: 0,
+          pageSize: 10,
+          paged: true,
+          unpaged: false
+        },
+        empty: true
+      })
+      setLoading(false)
+    }
+  }
+
   // 포인트 수정
   const updatePoint = async (userId: number, newPoint: number) => {
     try {
@@ -76,13 +142,9 @@ export const useManageUsersAPI = () => {
     }
   }
 
-  // 자동 데이터 로딩
-  useEffect(() => {
-    fetchUsers(usersPage)
-  }, [usersPage])
-
   return {
     fetchUsers,
+    searchUsers,
     updatePoint,
     updateTrust,
   }
