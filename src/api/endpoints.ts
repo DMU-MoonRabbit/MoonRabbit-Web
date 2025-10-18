@@ -14,9 +14,10 @@ export const ENDPOINTS = {
 
   // 유저(User)
   USER_INFO: `${BASE_URL}/user/info`,
-  USER_UPDATE: `${BASE_URL}/user/update`,
   USER_PROFILE: `${BASE_URL}/users/profile`,
   USER_PROFILE_IMAGE: `${BASE_URL}/users/profile/image`,
+  USER_PROFILE_PASSWORD: `${BASE_URL}/users/profile/password`,
+  USER_PROFILE_NICKNAME: `${BASE_URL}/users/profile/nickname`,
   USER_ITEMS: (userId: number, page = 0, size = 100) => `${BASE_URL}/user/items/${userId}?page=${page}&size=${size}`,
   USER_ITEM_EQUIP: (userItemId: number) => `${BASE_URL}/user/items/${userItemId}/equip`,
   USER_ITEM_UNEQUIP: (userItemId: number) => `${BASE_URL}/user/items/${userItemId}/unequip`,

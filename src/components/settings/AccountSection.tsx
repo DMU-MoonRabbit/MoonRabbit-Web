@@ -66,15 +66,24 @@ const AccountSection: React.FC = () => {
         return
       }
 
-      await axios.put(
-        ENDPOINTS.USER_UPDATE,
-        { nickname: newNickname },
+      // 새로운 닉네임 변경 API 사용
+      console.log('=== 닉네임 변경 요청 시작 ===')
+      console.log('새 닉네임:', newNickname)
+      console.log('API 엔드포인트:', ENDPOINTS.USER_PROFILE_NICKNAME)
+      console.log('토큰 존재:', !!accessToken)
+      console.log('토큰 앞 10자:', accessToken?.substring(0, 10))
+      
+      const response = await axios.patch(
+        ENDPOINTS.USER_PROFILE_NICKNAME,
+        { newNickname: newNickname },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json; charset=utf-8',
           },
         }
       )
+      console.log('닉네임 변경 성공:', response.data)
 
       await fetchUserProfile(true)
       setIsEditingNickname(false)
@@ -82,7 +91,12 @@ const AccountSection: React.FC = () => {
       showModal('success', '닉네임이 변경되었습니다.')
     } catch (error) {
       console.error('닉네임 변경 실패:', error)
-      showModal('error', '닉네임 변경에 실패했습니다.')
+      if (axios.isAxiosError(error) && error.response) {
+        const errorMessage = error.response.data?.message || '닉네임 변경에 실패했습니다.'
+        showModal('error', errorMessage)
+      } else {
+        showModal('error', '닉네임 변경에 실패했습니다.')
+      }
     }
   }
 
