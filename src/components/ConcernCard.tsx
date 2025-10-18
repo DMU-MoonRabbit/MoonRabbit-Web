@@ -61,11 +61,13 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
                 ? 'w-12 h-12 sm:w-14 sm:h-14 rounded-full top-3 left-3'
                 : 'w-[5rem] h-[5rem] rounded-full top-[1.1875rem] left-[1.875rem]',
             )}
+            style={{ aspectRatio: '1 / 1' }}
           >
             <img
               src={profileImage?.trim() || '/images/MoonRabbitSleep2.png'}
               alt="Profile"
-              className="w-full h-full object-cover rounded-full"
+              className="absolute inset-0 w-full h-full object-cover rounded-full"
+              style={{ aspectRatio: '1 / 1' }}
               loading="lazy"
               onError={(e) => {
                 e.currentTarget.src = '/images/MoonRabbitSleep2.png'
@@ -76,7 +78,8 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
               <img
                 src={borderImageUrl}
                 alt="테두리"
-                className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                className="absolute inset-0 w-full h-full pointer-events-none"
+                style={{ aspectRatio: '1 / 1' }}
               />
             )}
           </div>

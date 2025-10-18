@@ -90,11 +90,15 @@ const MypageProfile: React.FC = memo(() => {
         <div className={profilePositionClass}> 
           <div className="flex items-center mb-2">
             {/* 프로필 이미지 + 테두리 */}
-            <div className={clsx("relative flex-shrink-0", isMobile ? "w-[60px] h-[60px]" : "w-[120px] h-[120px]")}>
+            <div 
+              className={clsx("relative flex-shrink-0", isMobile ? "w-[60px] h-[60px]" : "w-[120px] h-[120px]")}
+              style={{ aspectRatio: '1 / 1' }}
+            >
               <img 
-                src={userProfile?.profileImage || "/images/MoonRabbitSleep2.png"} 
+                src={userProfile?.profileImage || userProfile?.profileImg || "/images/MoonRabbitSleep2.png"} 
                 alt="프로필 이미지" 
-                className={clsx("object-cover rounded-full w-full h-full")}
+                className="absolute inset-0 w-full h-full object-cover rounded-full"
+                style={{ aspectRatio: '1 / 1' }}
                 loading="lazy"
                 onError={(e) => {
                   e.currentTarget.src = '/images/MoonRabbitSleep2.png'
@@ -105,7 +109,8 @@ const MypageProfile: React.FC = memo(() => {
                 <img
                   src={equippedBorder.imageUrl}
                   alt="프로필 테두리"
-                  className="absolute top-0 left-0 w-full h-full pointer-events-none"
+                  className="absolute inset-0 w-full h-full pointer-events-none"
+                  style={{ aspectRatio: '1 / 1' }}
                 />
               )}
             </div>

@@ -14,8 +14,10 @@ export const ENDPOINTS = {
 
   // 유저(User)
   USER_INFO: `${BASE_URL}/user/info`,
-  USER_UPDATE: `${BASE_URL}/user/update`,
   USER_PROFILE: `${BASE_URL}/users/profile`,
+  USER_PROFILE_IMAGE: `${BASE_URL}/users/profile/image`,
+  USER_PROFILE_PASSWORD: `${BASE_URL}/users/profile/password`,
+  USER_PROFILE_NICKNAME: `${BASE_URL}/users/profile/nickname`,
   USER_ITEMS: (userId: number, page = 0, size = 100) => `${BASE_URL}/user/items/${userId}?page=${page}&size=${size}`,
   USER_ITEM_EQUIP: (userItemId: number) => `${BASE_URL}/user/items/${userItemId}/equip`,
   USER_ITEM_UNEQUIP: (userItemId: number) => `${BASE_URL}/user/items/${userItemId}/unequip`,
@@ -47,6 +49,11 @@ export const ENDPOINTS = {
   // 상점(Shop)
   ITEM_LIST: `${BASE_URL}/items`,
   ITEM_BUY: `${BASE_URL}/user/items/buy`,
+  
+  // 이미지(Image)
+  IMAGE_UPLOAD: (type: string) => `${BASE_URL}/images/upload/${type}`,
+  IMAGE_UPDATE: (type: string, oldUrl: string) => `${BASE_URL}/images/${type}?oldUrl=${encodeURIComponent(oldUrl)}`,
+  IMAGE_DELETE: (url: string) => `${BASE_URL}/images?url=${encodeURIComponent(url)}`,
   
   // 기타 필요시 추가
   ASSISTANT_ANSWER: (boardId: number, category: string) => `${BASE_URL}/board/${boardId}/assistant/${category}`,
