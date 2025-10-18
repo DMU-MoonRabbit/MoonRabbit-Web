@@ -6,32 +6,21 @@ import axios from 'axios'
 import clsx from 'clsx'
 import { DailyQuestionCreateModal } from '../components/DailyQuestionCreateModal'
 
-interface DailyQuestionResponse {
-  content: DailyQuestion[]
-  totalElements: number
-  totalPages: number
-  number: number
-  size: number
-  first: boolean
-  last: boolean
-  empty: boolean
-}
-
 export const ManageDailyQuestion = () => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
   
-  const [questions, setQuestions] = useState<DailyQuestionResponse | null>(null)
+  const [question, setQuestion] = useState<DailyQuestion | null>(null)
   const [loading, setLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(0)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
-  // 오늘의질문 목록 조회
-  const fetchDailyQuestions = async (page = 0) => {
+  // 오늘의질문 조회
+  const fetchDailyQuestion = async (page = 0) => {
     setLoading(true)
     try {
-      const response = await axios.get(ENDPOINTS.DAILY_QUESTION, )
-      setQuestions(response.data)
+      const response = await axios.get(ENDPOINTS.DAILY_QUESTION)
+      setQuestion(response.data)
     } catch (error) {
       console.error('오늘의질문 조회 실패:', error)
       alert('오늘의질문을 불러오는데 실패했습니다.')
@@ -43,13 +32,13 @@ export const ManageDailyQuestion = () => {
   // 오늘의질문 생성 성공 후 콜백
   const handleCreateSuccess = () => {
     setIsCreateModalOpen(false)
-    fetchDailyQuestions(0)
+    fetchDailyQuestion(0)
     setCurrentPage(0)
   }
 
   // 초기 데이터 로딩
   useEffect(() => {
-    fetchDailyQuestions(currentPage)
+    fetchDailyQuestion(currentPage)
   }, [])
 
   return (
@@ -71,18 +60,35 @@ export const ManageDailyQuestion = () => {
         </div>
       )}
 
-      {/* 질문 목록 */} 
-      {!loading && questions && (
-        <div className="overflow-x-auto">
-          <div className="w-full border-collapse">
-            <div className="px-4 py-3 text-left text-sm font-mainFont font-semibold text-gray-700">
-              {questions.content.map((question) => (
-                <div key={question.id}>
-                  {question.content}
-                </div>
-              ))}
+      {/* 오늘의 질문 */} 
+      {!loading && question && (
+        <div className="mx-auto">
+          {/* 날짜 배지 */}
+          <div className="flex mb-6">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-mainColor/10 rounded-full">
+              <span className="text-sm font-mainFont font-semibold text-mainColor">
+                {question.date}
+              </span>
             </div>
           </div>
+          {/* 질문 내용 */}
+          <div className="bg-white rounded-xl p-6 shadow-inner border border-lightBeige">
+            <p className="text-lg font-gothicFont text-darkWalnut leading-relaxed">
+              {question.content}
+            </p>
+          </div>
+        </div>
+      )}
+      
+      {/* 질문이 없을 때 */}
+      {!loading && !question && (
+        <div className="mx-auto">
+          <p className="text-lg font-mainFont text-gray-600">
+            등록된 오늘의 질문이 없습니다
+          </p>
+          <p className="text-sm font-gothicFont text-gray-500 mt-2">
+            질문을 생성해주세요
+          </p>
         </div>
       )}
 
