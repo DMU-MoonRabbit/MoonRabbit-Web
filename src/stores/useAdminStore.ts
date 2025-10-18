@@ -4,12 +4,12 @@ import { ENDPOINTS } from '../api/endpoints'
 import axios from 'axios'
 
 interface AdminState {
-  activeTab: 'members' | 'posts'
+  activeTab: 'members' | 'posts' | 'dailyQuestion'
   searchTerm: string
   pageData: AdminUserResponse | null
   loading: boolean
   isSearching: boolean
-  setActiveTab: (tab: 'members' | 'posts') => void
+  setActiveTab: (tab: 'members' | 'posts' | 'dailyQuestion') => void
   setSearchTerm: (term: string) => void
   setPageData: (data: AdminUserResponse | null) => void
   setLoading: (loading: boolean) => void

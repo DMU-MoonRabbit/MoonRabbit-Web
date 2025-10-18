@@ -4,6 +4,7 @@ import { SearchBar } from "../components/SearchBar"
 import { useAdminStore } from "../stores/useAdminStore"
 import { ManageUsers } from "../components/ManageUsers"
 import { ManageBoard } from "../components/ManageBoard"
+import { ManageDailyQuestion } from "../components/ManageDailyQuestion"
 
 export default function AdminPage() {
   const { activeTab } = useAdminStore()
@@ -16,7 +17,13 @@ export default function AdminPage() {
           <SearchBar />
         </div>
       </div>
-      {activeTab === 'members' ? <ManageUsers /> : <ManageBoard />}
+      {activeTab === 'members' ? (
+        <ManageUsers />
+      ) : activeTab === 'posts' ? (
+        <ManageBoard />
+      ) : (
+        <ManageDailyQuestion />
+      )}
     </div>
   )
 }

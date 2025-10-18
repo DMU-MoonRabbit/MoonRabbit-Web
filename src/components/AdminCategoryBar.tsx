@@ -5,6 +5,7 @@ import clsx from 'clsx'
 const categories = [
   { id: 'members', label: '회원' },
   { id: 'posts', label: '게시글 및 댓글' },
+  { id: 'dailyQuestion', label: '오늘의질문' },
 ]
 
 export const AdminCategoryBar = () => {
@@ -15,7 +16,7 @@ export const AdminCategoryBar = () => {
       {categories.map((category) => (
       <button
         key={category.id}
-        onClick={() => setActiveTab(category.id as 'members' | 'posts')}
+        onClick={() => setActiveTab(category.id as 'members' | 'posts' | 'dailyQuestion')}
         className={clsx(
           'min-w-fit h-8 rounded-full font-semibold text-xs sm:text-sm shadow-md transition-transform duration-200 ease-in-out transform hover:-translate-y-0.5 whitespace-nowrap px-3 sm:px-4',
           (activeTab === category.id)
