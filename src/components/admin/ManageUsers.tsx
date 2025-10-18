@@ -1,8 +1,8 @@
 import React, { useEffect } from "react"
-import { useManageUsersStore } from "../stores/useManageUsersStore"
-import { usePaginationStore } from "../stores/usePaginationStore"
-import { useAdminStore } from "../stores/useAdminStore"
-import { useManageUsersAPI } from "../hooks/useManageUsersAPI"
+import { useManageUsersStore } from "../../stores/useManageUsersStore"
+import { usePaginationStore } from "../../stores/usePaginationStore"
+import { useAdminStore } from "../../stores/useAdminStore"
+import { useManageUsersAPI } from "../../hooks/useManageUsersAPI"
 import { ManagePointModal } from "./ManagePointModal"
 import { UsersTable } from "./UsersTable"
 

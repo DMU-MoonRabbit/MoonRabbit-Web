@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ENDPOINTS } from '../api/endpoints'
+import { ENDPOINTS } from '../../api/endpoints'
 import axios from 'axios'
 import { AdminModal } from './AdminModal'
 

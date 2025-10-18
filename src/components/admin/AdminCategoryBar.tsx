@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAdminStore } from '../stores/useAdminStore'
+import { useAdminStore } from '../../stores/useAdminStore'
 import clsx from 'clsx'
 
 const categories = [

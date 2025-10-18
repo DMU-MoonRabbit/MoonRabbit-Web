@@ -1,10 +1,10 @@
 import React from "react"
-import { AdminCategoryBar } from "../components/AdminCategoryBar"
-import { SearchBar } from "../components/SearchBar"
+import { AdminCategoryBar } from "../components/admin/AdminCategoryBar"
+import { SearchBar } from "../components/admin/SearchBar"
 import { useAdminStore } from "../stores/useAdminStore"
-import { ManageUsers } from "../components/ManageUsers"
-import { ManageBoard } from "../components/ManageBoard"
-import { ManageDailyQuestion } from "../components/ManageDailyQuestion"
+import { ManageUsers } from "../components/admin/ManageUsers"
+import { ManageBoard } from "../components/admin/ManageBoard"
+import { ManageDailyQuestion } from "../components/admin/ManageDailyQuestion"
 
 export default function AdminPage() {
   const { activeTab } = useAdminStore()

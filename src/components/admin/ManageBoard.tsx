@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
-import { useManageBoardStore } from '../stores/useManageBoardStore'
-import { usePaginationStore } from '../stores/usePaginationStore'
-import { useAdminStore } from '../stores/useAdminStore'
-import { useManageBoardAPI } from '../hooks/useManageBoardAPI'
+import { useResponsiveStore } from '../../stores/useResponsiveStore'
+import { useManageBoardStore } from '../../stores/useManageBoardStore'
+import { usePaginationStore } from '../../stores/usePaginationStore'
+import { useAdminStore } from '../../stores/useAdminStore'
+import { useManageBoardAPI } from '../../hooks/useManageBoardAPI'
 import { ReportedBoard } from './ReportedBoard'
 import { BoardPostsTable } from './BoardPostsTable'
 import { BoardEditModal } from './BoardEditModal'
 import clsx from 'clsx'
-import { BoardUpdateRequest } from '../types/admin'
+import { BoardUpdateRequest } from '../../types/admin'
 
 export const ManageBoard = () => {
   const res = useResponsiveStore((state) => state.res)

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAdminStore } from '../stores/useAdminStore'
+import { useAdminStore } from '../../stores/useAdminStore'
 
 export const SearchBar = () => {
   const { searchTerm, setSearchTerm, handleSearch, activeTab, clearSearch } = useAdminStore()
@@ -39,3 +39,4 @@ export const SearchBar = () => {
     </div>
   )
 }
+

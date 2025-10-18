@@ -1,8 +1,8 @@
 import React from 'react'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
+import { useResponsiveStore } from '../../stores/useResponsiveStore'
 import { AdminPagination } from './AdminPagination'
 import clsx from 'clsx'
-import { AdminUserResponse } from '../types/admin'
+import { AdminUserResponse } from '../../types/admin'
 
 interface UsersTableProps {
   pageData: AdminUserResponse | null

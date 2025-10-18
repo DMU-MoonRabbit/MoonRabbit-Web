@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
-import { DailyQuestion } from '../types/question'
-import { ENDPOINTS } from '../api/endpoints'
+import { useResponsiveStore } from '../../stores/useResponsiveStore'
+import { DailyQuestion } from '../../types/question'
+import { ENDPOINTS } from '../../api/endpoints'
 import axios from 'axios'
 import clsx from 'clsx'
-import { DailyQuestionCreateModal } from '../components/DailyQuestionCreateModal'
+import { DailyQuestionCreateModal } from './DailyQuestionCreateModal'
 
 export const ManageDailyQuestion = () => {
   const res = useResponsiveStore((state) => state.res)
