@@ -5,34 +5,58 @@ import { useResponsiveStore } from "../stores/useResponsiveStore"
 import { useUserProfileStore } from "../stores/useUserProfileStore"
 import clsx from 'clsx'
 
-const MypageProfile: React.FC = memo(() => {
+interface MypageProfileProps {
+  userId?: number
+  isOwnPage: boolean
+}
+
+const MypageProfile: React.FC<MypageProfileProps> = memo(({ userId, isOwnPage }) => {
   const navigate = useNavigate()
   const { setIsLoggedIn } = useAuthStore()
   const { 
     userProfile, 
+    otherUserProfile,
     loading, 
     error, 
     fetchUserProfile, 
+    fetchUserProfileById,
     fetchUserInventory,
     getEquippedBorder,
     getEquippedBanner,
     getEquippedNicknameColor
   } = useUserProfileStore()
 
+  // 본인 페이지인 경우 자신의 프로필 조회
   useEffect(() => {
-    fetchUserProfile()
-  }, [fetchUserProfile])
-
-  useEffect(() => {
-    console.log('userProfile:', userProfile)
-    console.log('point:', userProfile?.point)
-  }, [userProfile])
-
-  useEffect(() => {
-    if (userProfile?.id) {
-      fetchUserInventory(userProfile.id)
+    if (isOwnPage) {
+      fetchUserProfile()
     }
-  }, [userProfile?.id, fetchUserInventory])
+  }, [isOwnPage, fetchUserProfile])
+
+  // 다른 사람 페이지인 경우 해당 사용자의 프로필 조회
+  useEffect(() => {
+    if (!isOwnPage && userId) {
+      fetchUserProfileById(userId)
+    }
+  }, [isOwnPage, userId, fetchUserProfileById])
+
+  // 표시할 프로필 결정
+  const displayProfile = isOwnPage ? userProfile : otherUserProfile
+
+  useEffect(() => {
+    console.log('displayProfile:', displayProfile)
+    console.log('point:', displayProfile?.point)
+  }, [displayProfile])
+
+  useEffect(() => {
+    const targetUserId = isOwnPage 
+      ? (userProfile?.id) 
+      : userId
+    
+    if (targetUserId) {
+      fetchUserInventory(targetUserId)
+    }
+  }, [isOwnPage, userId, userProfile, fetchUserInventory])
 
   // 장착된 아이템 가져오기
   const equippedBorder = getEquippedBorder()
@@ -95,7 +119,7 @@ const MypageProfile: React.FC = memo(() => {
               style={{ aspectRatio: '1 / 1' }}
             >
               <img 
-                src={userProfile?.profileImage || userProfile?.profileImg || "/images/MoonRabbitSleep2.png"} 
+                src={displayProfile?.profileImage || displayProfile?.profileImg || "/images/MoonRabbitSleep2.png"} 
                 alt="프로필 이미지" 
                 className="absolute inset-0 w-full h-full object-cover rounded-full"
                 style={{ aspectRatio: '1 / 1' }}
@@ -118,10 +142,10 @@ const MypageProfile: React.FC = memo(() => {
                {/* 닉네임 + 포인트 */}
                <div className="flex items-center gap-2 mb-1">
                  <p className={nameTextClass} style={nicknameStyle}>
-                   {loading ? '로딩 중...' : userProfile?.nickname || '사용자'}
+                   {loading ? '로딩 중...' : displayProfile?.nickname || '사용자'}
                  </p>
                  
-                 {userProfile && (
+                 {displayProfile && isOwnPage && (
                    <div className="relative flex items-center">
                      <img 
                        src="/images/point.png" 
@@ -136,7 +160,7 @@ const MypageProfile: React.FC = memo(() => {
                        "absolute ml-5 inset-0 flex items-center justify-center font-mainFont text-darkWalnut font-bold",
                        isMobile ? "text-[10px]" : "text-xs"
                      )}>
-                       {userProfile.point !== undefined ? userProfile.point : 0}
+                       {displayProfile.point !== undefined ? displayProfile.point : 0}
                      </span>
                    </div>
                  )}
@@ -149,12 +173,14 @@ const MypageProfile: React.FC = memo(() => {
               )}
               
               {/* 로그아웃 버튼 */}
-              <div 
-                className={logoutButtonClass}
-                onClick={handleLogout}
-              >
-                로그아웃
-              </div>
+              {isOwnPage && (
+                <div 
+                  className={logoutButtonClass}
+                  onClick={handleLogout}
+                >
+                  로그아웃
+                </div>
+              )}
             </div>
           </div> 
         </div>

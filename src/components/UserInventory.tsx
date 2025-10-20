@@ -3,7 +3,7 @@ import { useUserProfileStore } from "../stores/useUserProfileStore"
 import clsx from "clsx"
 
 interface UserInventoryProps {
-  userId: number
+  userId?: number
 }
 
 const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {

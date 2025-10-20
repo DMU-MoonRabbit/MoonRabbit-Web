@@ -4,7 +4,7 @@ import { useResponsiveStore } from "../stores/useResponsiveStore"
 import { useMypageStore } from "../stores/useMypageStore"
 import clsx from 'clsx'
 
-const MypageCountSection: React.FC = memo(() => {
+const MypageCountSection: React.FC<{ isOwnPage: boolean }> = memo(({ isOwnPage }) => {
   const { totalBoardCount, fetchTotalBoardCount } = useMypageStore()
   
   useEffect(() => {

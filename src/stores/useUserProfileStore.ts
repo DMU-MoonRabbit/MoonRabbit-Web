@@ -7,6 +7,7 @@ import { NICKNAME_COLOR_MAP } from '../constants/colors'
 interface UserProfileStore {
   // 상태
   userProfile: UserProfile | null
+  otherUserProfile: UserProfile | null
   userInventory: UserInventory | null
   likedBoards: LikedBoard[]
   loading: boolean
@@ -14,13 +15,15 @@ interface UserProfileStore {
   isProfileLoaded: boolean
 
   // 액션
-  fetchUserProfile: (force?: boolean) => Promise<void>
+  fetchUserProfile: (force?: boolean) => Promise<void> // 내 프로필 조회
+  fetchUserProfileById: (userId: number) => Promise<void> // 타 유저 프로필 조회
   fetchUserInventory: (userId: number) => Promise<void>
   fetchLikedBoards: () => Promise<void>
   equipItem: (userItemId: number) => Promise<void>
   unequipItem: (userItemId: number) => Promise<void>
   clearError: () => void
   resetProfileLoadState: () => void
+  clearOtherUserProfile: () => void
   
   // Selectors
   getEquippedBorder: () => UserItem | null
@@ -31,13 +34,14 @@ interface UserProfileStore {
 export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
   // 초기 상태
   userProfile: null,
+  otherUserProfile: null,
   userInventory: null,
   likedBoards: [],
   loading: false,
   error: null,
   isProfileLoaded: false,
 
-  // 사용자 프로필 조회
+  // 내 프로필 조회
   fetchUserProfile: async (force = false) => {
     try {
       // 이미 로드되었고 강제 재로드가 아니라면 스킵
@@ -72,6 +76,34 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
       })
     } catch (error) {
       console.error('사용자 프로필 조회 실패:', error)
+      set({ 
+        error: error instanceof Error ? error.message : '프로필 조회에 실패했습니다.',
+        loading: false 
+      })
+    }
+  },
+
+  // 타 유저 프로필 조회
+  fetchUserProfileById: async (userId: number) => {
+    try {
+      set({ loading: true, error: null })
+      
+      const response = await axios.get(ENDPOINTS.USER_PROFILE_BY_ID(userId))
+
+      console.log('다른 사용자 프로필 API 응답:', response.data)
+
+      // 백엔드 응답의 profileImg를 profileImage로도 매핑
+      const otherUserProfile = {
+        ...response.data,
+        profileImage: response.data.profileImg || response.data.profileImage
+      }
+
+      set({ 
+        otherUserProfile,
+        loading: false
+      })
+    } catch (error) {
+      console.error('다른 사용자 프로필 조회 실패:', error)
       set({ 
         error: error instanceof Error ? error.message : '프로필 조회에 실패했습니다.',
         loading: false 
@@ -221,6 +253,9 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
 
   // 프로필 로드 상태 리셋
   resetProfileLoadState: () => set({ isProfileLoaded: false }),
+
+  // 다른 사용자 프로필 클리어
+  clearOtherUserProfile: () => set({ otherUserProfile: null }),
 
   // Selectors - 장착된 아이템 조회
   getEquippedBorder: () => {

@@ -6,16 +6,22 @@ import clsx from "clsx"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 import { useUserProfileStore } from "../stores/useUserProfileStore"
 
-const MypageSidebar: React.FC = memo(() => {
-  const { userProfile, fetchUserProfile } = useUserProfileStore()
+interface MypageSidebarProps {
+  isOwnPage: boolean
+}
+
+const MypageSidebar: React.FC<MypageSidebarProps> = memo(({ isOwnPage }) => {
+  const { userProfile, otherUserProfile, fetchUserProfile } = useUserProfileStore()
   
   useEffect(() => {
-    if (!userProfile) {
+    if (isOwnPage && !userProfile) {
       fetchUserProfile()
     }
-  }, [userProfile, fetchUserProfile])
+  }, [isOwnPage, userProfile, fetchUserProfile])
   
-  const level = userProfile?.level || 1
+  // 표시할 프로필 결정
+  const displayProfile = isOwnPage ? userProfile : otherUserProfile
+  const level = displayProfile?.level || 1
   const [showAllStars, setShowAllStars] = useState(false)
   const [popupOpen, setPopupOpen] = useState<null | 'nightSky' | 'constellation'>(null)
 
@@ -27,9 +33,9 @@ const MypageSidebar: React.FC = memo(() => {
   
   // 현재 레벨의 경험치 정보
   const expInfo = useMemo(() => {
-    if (!userProfile) return { current: 0, required: 100, percentage: 0 }
+    if (!displayProfile) return { current: 0, required: 100, percentage: 0 }
     
-    const currentExp = (userProfile.totalPoint - (level-1)*30) *10
+    const currentExp = (displayProfile.totalPoint - (level-1)*30) *10
     const requiredExp = 300
     const percentage = Math.min(Math.max((currentExp / requiredExp) * 100, 0), 100)
     
@@ -38,7 +44,7 @@ const MypageSidebar: React.FC = memo(() => {
       required: requiredExp,
       percentage,
     }
-  }, [userProfile])
+  }, [displayProfile, level])
 
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
@@ -115,28 +121,33 @@ const MypageSidebar: React.FC = memo(() => {
           </button>
         )}
       </div>
-      <button onClick={handleNightSkyClick} className={clsx('cursor-pointer flex items-center justify-center rounded-xl bg-mainColor text-white font-mainFont w-full py-2 mr-8',
-        isMobile ? "text-[16px]" : "text-[1.5vw]"
-      )}>
-        내 밤하늘
-      </button>
-      <button onClick={handleConstellationClick} className={clsx('cursor-pointer flex items-center justify-center rounded-xl bg-mainColor text-white font-mainFont w-full py-2 mr-8',
-        isMobile ? "text-[16px]" : "text-[1.5vw]"
-      )}>
-        내 아이템
-      </button>
+      {/* 본인 페이지일 때만 버튼 표시 */}
+      {isOwnPage && (
+        <>
+          <button onClick={handleNightSkyClick} className={clsx('cursor-pointer flex items-center justify-center rounded-xl bg-mainColor text-white font-mainFont w-full py-2 mr-8',
+            isMobile ? "text-[16px]" : "text-[1.5vw]"
+          )}>
+            내 밤하늘
+          </button>
+          <button onClick={handleConstellationClick} className={clsx('cursor-pointer flex items-center justify-center rounded-xl bg-mainColor text-white font-mainFont w-full py-2 mr-8',
+            isMobile ? "text-[16px]" : "text-[1.5vw]"
+          )}>
+            내 아이템
+          </button>
 
-      <CenteredPopup
-        title={popupOpen === 'nightSky' ? '내 밤하늘' : '내 아이템'}
-        isOpen={popupOpen !== null}
-        onClose={handleClosePopup}
-      >
-        {popupOpen === 'nightSky' ? (
-          <MyBoardContents />
-        ) : (
-          <UserInventory userId={userProfile?.userId || 0} />
-        )}
-      </CenteredPopup>
+          <CenteredPopup
+            title={popupOpen === 'nightSky' ? '내 밤하늘' : '내 아이템'}
+            isOpen={popupOpen !== null}
+            onClose={handleClosePopup}
+          >
+            {popupOpen === 'nightSky' ? (
+              <MyBoardContents />
+            ) : (
+              <UserInventory userId={userProfile?.id} />
+            )}
+          </CenteredPopup>
+        </>
+      )}
 
     </div>
   )

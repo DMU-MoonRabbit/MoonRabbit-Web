@@ -25,6 +25,7 @@ function App() {
 
   useEffect(() => {
     // 토큰 체크
+    localStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnbGF5QGtha2FvLmNvbSIsImF1dGgiOiJST0xFX0FETUlOIiwiaWF0IjoxNzYwOTQwMDEyLCJleHAiOjE3NjA5NDM2MTJ9.AFFC8Bw_qht_8XKbplhhmnOj9ihPrqEzkOCexo4CY14')
     const accessToken = localStorage.getItem('accessToken')
     if (accessToken) {
       setIsLoggedIn(true)
@@ -60,6 +61,7 @@ function App() {
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/mypage/:userId" element={<MypagePage />} />
         </Routes>
         <Footer />
       </div>
