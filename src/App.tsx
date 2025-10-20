@@ -25,7 +25,7 @@ function App() {
 
   useEffect(() => {
     // 토큰 체크
-    localStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnbGF5QGtha2FvLmNvbSIsImF1dGgiOiJST0xFX0FETUlOIiwiaWF0IjoxNzYwOTQwMDEyLCJleHAiOjE3NjA5NDM2MTJ9.AFFC8Bw_qht_8XKbplhhmnOj9ihPrqEzkOCexo4CY14')
+    localStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJnbGF5QGtha2FvLmNvbSIsImF1dGgiOiJST0xFX0FETUlOIiwiaWF0IjoxNzYwOTUyMDY2LCJleHAiOjE3NjA5NTU2NjZ9.jVXAzxVot7ibmZ_3Uo0aGqANIhxOzVNzlMqs7W35oSg')
     const accessToken = localStorage.getItem('accessToken')
     if (accessToken) {
       setIsLoggedIn(true)

@@ -22,6 +22,7 @@ export const ENDPOINTS = {
   USER_ITEM_EQUIP: (userItemId: number) => `${BASE_URL}/user/items/${userItemId}/equip`,
   USER_ITEM_UNEQUIP: (userItemId: number) => `${BASE_URL}/user/items/${userItemId}/unequip`,
   USER_PROFILE_BY_ID: (userId: number) => `${BASE_URL}/users/users/${userId}`,
+  USER_BOARDS_BY_ID: (userId: number, page = 0, size = 2) => `${BASE_URL}/boards/users/${userId}?page=${page}&size=${size}`,
 
   // 인증(Auth)
   LOGIN: `${BASE_URL}/auth/login`,

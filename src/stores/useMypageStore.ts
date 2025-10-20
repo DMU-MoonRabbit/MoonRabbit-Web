@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import axios from "axios"
 import { Board, PageInfo, Concern, transformBoardToConcern } from "./useUnifiedConcernStore"
+import ENDPOINTS from '../api/endpoints'
 
 interface MypageStore {
   concerns: Concern[]
@@ -8,10 +9,15 @@ interface MypageStore {
   filteredConcerns: Concern[]
   pageInfo: PageInfo
   totalBoardCount: number
+  otherUserConcerns: Concern[]
+  otherUserPageInfo: PageInfo
+  otherUserBoardCount: number
   fetchMyConcerns: (page?: number) => Promise<void>
   fetchTotalBoardCount: () => Promise<void>
+  fetchOtherUserConcerns: (userId: number, page?: number) => Promise<void>
   setSelectedCategory: (category: string) => void
   setPage: (page: number) => void
+  setOtherUserPage: (page: number) => void
 }
 
 export const useMypageStore = create<MypageStore>((set, get) => ({
@@ -19,7 +25,19 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
   selectedCategory: '전체',
   filteredConcerns: [],
   totalBoardCount: 0,
+  otherUserConcerns: [],
+  otherUserBoardCount: 0,
   pageInfo: {
+    totalPages: 0,
+    totalElements: 0,
+    first: true,
+    last: true,
+    size: 2,
+    number: 0,
+    numberOfElements: 0,
+    empty: true,
+  },
+  otherUserPageInfo: {
     totalPages: 0,
     totalElements: 0,
     first: true,
@@ -49,6 +67,16 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
     set({
       pageInfo: {
         ...pageInfo,
+        number: page,
+      },
+    })
+  },
+
+  setOtherUserPage: (page) => {
+    const { otherUserPageInfo } = get()
+    set({
+      otherUserPageInfo: {
+        ...otherUserPageInfo,
         number: page,
       },
     })
@@ -135,4 +163,44 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
       })
     }
   },
+
+  fetchOtherUserConcerns: async (userId: number, page = 0) => {
+    try {
+      const response = await axios.get(ENDPOINTS.USER_BOARDS_BY_ID(userId, page, 2))
+      const boards: Board[] = response.data.content || []
+      const concerns = boards.map(transformBoardToConcern)
+
+      set({
+        otherUserConcerns: concerns,
+        otherUserBoardCount: response.data.totalCount || 0,
+        otherUserPageInfo: {
+          totalPages: response.data.totalPages || 0,
+          totalElements: response.data.totalCount || boards.length,
+          first: (response.data.pageNumber || page) === 0,
+          last: (response.data.pageNumber || page) >= (response.data.totalPages || 1) - 1,
+          size: response.data.pageSize || 2,
+          number: response.data.pageNumber || page,
+          numberOfElements: response.data.content?.length || boards.length,
+          empty: boards.length === 0,
+        },
+      })
+    } catch (error) {
+      console.error('다른 사용자 고민 목록 조회 실패:', error)
+      set({
+        otherUserConcerns: [],
+        otherUserBoardCount: 0,
+        otherUserPageInfo: {
+          totalPages: 0,
+          totalElements: 0,
+          first: true,
+          last: true,
+          size: 2,
+          number: page,
+          numberOfElements: 0,
+          empty: true,
+        },
+      })
+    }
+  },
+
 }))

@@ -47,7 +47,7 @@ const MypagePage: React.FC = memo(() => {
     <div className={containerClasses}>
       <div className="flex flex-col w-full">
         <MypageProfile userId={targetUserId} isOwnPage={isOwnPage} />
-        <MypageCountSection isOwnPage={isOwnPage} />
+        <MypageCountSection isOwnPage={isOwnPage} userId={targetUserId} />
       </div>
       <MypageSidebar isOwnPage={isOwnPage} />
     </div>
