@@ -13,6 +13,7 @@ import MiniModal from './MiniModal'
 import ReportModal from './ReportModal'
 import { ReportCreateRequest } from '../types/report'
 import { useUserProfileStore } from '../stores/useUserProfileStore'
+import { useNavigate } from 'react-router-dom'
 
 interface CommentItemProps {
   comment: Comment
@@ -33,7 +34,8 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   const { isLoggedIn } = useAuthStore()
   const showReplyInput = replyTargetId === comment.id
   const { userProfile, fetchUserProfile } = useUserProfileStore()
-  
+  const navigate = useNavigate()
+
   // 댓글 좋아요 상태 로컬 관리
   const [commentLikeState, setCommentLikeState] = useState({
     likedByMe: comment.likedByMe ?? comment.like ?? false,
@@ -245,6 +247,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               onError={(e) => {
                 e.currentTarget.src = '/images/MoonRabbitSleep2.png'
               }}
+              onClick={() => navigate(`/mypage/${comment.userId}`)}
             />
             {/* 장착된 테두리 - 본인 댓글일 때만 표시 */}
             {borderImageUrl && (
