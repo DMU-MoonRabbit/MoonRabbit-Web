@@ -12,6 +12,7 @@ export interface UserProfile {
   trustPoint: number
   createdAt?: string
   updatedAt?: string
+  totalPoint: number
 }
 
 // 사용자 아이템 관련 타입 정의 (백엔드 API 응답 기반)
