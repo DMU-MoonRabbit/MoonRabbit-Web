@@ -5,7 +5,6 @@ import UserInventory from "./UserInventory"
 import clsx from "clsx"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 import { useUserProfileStore } from "../stores/useUserProfileStore"
-import { getExpForLevel } from "../constants/colors"
 
 const MypageSidebar: React.FC = memo(() => {
   const { userProfile, fetchUserProfile } = useUserProfileStore()
