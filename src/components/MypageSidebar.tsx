@@ -5,7 +5,6 @@ import UserInventory from "./UserInventory"
 import clsx from "clsx"
 import { useResponsiveStore } from "../stores/useResponsiveStore"
 import { useUserProfileStore } from "../stores/useUserProfileStore"
-import { getExpForLevel } from "../constants/colors"
 
 const MypageSidebar: React.FC = memo(() => {
   const { userProfile, fetchUserProfile } = useUserProfileStore()
@@ -28,21 +27,16 @@ const MypageSidebar: React.FC = memo(() => {
   
   // 현재 레벨의 경험치 정보
   const expInfo = useMemo(() => {
-    if (!userProfile) return { current: 0, required: 100, percentage: 0, nextLevel: 1 }
+    if (!userProfile) return { current: 0, required: 100, percentage: 0 }
     
-    const currentLevel = userProfile.level
-    const nextLevel = currentLevel + 1
-    const currentLevelExp = getExpForLevel(currentLevel)
-    const nextLevelExp = getExpForLevel(nextLevel)
-    const requiredExp = nextLevelExp - currentLevelExp
-    const currentExp = userProfile.trustPoint - currentLevelExp
+    const currentExp = (userProfile.totalPoint - (level-1)*30) *10
+    const requiredExp = 300
     const percentage = Math.min(Math.max((currentExp / requiredExp) * 100, 0), 100)
     
     return {
       current: Math.max(currentExp, 0),
       required: requiredExp,
       percentage,
-      nextLevel
     }
   }, [userProfile])
 

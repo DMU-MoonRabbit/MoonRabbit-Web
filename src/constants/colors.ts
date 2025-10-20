@@ -38,7 +38,3 @@ export const NICKNAME_COLOR_DEFINITIONS: Record<string, {
     textColorClass: 'text-red-300' 
   },
 }
-
-// 레벨별 필요 경험치 계산 함수
-export const getExpForLevel = (level: number): number => level * 100
-
