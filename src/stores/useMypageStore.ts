@@ -10,6 +10,7 @@ interface MypageStore {
   pageInfo: PageInfo
   totalBoardCount: number
   otherUserConcerns: Concern[]
+  otherUserFilteredConcerns: Concern[]
   otherUserPageInfo: PageInfo
   otherUserBoardCount: number
   fetchMyConcerns: (page?: number) => Promise<void>
@@ -26,6 +27,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
   filteredConcerns: [],
   totalBoardCount: 0,
   otherUserConcerns: [],
+  otherUserFilteredConcerns: [],
   otherUserBoardCount: 0,
   pageInfo: {
     totalPages: 0,
@@ -49,16 +51,25 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
   },
 
   setSelectedCategory: (category) => {
-    const { concerns } = get()
+    const { concerns, otherUserConcerns } = get()
     const selectedCategory = category || '전체'
+    
+    // 내 글 필터링
     const filtered =
       selectedCategory === '전체'
         ? concerns
         : concerns.filter((concern) => concern.category === selectedCategory)
 
+    // 타유저 글 필터링
+    const otherUserFiltered =
+      selectedCategory === '전체'
+        ? otherUserConcerns
+        : otherUserConcerns.filter((concern) => concern.category === selectedCategory)
+
     set({
       selectedCategory,
       filteredConcerns: filtered,
+      otherUserFilteredConcerns: otherUserFiltered,
     })
   },
 
@@ -170,8 +181,15 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
       const boards: Board[] = response.data.content || []
       const concerns = boards.map(transformBoardToConcern)
 
+      const { selectedCategory } = get()
+      const otherUserFiltered =
+        selectedCategory === '전체'
+          ? concerns
+          : concerns.filter((concern) => concern.category === selectedCategory)
+
       set({
         otherUserConcerns: concerns,
+        otherUserFilteredConcerns: otherUserFiltered,
         otherUserBoardCount: response.data.totalCount || 0,
         otherUserPageInfo: {
           totalPages: response.data.totalPages || 0,
@@ -188,6 +206,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
       console.error('다른 사용자 고민 목록 조회 실패:', error)
       set({
         otherUserConcerns: [],
+        otherUserFilteredConcerns: [],
         otherUserBoardCount: 0,
         otherUserPageInfo: {
           totalPages: 0,

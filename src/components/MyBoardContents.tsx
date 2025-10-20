@@ -16,6 +16,7 @@ const MyBoardContents: React.FC<MyBoardContentsProps> = memo(({ userId, isOwnPag
     filteredConcerns,
     pageInfo,
     otherUserConcerns,
+    otherUserFilteredConcerns,
     otherUserPageInfo,
     setSelectedCategory,
     fetchMyConcerns,
@@ -27,7 +28,7 @@ const MyBoardContents: React.FC<MyBoardContentsProps> = memo(({ userId, isOwnPag
   const navigate = useNavigate()
 
   // 현재 사용할 데이터와 함수들 결정
-  const concerns = isOwnPage ? filteredConcerns : otherUserConcerns
+  const concerns = isOwnPage ? filteredConcerns : otherUserFilteredConcerns
   const currentPageInfo = isOwnPage ? pageInfo : otherUserPageInfo
   const fetchFunction = isOwnPage ? fetchMyConcerns : fetchOtherUserConcerns
   const setPageFunction = isOwnPage ? setPage : setOtherUserPage
