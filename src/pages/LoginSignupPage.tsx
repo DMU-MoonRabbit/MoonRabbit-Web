@@ -1,7 +1,7 @@
 import React from 'react'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
-import { useAuthFormStore } from '../stores/useAuthStore'
-import { LogoPanel, LoginForm, SignupForm } from '../components/Login'
+import { useResponsiveStore } from '../common/hooks/useResponsiveStore'
+import { useAuthFormStore } from '../features/auth/stores/useAuthStore'
+import { LogoPanel, LoginForm, SignupForm } from '../features/auth/components/Login'
 import clsx from 'clsx'
 import MoonRabbitStarsDark from '../assets/images/MoonRabbitStarsDark.png'
 

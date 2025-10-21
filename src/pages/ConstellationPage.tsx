@@ -1,11 +1,11 @@
 import React from 'react'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
-import { usePlaylist } from '../hooks/usePlaylist'
+import { useResponsiveStore } from '../common/hooks/useResponsiveStore'
+import { usePlaylist } from '../features/shop/hooks/usePlaylist'
 import { getEmbedUrl } from '../utils/youtube'
-import StarBackground from '../components/StarBackground'
-import PageHeader from '../components/PageHeader'
-import MobileLayout from '../components/MobileLayout'
-import DesktopLayout from '../components/DesktopLayout'
+import StarBackground from '../common/components/StarBackground'
+import PageHeader from '../common/components/PageHeader'
+import MobileLayout from '../common/components/MobileLayout'
+import DesktopLayout from '../common/components/DesktopLayout'
 
 const ConstellationPage: React.FC = () => {
   const { res } = useResponsiveStore()

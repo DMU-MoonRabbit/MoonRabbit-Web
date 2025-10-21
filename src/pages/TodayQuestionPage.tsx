@@ -1,12 +1,12 @@
 import React from 'react'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
-import { useQuestionCards } from '../hooks/useQuestionCards'
-import StarBackground from '../components/StarBackground'
-import PageHeader from '../components/PageHeader'
-import MobileQuestionLayout from '../components/MobileQuestionLayout'
-import DesktopQuestionLayout from '../components/DesktopQuestionLayout'
-import DailyAnswerInput from '../components/DailyAnswerInput'
-import DailyAnswerDisplay from '../components/DailyAnswerDisplay'
+import { useResponsiveStore } from '../common/hooks/useResponsiveStore'
+import { useQuestionCards } from '../features/daily-question/hooks/useQuestionCards'
+import StarBackground from '../common/components/StarBackground'
+import PageHeader from '../common/components/PageHeader'
+import MobileQuestionLayout from '../features/daily-question/components/MobileQuestionLayout'
+import DesktopQuestionLayout from '../features/daily-question/components/DesktopQuestionLayout'
+import DailyAnswerInput from '../features/daily-question/components/DailyAnswerInput'
+import DailyAnswerDisplay from '../features/daily-question/components/DailyAnswerDisplay'
 
 const TodayQuestionPage: React.FC = () => {
   const { res } = useResponsiveStore()

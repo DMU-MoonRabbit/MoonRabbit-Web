@@ -1,5 +1,5 @@
 import React from 'react'
-import PageHeader from '../components/PageHeader'
+import PageHeader from '../common/components/PageHeader'
 
 const TermsPage: React.FC = () => {
   return (

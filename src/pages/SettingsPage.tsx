@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { useUserProfileStore } from '../stores/useUserProfileStore'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
+import { useUserProfileStore } from '../features/mypage/stores/useUserProfileStore'
+import { useResponsiveStore } from '../common/hooks/useResponsiveStore'
 import clsx from 'clsx'
 import MoonRabbitStarsDark from '../assets/images/MoonRabbitStarsDark.png'
 import LogoImg from '../assets/images/MoonRabbitSleep2.png'
-import SettingsHeader from '../components/settings/SettingsHeader'
-import AccountSection from '../components/settings/AccountSection'
-import SecuritySection from '../components/settings/SecuritySection'
-import PreferencesSection from '../components/settings/PreferencesSection'
-import AppInfoSection from '../components/settings/AppInfoSection'
+import SettingsHeader from '../common/components/SettingsHeader'
+import AccountSection from '../common/components/AccountSection'
+import SecuritySection from '../common/components/SecuritySection'
+import PreferencesSection from '../common/components/PreferencesSection'
+import AppInfoSection from '../common/components/AppInfoSection'
 
 const SettingsPage: React.FC = () => {
   const { fetchUserProfile } = useUserProfileStore()

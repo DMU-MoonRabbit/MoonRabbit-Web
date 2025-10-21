@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
-import PageHeader from '../components/PageHeader'
+import PageHeader from '../common/components/PageHeader'
 
 interface FAQItem {
   id: number
