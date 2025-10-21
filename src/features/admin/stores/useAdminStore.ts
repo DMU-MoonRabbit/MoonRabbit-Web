@@ -59,7 +59,6 @@ export const getAdminUsers = async (page = 0, size = 10) => {
     setLoading(false)
 
   } catch (error) {
-    console.error('회원 목록 조회 실패:', error)
     // 에러 발생 시 빈 데이터로 설정
     setPageData({
       totalElements: 0,
@@ -93,15 +92,9 @@ export const updateUserPoint = async (userId: number, newPoint: number) => {
       throw new Error('로그인이 필요합니다.')
     }
     
-    console.log('=== 포인트 수정 요청 시작 ===')
-    console.log('사용자 ID:', userId)
-    console.log('포인트 변경량:', newPoint)
-    console.log('API 엔드포인트:', ENDPOINTS.ADMIN_USER_UPDATE_POINT(userId, newPoint))
-    console.log('토큰 존재:', !!token)
-    
     const response = await axios.put(
       ENDPOINTS.ADMIN_USER_UPDATE_POINT(userId, newPoint),
-      {}, // 빈 body
+      {},
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -111,11 +104,9 @@ export const updateUserPoint = async (userId: number, newPoint: number) => {
       }
     )
     
-    console.log('포인트 수정 API 응답:', response.data)
     return response.data
     
   } catch (error) {
-    console.error('포인트 수정 실패:', error)
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 403) {
         throw new Error('관리자 권한이 필요합니다.')
@@ -134,15 +125,9 @@ export const updateUserTrust = async (userId: number, newTrust: number) => {
       throw new Error('로그인이 필요합니다.')
     }
     
-    console.log('=== 신뢰도 수정 요청 시작 ===')
-    console.log('사용자 ID:', userId)
-    console.log('신뢰도 변경량:', newTrust)
-    console.log('API 엔드포인트:', ENDPOINTS.ADMIN_USER_UPDATE_TRUST(userId, newTrust))
-    console.log('토큰 존재:', !!token)
-    
     const response = await axios.put(
       ENDPOINTS.ADMIN_USER_UPDATE_TRUST(userId, newTrust),
-      {}, // 빈 body
+      {},
       {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -152,11 +137,9 @@ export const updateUserTrust = async (userId: number, newTrust: number) => {
       }
     )
     
-    console.log('신뢰도 수정 API 응답:', response.data)
     return response.data
 
   } catch (error) {
-    console.error('신뢰도 수정 실패:', error)
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 403) {
         throw new Error('관리자 권한이 필요합니다.')

@@ -102,14 +102,11 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
         },
       )
 
-      console.log('AI답변:', assistantRes.data)
-      console.log('게시글 생성 성공:', response.data)
       onCreateConcern()
       handleClose()
       navigate('/night-sky/' + response.data.boardId)
     } catch (err) {
       setError('게시글 생성 중 오류가 발생했습니다. 다시 시도해주세요.')
-      console.error(err)
     } finally {
       setLoading(false)
     }

@@ -109,7 +109,6 @@ const SecuritySection: React.FC = () => {
       })
       showModal('success', '비밀번호가 변경되었습니다.')
     } catch (error) {
-      console.error('비밀번호 변경 실패:', error)
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage = error.response.data?.message || '비밀번호 변경에 실패했습니다.'
         showModal('error', errorMessage)

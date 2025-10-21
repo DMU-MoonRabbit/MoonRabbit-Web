@@ -49,9 +49,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
 
   const handleSubmit = async () => {
     const token = localStorage.getItem('accessToken')
-    console.log('토큰:', token)
     if (!token) {
-      console.log('토큰이 없습니다.')
       showModal('error', '로그인이 필요합니다.')
       return
     }
@@ -59,15 +57,13 @@ export const CommentInput: React.FC<CommentInputProps> = ({
     // 토큰 만료 시간 확인
     try {
       const tokenData = JSON.parse(atob(token.split('.')[1]))
-      const expirationTime = tokenData.exp * 1000 // Convert to milliseconds
+      const expirationTime = tokenData.exp * 1000
       if (Date.now() >= expirationTime) {
-        console.log('토큰이 만료되었습니다.')
         localStorage.removeItem('accessToken')
         showModal('error', '로그인이 만료되었습니다. 다시 로그인해주세요.')
         return
       }
     } catch (err) {
-      console.error('토큰 파싱 실패:', err)
       localStorage.removeItem('accessToken')
       showModal('error', '유효하지 않은 토큰입니다. 다시 로그인해주세요.')
       return
@@ -80,15 +76,6 @@ export const CommentInput: React.FC<CommentInputProps> = ({
       const requestBody = parentId === null 
         ? { content }
         : { content, parentId }
-
-      console.log('요청 데이터:', {
-        url: ENDPOINTS.COMMENT_CREATE(Number(boardId)),
-        ...requestBody,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
 
       const response = await axios.post(
         ENDPOINTS.COMMENT_CREATE(Number(boardId)),
@@ -103,7 +90,6 @@ export const CommentInput: React.FC<CommentInputProps> = ({
 
       const newComment = response.data
       useCommentStore.getState().addComment(newComment, parentId)
-      console.log('응답 데이터:', newComment)
 
       // 입력창 초기화
       if (parentId !== null) {
@@ -112,11 +98,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
         setCommentContent('')
       }
     } catch (err) {
-      console.error('댓글 등록 실패', err)
       if (axios.isAxiosError(err)) {
-        console.error('에러 응답:', err.response?.data)
-        console.error('에러 상태:', err.response?.status)
-        
         if (err.response?.status === 401) {
           localStorage.removeItem('accessToken')
           showModal('error', '인증이 만료되었습니다. 다시 로그인해주세요.')

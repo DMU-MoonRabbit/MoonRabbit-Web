@@ -60,8 +60,6 @@ export const ManageUsers = () => {
       closeEditModal()
       
     } catch (error) {
-      console.error('저장 실패:', error)
-      
       let errorMessage = '저장에 실패했습니다. 다시 시도해주세요.'
       
       if (error instanceof Error) {

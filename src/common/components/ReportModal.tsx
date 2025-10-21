@@ -59,8 +59,6 @@ export const ReportModal: React.FC<ReportModalProps> = ({
         onClose()
       }, 1500)
     } catch (error) {
-      console.error('신고 제출 에러:', error)
-      
       // 에러 유형별 세부 메시지 처리
       if (error instanceof Error && error.message.includes('로그인')) {
         showModal('error', '로그인 후 신고할 수 있습니다.')

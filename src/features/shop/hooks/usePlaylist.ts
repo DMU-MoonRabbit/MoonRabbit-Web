@@ -23,7 +23,7 @@ export const usePlaylist = () => {
         })
         setPlaylistStates(initialState)
       } catch (error) {
-        console.error('플레이리스트 조회 실패:', error)
+        // 에러 처리
       } finally {
         setLoading(false)
       }

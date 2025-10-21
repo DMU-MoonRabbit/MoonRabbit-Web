@@ -21,7 +21,7 @@ export const useQuestionCards = () => {
         const response = await axios.get<DailyQuestion>(ENDPOINTS.DAILY_QUESTION)
         setTodayQuestion(response.data)
       } catch (error) {
-        console.error('오늘의 질문 조회 실패:', error)
+        // 에러 처리
       } finally {
         setLoading(false)
       }
@@ -58,11 +58,6 @@ export const useQuestionCards = () => {
         }
       } catch (error) {
         // 404 에러는 답변이 없는 경우이므로 무시
-        if (axios.isAxiosError(error) && error.response?.status === 404) {
-          console.log('오늘 작성한 답변이 없습니다.')
-        } else {
-          console.error('내 답변 조회 실패:', error)
-        }
       }
     }
 
@@ -120,7 +115,6 @@ export const useQuestionCards = () => {
       
       return answerData
     } catch (error) {
-      console.error('답변 제출 실패:', error)
       return null
     } finally {
       setSubmitting(false)

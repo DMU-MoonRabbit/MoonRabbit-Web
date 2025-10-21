@@ -44,8 +44,7 @@ const MypageProfile: React.FC<MypageProfileProps> = memo(({ userId, isOwnPage })
   const displayProfile = isOwnPage ? userProfile : otherUserProfile
 
   useEffect(() => {
-    console.log('displayProfile:', displayProfile)
-    console.log('point:', displayProfile?.point)
+    // displayProfile 업데이트 감지
   }, [displayProfile])
 
   useEffect(() => {
@@ -152,9 +151,6 @@ const MypageProfile: React.FC<MypageProfileProps> = memo(({ userId, isOwnPage })
                        alt="포인트" 
                        className={isMobile ? "w-11 h-6" : "w-16 h-8"}
                        loading="lazy"
-                       onError={() => {
-                        console.error('포인트 이미지 로드 실패')
-                      }}
                      />
                      <span className={clsx(
                        "absolute ml-5 inset-0 flex items-center justify-center font-mainFont text-darkWalnut font-bold",

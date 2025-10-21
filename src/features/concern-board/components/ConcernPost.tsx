@@ -119,7 +119,6 @@ export const ConcernContent: React.FC = () => {
       }
     )
 
-    console.log('신고 제출 성공:', response.data)
     return response.data
   }
 
@@ -195,17 +194,9 @@ export const ConcernContent: React.FC = () => {
         toggleConcernLike()
       }
     } catch (error) {
-      console.error('❌ 좋아요 처리 실패:', error)
       if (axios.isAxiosError(error)) {
         const status = error.response?.status
         const errorData = error.response?.data
-        
-        console.error('에러 상세:', {
-          status,
-          statusText: error.response?.statusText,
-          data: errorData,
-          message: errorData?.message || errorData?.error
-        })
         
         if (status === 401 || status === 403) {
           showModal('error', '로그인이 필요합니다.')
@@ -252,7 +243,6 @@ export const ConcernContent: React.FC = () => {
             const status = authError.response?.status
             
             if (status === 401 || status === 403 || errorCode === 'U002') {
-              console.warn('토큰이 유효하지 않습니다. 비로그인 상태로 조회합니다.')
               // 유효하지 않은 토큰 제거
               if (errorCode === 'U002') {
                 localStorage.removeItem('accessToken')
@@ -297,7 +287,7 @@ export const ConcernContent: React.FC = () => {
         }
         setConcern(concern)
       } catch (error) {
-        console.error('게시글 정보 불러오기 실패', error)
+        // 에러 처리
       }
     }
     fetchConcern()

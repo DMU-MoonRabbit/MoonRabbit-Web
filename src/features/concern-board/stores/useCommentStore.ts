@@ -220,7 +220,6 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
       set({ comments: updatedComments })
       return true
     } catch (err) {
-      console.error('댓글 삭제 실패', err)
       return false
     }
   },

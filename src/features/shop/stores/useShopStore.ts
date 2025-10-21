@@ -42,14 +42,11 @@ export const useShopStore = create<ShopStore>((set, get) => ({
         },
       })
 
-      console.log('상점 아이템 목록 API 응답:', response.data)
-
       set({ 
         shopItems: response.data.content || [],
         loading: false 
       })
     } catch (error) {
-      console.error('상점 아이템 목록 조회 실패:', error)
       set({ 
         error: error instanceof Error ? error.message : '아이템 목록 조회에 실패했습니다.',
         loading: false 
@@ -73,8 +70,6 @@ export const useShopStore = create<ShopStore>((set, get) => ({
         throw new Error('로그인이 필요합니다.')
       }
 
-      console.log('구매 요청 데이터:', { userId, itemId })
-
       const response = await axios.post<PurchaseResponse>(
         `${ENDPOINTS.ITEM_BUY}?userId=${userId}&itemId=${itemId}`,
         {},
@@ -85,14 +80,10 @@ export const useShopStore = create<ShopStore>((set, get) => ({
         }
       )
 
-      console.log('아이템 구매 API 응답:', response.data)
-
       set({ purchaseLoading: false })
       return response.data
     } catch (error: unknown) {
-      console.error('아이템 구매 실패:', error)
       const err = error as { response?: { data?: { message?: string } }; message?: string }
-      console.error('에러 응답:', err.response?.data)
       const errorMessage = err.response?.data?.message || err.message || '아이템 구매에 실패했습니다.'
       set({ 
         purchaseError: errorMessage,

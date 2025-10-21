@@ -41,12 +41,10 @@ export const useManageBoardAPI = () => {
         }
       )
       
-      console.log('게시글 목록 API 응답:', response.data)
       setBoardData(response.data)
       setLoading(false)
       
     } catch (error) {
-      console.error('게시글 목록 조회 실패:', error)
       setBoardData(null)
       setLoading(false)
     }
@@ -82,7 +80,6 @@ export const useManageBoardAPI = () => {
       const totalElements = filteredContent.length
       const totalPages = Math.ceil(totalElements / pageSize)
       
-      console.log('게시글 검색 결과:', filteredContent.length)
       setBoardData({
         ...response.data,
         content: filteredContent.slice(0, pageSize),
@@ -97,7 +94,6 @@ export const useManageBoardAPI = () => {
       setLoading(false)
       
     } catch (error) {
-      console.error('게시글 검색 실패:', error)
       setFilteredBoards([])
       setBoardData(null)
       setLoading(false)
@@ -111,8 +107,6 @@ export const useManageBoardAPI = () => {
       const token = localStorage.getItem('accessToken')
       const url = ENDPOINTS.REPORT_LIST_BY_TYPE('BOARD', page, reportsPageSize)
       
-      console.log('신고된 게시글 목록 조회 URL:', url)
-      
       const response = await axios.get(url, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -121,16 +115,10 @@ export const useManageBoardAPI = () => {
         withCredentials: true
       })
       
-      console.log('신고된 게시글 목록 API 응답:', response.data)
       setReportedBoardsData(response.data)
       setReportsLoading(false)
       
     } catch (error) {
-      console.error('신고된 게시글 목록 조회 실패:', error)
-      if (axios.isAxiosError(error)) {
-        console.error('에러 응답:', error.response?.data)
-        console.error('에러 상태:', error.response?.status)
-      }
       // 빈 데이터로 설정
       setReportedBoardsData({
         totalElements: 0,
@@ -163,8 +151,6 @@ export const useManageBoardAPI = () => {
       const token = localStorage.getItem('accessToken')
       const url = ENDPOINTS.REPORT_LIST_BY_TYPE('ANSWER', page, reportsPageSize)
       
-      console.log('신고된 댓글 목록 조회 URL:', url)
-      
       const response = await axios.get(url, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -173,16 +159,10 @@ export const useManageBoardAPI = () => {
         withCredentials: true
       })
       
-      console.log('신고된 댓글 목록 API 응답:', response.data)
       setReportedCommentsData(response.data)
       setReportsLoading(false)
       
     } catch (error) {
-      console.error('신고된 댓글 목록 조회 실패:', error)
-      if (axios.isAxiosError(error)) {
-        console.error('에러 응답:', error.response?.data)
-        console.error('에러 상태:', error.response?.status)
-      }
       // 빈 데이터로 설정
       setReportedCommentsData({
         totalElements: 0,
@@ -225,11 +205,9 @@ export const useManageBoardAPI = () => {
         }
       )
       
-      console.log('게시글 수정 성공:', updateData)
       return true
       
     } catch (error) {
-      console.error('게시글 수정 실패:', error)
       throw error
     }
   }
@@ -250,11 +228,9 @@ export const useManageBoardAPI = () => {
         }
       )
       
-      console.log('게시글 삭제 성공:', boardId)
       return true
       
     } catch (error) {
-      console.error('게시글 삭제 실패:', error)
       throw error
     }
   }
@@ -297,11 +273,9 @@ export const useManageBoardAPI = () => {
         }
       )
       
-      console.log('신고 생성 성공:', reportData)
       return true
       
     } catch (error) {
-      console.error('신고 생성 실패:', error)
       throw error
     }
   }

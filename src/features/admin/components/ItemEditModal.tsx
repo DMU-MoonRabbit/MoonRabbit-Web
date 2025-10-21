@@ -58,7 +58,7 @@ export const ItemEditModal: React.FC<ItemEditModalProps> = ({
       await onSave(item.id, name.trim(), priceNum, imageUrl.trim())
       onClose()
     } catch (error) {
-      console.error('아이템 수정 실패:', error)
+      // 에러 처리
     } finally {
       setLoading(false)
     }

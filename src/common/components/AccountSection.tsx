@@ -66,13 +66,6 @@ const AccountSection: React.FC = () => {
         return
       }
 
-      // 새로운 닉네임 변경 API 사용
-      console.log('=== 닉네임 변경 요청 시작 ===')
-      console.log('새 닉네임:', newNickname)
-      console.log('API 엔드포인트:', ENDPOINTS.USER_PROFILE_NICKNAME)
-      console.log('토큰 존재:', !!accessToken)
-      console.log('토큰 앞 10자:', accessToken?.substring(0, 10))
-      
       const response = await axios.patch(
         ENDPOINTS.USER_PROFILE_NICKNAME,
         { newNickname: newNickname },
@@ -83,14 +76,12 @@ const AccountSection: React.FC = () => {
           },
         }
       )
-      console.log('닉네임 변경 성공:', response.data)
 
       await fetchUserProfile(true)
       setIsEditingNickname(false)
       setNewNickname('')
       showModal('success', '닉네임이 변경되었습니다.')
     } catch (error) {
-      console.error('닉네임 변경 실패:', error)
       if (axios.isAxiosError(error) && error.response) {
         const errorMessage = error.response.data?.message || '닉네임 변경에 실패했습니다.'
         showModal('error', errorMessage)
@@ -139,17 +130,6 @@ const AccountSection: React.FC = () => {
       const formData = new FormData()
       formData.append('file', safeFile)
 
-      // 디버깅: FormData 내용 확인
-      console.log('=== 프로필 이미지 업로드 시작 ===')
-      console.log('원본 파일명:', file.name)
-      console.log('변환된 파일명:', safeFileName)
-      console.log('파일 크기:', file.size, 'bytes')
-      console.log('파일 타입:', file.type)
-      console.log('API 엔드포인트:', ENDPOINTS.USER_PROFILE_IMAGE)
-      console.log('토큰 존재:', !!accessToken)
-
-      // 새로운 통합 API 사용 - 업로드와 프로필 업데이트를 한 번에 처리
-      // Content-Type은 브라우저가 자동으로 설정 (boundary 포함)
       const response = await axios.post(
         ENDPOINTS.USER_PROFILE_IMAGE,
         formData,
@@ -160,41 +140,26 @@ const AccountSection: React.FC = () => {
         }
       )
 
-      console.log('프로필 이미지 업데이트 성공:', response.data)
-      console.log('=== 프로필 이미지 업로드 완료 ===')
-
       // 프로필 새로고침
       await fetchUserProfile(true)
       showModal('success', '프로필 이미지가 변경되었습니다.')
     } catch (error) {
-      console.error('=== 이미지 업로드 실패 ===')
-      console.error('에러 객체:', error)
-      
       if (axios.isAxiosError(error)) {
         if (error.response) {
-          console.error('서버 응답 상태:', error.response.status)
-          console.error('서버 응답 데이터:', error.response.data)
-          console.error('서버 응답 헤더:', error.response.headers)
-          
           const errorData = error.response.data
           const errorMessage = errorData?.message || errorData?.error || '서버 오류'
           
-          // 데이터베이스 컬럼 크기 문제 감지
           if (errorMessage.includes('Data too long') || errorMessage.includes('profile_img')) {
             showModal('error', '이미지 URL이 너무 깁니다. 관리자에게 문의해주세요.')
-            console.error('⚠️ 데이터베이스 스키마 오류: profile_img 컬럼 크기를 늘려야 합니다 (VARCHAR(500) 또는 TEXT 권장)')
           } else {
             showModal('error', `이미지 업로드에 실패했습니다: ${errorMessage}`)
           }
         } else if (error.request) {
-          console.error('요청은 전송되었으나 응답이 없음:', error.request)
           showModal('error', '서버 응답이 없습니다. 네트워크를 확인해주세요.')
         } else {
-          console.error('요청 설정 중 오류:', error.message)
           showModal('error', '요청 설정 중 오류가 발생했습니다.')
         }
       } else {
-        console.error('알 수 없는 에러:', error)
         showModal('error', '이미지 업로드에 실패했습니다.')
       }
     } finally {

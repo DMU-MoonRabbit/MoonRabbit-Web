@@ -236,7 +236,7 @@ export const useUnifiedConcernStore = create<UnifiedConcernStore>((set, get) => 
         },
       })
     } catch (error) {
-      console.error('Failed to fetch concerns:', error)
+      // 에러 처리
     }
   },
 

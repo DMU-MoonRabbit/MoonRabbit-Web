@@ -56,7 +56,6 @@ export const useBoardDetailStore = create<BoardDetailStore>((set) => ({
         error: '게시글을 불러오는데 실패했습니다.',
         isLoading: false,
       })
-      console.error('Failed to fetch board detail:', error)
     }
   },
 
@@ -79,7 +78,6 @@ export const useBoardDetailStore = create<BoardDetailStore>((set) => ({
             },
       }))
     } catch (error) {
-      console.error('AI 답변 조회 실패:', error)
       set({
         error: 'AI 답변을 불러오는데 실패했습니다.',
       })

@@ -102,7 +102,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       }
     )
 
-    console.log('댓글 신고 제출 성공:', response.data)
     return response.data
   }
 
@@ -171,18 +170,9 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         })
       }
     } catch (error) {
-      console.error('❌ 댓글 좋아요 처리 실패:', error)
       if (axios.isAxiosError(error)) {
         const status = error.response?.status
         const errorData = error.response?.data
-        
-        console.error('에러 상세:', {
-          status,
-          statusText: error.response?.statusText,
-          data: errorData,
-          message: errorData?.message || errorData?.error
-        })
-        console.error('서버 응답 데이터:', JSON.stringify(errorData, null, 2))
         
         if (status === 400) {
           const serverMessage = errorData?.message || errorData?.error
@@ -226,7 +216,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         )
         setUserId(response.data.id)
       } catch (error) {
-        console.error('유저아이디 실패', error)
+        // 에러 처리
       }
     }
     getUserId()

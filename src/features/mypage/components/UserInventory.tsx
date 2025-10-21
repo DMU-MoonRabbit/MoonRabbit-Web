@@ -18,14 +18,9 @@ const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {
 
   useEffect(() => {
     if (userId) {
-      console.log('UserInventory: fetchUserInventory 호출, userId:', userId)
       fetchUserInventory(userId)
     }
   }, [userId, fetchUserInventory])
-
-  useEffect(() => {
-    console.log('UserInventory: userInventory 업데이트:', userInventory)
-  }, [userInventory])
 
   const handleEquipItem = useCallback(async (userItemId: number) => {
     await equipItem(userItemId)

@@ -17,7 +17,6 @@ export const ConcernComment: React.FC = () => {
   useEffect(() => {
     const getComments = async () => {
       if (!boardId) {
-        console.error('boardId is undefined')
         return
       }
       
@@ -40,16 +39,12 @@ export const ConcernComment: React.FC = () => {
         const answers = await response.data
         setComments(answers)
       } catch (error) {
-        console.error('댓글 조회 실패', error)
-        
         // 토큰 에러 시 토큰 없이 재시도
         if (axios.isAxiosError(error)) {
           const errorCode = error.response?.data?.code
           const status = error.response?.status
           
           if (status === 401 || status === 403 || errorCode === 'U002') {
-            console.warn('토큰이 유효하지 않습니다. 비로그인 상태로 댓글을 조회합니다.')
-            
             // 유효하지 않은 토큰 제거
             if (errorCode === 'U002') {
               localStorage.removeItem('accessToken')
@@ -66,7 +61,7 @@ export const ConcernComment: React.FC = () => {
               const answers = await response.data
               setComments(answers)
             } catch (retryError) {
-              console.error('토큰 없이 댓글 조회 재시도 실패:', retryError)
+              // 재시도 실패
             }
           }
         }

@@ -24,7 +24,6 @@ export const useManageUsersAPI = () => {
       setLoading(false)
 
     } catch (error) {
-      console.error('회원 목록 조회 실패:', error)
       setPageData({
         totalElements: 0,
         totalPages: 0,
@@ -89,7 +88,6 @@ export const useManageUsersAPI = () => {
       setLoading(false)
 
     } catch (error) {
-      console.error('회원 검색 실패:', error)
       setFilteredUsers([])
       setPageData({
         totalElements: 0,
@@ -119,10 +117,8 @@ export const useManageUsersAPI = () => {
   const updatePoint = async (userId: number, newPoint: number) => {
     try {
       await updateUserPoint(userId, newPoint)
-      console.log('포인트 수정 성공')
       return true
     } catch (error) {
-      console.error('포인트 수정 실패:', error)
       throw error
     }
   }
@@ -131,10 +127,8 @@ export const useManageUsersAPI = () => {
   const updateTrust = async (userId: number, newTrust: number) => {
     try {
       await updateUserTrust(userId, newTrust)
-      console.log('신뢰도 수정 성공')
       return true
     } catch (error) {
-      console.error('신뢰도 수정 실패:', error)
       throw error
     }
   }

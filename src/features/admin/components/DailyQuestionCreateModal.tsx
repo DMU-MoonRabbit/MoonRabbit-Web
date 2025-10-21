@@ -51,7 +51,6 @@ export const DailyQuestionCreateModal: React.FC<DailyQuestionCreateModalProps> =
       setContent('')
       onSuccess()
     } catch (error) {
-      console.error('질문 생성 실패:', error)
       alert('질문 생성에 실패했습니다.')
     } finally {
       setLoading(false)

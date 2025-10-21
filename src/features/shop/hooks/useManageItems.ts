@@ -27,7 +27,6 @@ export const useManageItems = () => {
       setItemsData(response.data)
       setCurrentPage(page)
     } catch (error) {
-      console.error('아이템 목록 조회 실패:', error)
       throw new Error('아이템 목록을 불러오는데 실패했습니다.')
     } finally {
       setLoading(false)
@@ -55,7 +54,6 @@ export const useManageItems = () => {
         }
       )
     } catch (error) {
-      console.error('아이템 수정 실패:', error)
       throw new Error('아이템 수정에 실패했습니다.')
     }
   }, [])
@@ -72,7 +70,6 @@ export const useManageItems = () => {
         withCredentials: true
       })
     } catch (error) {
-      console.error('아이템 삭제 실패:', error)
       throw new Error('아이템 삭제에 실패했습니다.')
     }
   }, [])

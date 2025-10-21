@@ -61,8 +61,6 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         },
       })
 
-      console.log('사용자 프로필 API 응답:', response.data)
-
       // 백엔드 응답의 profileImg를 profileImage로도 매핑
       const userProfile = {
         ...response.data,
@@ -75,7 +73,6 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         isProfileLoaded: true
       })
     } catch (error) {
-      console.error('사용자 프로필 조회 실패:', error)
       set({ 
         error: error instanceof Error ? error.message : '프로필 조회에 실패했습니다.',
         loading: false 
@@ -90,8 +87,6 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
       
       const response = await axios.get(ENDPOINTS.USER_PROFILE_BY_ID(userId))
 
-      console.log('다른 사용자 프로필 API 응답:', response.data)
-
       // 백엔드 응답의 profileImg를 profileImage로도 매핑
       const otherUserProfile = {
         ...response.data,
@@ -103,7 +98,6 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         loading: false
       })
     } catch (error) {
-      console.error('다른 사용자 프로필 조회 실패:', error)
       set({ 
         error: error instanceof Error ? error.message : '프로필 조회에 실패했습니다.',
         loading: false 
@@ -127,10 +121,6 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         },
       })
 
-      console.log('인벤토리 API 응답:', response.data)
-      console.log('인벤토리 API 응답 타입:', typeof response.data)
-      console.log('인벤토리 items:', response.data.items || response.data.content)
-
       // 페이지네이션 응답 처리
       const inventoryData = {
         userId,
@@ -138,14 +128,11 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         totalItems: response.data.totalElements || 0
       }
 
-      console.log('처리된 인벤토리 데이터:', inventoryData)
-
       set({ 
         userInventory: inventoryData,
         loading: false 
       })
     } catch (error) {
-      console.error('사용자 인벤토리 조회 실패:', error)
       set({ 
         error: error instanceof Error ? error.message : '인벤토리 조회에 실패했습니다.',
         loading: false 
@@ -174,7 +161,6 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         loading: false 
       })
     } catch (error) {
-      console.error('좋아요한 게시글 조회 실패:', error)
       set({ 
         error: error instanceof Error ? error.message : '좋아요한 게시글 조회에 실패했습니다.',
         loading: false 
@@ -207,7 +193,6 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
 
       set({ loading: false })
     } catch (error) {
-      console.error('아이템 장착 실패:', error)
       set({ 
         error: error instanceof Error ? error.message : '아이템 장착에 실패했습니다.',
         loading: false 
@@ -240,7 +225,6 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
 
       set({ loading: false })
     } catch (error) {
-      console.error('아이템 해제 실패:', error)
       set({ 
         error: error instanceof Error ? error.message : '아이템 해제에 실패했습니다.',
         loading: false 

@@ -97,7 +97,6 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
     try {
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
-        console.warn('로그인이 필요합니다.');
         return;
       }
 
@@ -128,7 +127,6 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         },
       })
     } catch (error) {
-      console.error('마이페이지 고민 목록 조회 실패:', error)
       // 에러 발생 시 기존 데이터는 유지하고 빈 결과만 설정
       set({
         concerns: [],
@@ -151,7 +149,6 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
     try {
       const accessToken = localStorage.getItem('accessToken');
       if (!accessToken) {
-        console.warn('로그인이 필요합니다.');
         return;
       }
 
@@ -168,7 +165,6 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         totalBoardCount: response.data.totalCount || 0,
       })
     } catch (error) {
-      console.error('전체 게시글 수 조회 실패:', error)
       set({
         totalBoardCount: 0,
       })
@@ -203,7 +199,6 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         },
       })
     } catch (error) {
-      console.error('다른 사용자 고민 목록 조회 실패:', error)
       set({
         otherUserConcerns: [],
         otherUserFilteredConcerns: [],

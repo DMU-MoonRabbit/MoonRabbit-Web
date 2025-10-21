@@ -22,7 +22,6 @@ export const ManageDailyQuestion = () => {
       const response = await axios.get(ENDPOINTS.DAILY_QUESTION)
       setQuestion(response.data)
     } catch (error) {
-      console.error('오늘의질문 조회 실패:', error)
       alert('오늘의질문을 불러오는데 실패했습니다.')
     } finally {
       setLoading(false)

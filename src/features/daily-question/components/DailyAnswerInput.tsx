@@ -50,7 +50,6 @@ export const DailyAnswerInput: React.FC<DailyAnswerInputProps> = ({
         return
       }
     } catch (err) {
-      console.error('토큰 파싱 실패:', err)
       localStorage.removeItem('accessToken')
       showModal('error', '유효하지 않은 토큰입니다. 다시 로그인해주세요.')
       return

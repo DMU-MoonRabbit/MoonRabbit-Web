@@ -7,7 +7,7 @@ import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import LogoImg from '@/assets/images/MoonRabbitSleep2.png'
 import GoogleLoginImg from '@/assets/images/GoogleLogin.svg'
 import kakaoLoginImg from '@/assets/images/KakaoLogin.png'
-import axios from 'axios'
+import axiosInstance from '@/api/axiosInstance'
 import { ENDPOINTS } from '@/api/endpoints'
 import MiniModal from '@/common/components/MiniModal'
 
@@ -37,8 +37,7 @@ export const LogoPanel = () => {
 }
 
 export const LoginForm = () => {
-  const { email, password, setEmail, setPassword } = useAuthStore()
-  const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn)
+  const { email, password, setEmail, setPassword, setIsLoggedIn, setUser } = useAuthStore()
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
@@ -64,18 +63,25 @@ export const LoginForm = () => {
 
   const handleLogin = async () => {
     try {
-      await axios.post(
+      const response = await axiosInstance.post(
         ENDPOINTS.LOGIN,
         {
           email,
           password,
         },
       )
-      // 로그인 상태 변경
-      setIsLoggedIn(true)
-      navigate('/')
+      
+      // 응답에서 accessToken 추출 및 저장
+      const { accessToken, ...userData } = response.data
+      if (accessToken) {
+        localStorage.setItem('accessToken', accessToken)
+        localStorage.setItem('cachedUser', JSON.stringify(userData))
+        setUser(userData)
+        setIsLoggedIn(true)
+        navigate('/')
+      }
     } catch (error) {
-      console.error('에러:', error)
+      showModal('error', '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.')
     }
   }
 
@@ -83,7 +89,6 @@ export const LoginForm = () => {
     try {
       window.location.href = `https://moonrabbit-api.kro.kr/api/users/${platform}`
     } catch (error) {
-      console.error('소셜 로그인 오류:', error)
       showModal('error', '소셜 로그인에 실패했습니다.')
     }
   }
@@ -194,7 +199,7 @@ export const SignupForm = () => {
     }
 
     try {
-      await axios.post(
+      await axiosInstance.post(
         ENDPOINTS.SIGNUP,
         {
           email,
@@ -209,17 +214,22 @@ export const SignupForm = () => {
         setIsLogin(true)
       }, 1500)
     } catch (error) {
-      console.error('에러:', error)
+      showModal('error', '회원가입에 실패했습니다.')
     }
   }
 
   const handleVerification = async () => {
-    await axios.post(
-      ENDPOINTS.VERIFY,
-      {
-        phoneNum,
-      },
-    )
+    try {
+      await axiosInstance.post(
+        ENDPOINTS.VERIFY,
+        {
+          phoneNum,
+        },
+      )
+      showModal('success', '인증번호가 전송되었습니다.')
+    } catch (error) {
+      showModal('error', '인증번호 전송에 실패했습니다.')
+    }
   }
 
   return (
