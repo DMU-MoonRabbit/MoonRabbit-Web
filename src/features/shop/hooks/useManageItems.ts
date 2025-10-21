@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
-import { ShopItemListResponse, ShopItem } from '../../features/shop/types/shop'
-import { ENDPOINTS } from '../../api/endpoints'
+import { ShopItemListResponse, ShopItem } from '@/features/shop/types/shop'
+import { ENDPOINTS } from '@/api/endpoints'
 import axios from 'axios'
 
 export const useManageItems = () => {

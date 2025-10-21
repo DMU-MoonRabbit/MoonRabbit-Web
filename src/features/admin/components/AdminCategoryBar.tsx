@@ -1,6 +1,6 @@
 import React from 'react'
 import { useAdminStore } from '../stores/useAdminStore'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import clsx from 'clsx'
 
 const categories = [

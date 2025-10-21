@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { ItemEditModal } from './ItemEditModal'
 import { ShopItemsTable } from './ShopItemsTable'
-import { useManageItems } from '../../features/shop/hooks/useManageItems'
-import { ShopItem } from '../../features/shop/types/shop'
+import { useManageItems } from '@/features/shop/hooks/useManageItems'
+import { ShopItem } from '@/features/shop/types/shop'
 
 export const ManageShopItems = () => {
   const {

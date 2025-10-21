@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { BoardPageData } from '../../features/concern-board/types/board'
+import { BoardPageData } from '@/features/concern-board/types/board'
 import { AdminReportsResponse } from '../types/admin'
 
 interface ManageBoardState {

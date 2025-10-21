@@ -1,7 +1,7 @@
 import React from 'react'
 import { useAdminStore } from '../stores/useAdminStore'
 import clsx from 'clsx'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 
 export const SearchBar = () => {
   const { searchTerm, setSearchTerm, handleSearch, activeTab, clearSearch } = useAdminStore()

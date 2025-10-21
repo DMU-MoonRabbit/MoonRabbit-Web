@@ -1,6 +1,6 @@
 import React from 'react'
-import Like from '../assets/images/Like.svg'
-import Liked from '../assets/images/Liked.svg'
+import Like from '@/assets/images/Like.svg'
+import Liked from '@/assets/images/Liked.svg'
 
 interface LikeButtonProps {
   isLiked: boolean

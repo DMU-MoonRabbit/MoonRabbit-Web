@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useManageUsersStore } from '../stores/useManageUsersStore'
-import { usePaginationStore } from '../../../common/hooks/usePaginationStore'
+import { usePaginationStore } from '@/common/hooks/usePaginationStore'
 import { updateUserPoint, updateUserTrust } from '../stores/useAdminStore'
-import ENDPOINTS from '../../../api/endpoints'
+import ENDPOINTS from '@/api/endpoints'
 import axios from 'axios'
 
 export const useManageUsersAPI = () => {

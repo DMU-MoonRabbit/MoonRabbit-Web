@@ -1,7 +1,7 @@
 import React, { memo, useCallback, useMemo, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
-import { useAuthStore } from '../../features/auth/stores/useAuthStore'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import { useUserProfileStore } from '../stores/useUserProfileStore'
 import clsx from 'clsx'
 

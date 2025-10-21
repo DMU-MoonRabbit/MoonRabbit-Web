@@ -1,9 +1,9 @@
 import React, { useMemo, useState, memo, useCallback, useEffect } from "react"
-import CenteredPopup from '../../../common/components/CenteredPopup'
+import CenteredPopup from '@/common/components/CenteredPopup'
 import MyBoardContents from "./MyBoardContents"
 import UserInventory from "./UserInventory"
 import clsx from "clsx"
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import { useUserProfileStore } from '../stores/useUserProfileStore'
 
 interface MypageSidebarProps {

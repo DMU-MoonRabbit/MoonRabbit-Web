@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useCommentStore } from '../stores/useCommentStore'
 import { useParams } from 'react-router-dom'
-import { ENDPOINTS } from '../../../api/endpoints'
-import MiniModal from '../../../common/components/MiniModal'
+import { ENDPOINTS } from '@/api/endpoints'
+import MiniModal from '@/common/components/MiniModal'
 
 interface CommentInputProps {
   parentId?: number | null

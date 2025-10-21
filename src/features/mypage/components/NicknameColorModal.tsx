@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from 'react'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
-import { useShopStore } from '../../features/shop/stores/useShopStore'
-import { useShopPurchase } from '../../features/shop/hooks/useShopPurchase'
-import { NICKNAME_COLOR_DEFINITIONS } from '../../../common/constants/colors'
-import MiniModal from '../../../common/components/MiniModal'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import { useShopStore } from '@/features/shop/stores/useShopStore'
+import { useShopPurchase } from '@/features/shop/hooks/useShopPurchase'
+import { NICKNAME_COLOR_DEFINITIONS } from '@/common/constants/colors'
+import MiniModal from '@/common/components/MiniModal'
 import clsx from 'clsx'
 
 interface NicknameColorModalProps {

@@ -1,7 +1,7 @@
 import React from 'react'
 import { QuestionCard as QuestionCardType } from '../types/questionCard'
-import Like from '../assets/images/Like.svg'
-import Liked from '../assets/images/Liked.svg'
+import Like from '@/assets/images/Like.svg'
+import Liked from '@/assets/images/Liked.svg'
 
 interface QuestionCardProps {
   card: QuestionCardType

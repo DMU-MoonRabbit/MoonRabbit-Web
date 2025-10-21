@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { DailyAnswerResponse } from '../types/question'
-import MiniModal from '../../../common/components/MiniModal'
+import MiniModal from '@/common/components/MiniModal'
 
 interface DailyAnswerInputProps {
   onSubmit: (answer: string) => Promise<DailyAnswerResponse | null>

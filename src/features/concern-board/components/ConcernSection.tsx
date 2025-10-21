@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import clsx from 'clsx'
 import ConcernCard from '../components/ConcernCard'
-import CategoryBar from '../../../common/components/CategoryBar'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
+import CategoryBar from '@/common/components/CategoryBar'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 
 const ConcernSection: React.FC = () => {
   const res = useResponsiveStore((state) => state.res)

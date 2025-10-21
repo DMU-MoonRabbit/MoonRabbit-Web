@@ -1,7 +1,7 @@
 import React from 'react'
 import { Playlist, PlaylistState } from '../types/playlist'
 import { PlayButton } from './PlayButton'
-import { LikeButton } from '../../features/concern-board/components/LikeButton'
+import { LikeButton } from '@/features/concern-board/components/LikeButton'
 
 interface PlaylistCardProps {
   playlist: Playlist

@@ -1,8 +1,8 @@
 import { create } from 'zustand'
 import axios from 'axios'
-import { ENDPOINTS } from '../../../api/endpoints'
+import { ENDPOINTS } from '@/api/endpoints'
 import { UserProfile, UserInventory, LikedBoard, UserItem } from '../types/user'
-import { NICKNAME_COLOR_MAP } from '../../../common/constants/colors'
+import { NICKNAME_COLOR_MAP } from '@/common/constants/colors'
 
 interface UserProfileStore {
   // 상태

@@ -1,6 +1,6 @@
 import React from 'react'
 import { PenBox } from 'lucide-react'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 
 interface CreateConcernButtonProps {
   onClick: () => void

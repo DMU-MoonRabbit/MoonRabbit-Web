@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import axios from 'axios'
-import { EquippedItem } from '../../features/mypage/types/user'
+import { EquippedItem } from '@/features/mypage/types/user'
 
 // 기존 ConcernStore Concern, Board, PageInfo 타입 등 복사
 interface Answer {

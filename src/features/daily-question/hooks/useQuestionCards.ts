@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { ENDPOINTS } from '../../../api/endpoints'
+import { ENDPOINTS } from '@/api/endpoints'
 import { DailyQuestion, DailyAnswerRequest, DailyAnswerResponse } from '../types/question'
 import { QuestionCard } from '../types/questionCard'
-import useUserStore from '../../features/mypage/stores/useUserStore'
+import useUserStore from '@/features/mypage/stores/useUserStore'
 
 export const useQuestionCards = () => {
   const { nickname } = useUserStore()

@@ -1,9 +1,9 @@
 import React from 'react'
-import { useResponsiveStore } from '../common/hooks/useResponsiveStore'
-import { useAuthFormStore } from '../features/auth/stores/useAuthStore'
-import { LogoPanel, LoginForm, SignupForm } from '../features/auth/components/Login'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import { useAuthFormStore } from '@/features/auth/stores/useAuthStore'
+import { LogoPanel, LoginForm, SignupForm } from '@/features/auth/components/Login'
 import clsx from 'clsx'
-import MoonRabbitStarsDark from '../assets/images/MoonRabbitStarsDark.png'
+import MoonRabbitStarsDark from '@/assets/images/MoonRabbitStarsDark.png'
 
 const LoginSignupPage: React.FC = () => {
   const res = useResponsiveStore((state) => state.res)

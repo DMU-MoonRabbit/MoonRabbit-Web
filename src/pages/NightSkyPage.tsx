@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import CategoryBar from '../common/components/CategoryBar'
-import ConcernCard from '../features/concern-board/components/ConcernCard'
-import CreateConcernButton from '../features/concern-board/components/CreateConcernButton'
-import CreateConcernModal from '../features/concern-board/components/CreateConcernModal'
-import { useUnifiedConcernStore, Concern } from '../features/concern-board/stores/useUnifiedConcernStore'
-import { useUserProfileStore } from '../features/mypage/stores/useUserProfileStore'
-import { usePostAuthorItems } from '../features/mypage/hooks/usePostAuthorItems'
+import CategoryBar from '@/common/components/CategoryBar'
+import ConcernCard from '@/features/concern-board/components/ConcernCard'
+import CreateConcernButton from '@/features/concern-board/components/CreateConcernButton'
+import CreateConcernModal from '@/features/concern-board/components/CreateConcernModal'
+import { useUnifiedConcernStore, Concern } from '@/features/concern-board/stores/useUnifiedConcernStore'
+import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
+import { usePostAuthorItems } from '@/features/mypage/hooks/usePostAuthorItems'
 
 // ConcernCard에 장착 아이템을 적용하는 래퍼 컴포넌트
 const ConcernCardWithItems: React.FC<{ concern: Concern; onClick: (id: number) => void }> = ({ concern, onClick }) => {

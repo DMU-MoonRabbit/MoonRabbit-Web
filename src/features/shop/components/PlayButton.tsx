@@ -1,6 +1,6 @@
 import React from 'react'
-import PlaySvg from '../assets/images/play.svg'
-import StopSvg from '../assets/images/stop.svg'
+import PlaySvg from '@/assets/images/play.svg'
+import StopSvg from '@/assets/images/stop.svg'
 
 interface PlayButtonProps {
   isPlaying: boolean

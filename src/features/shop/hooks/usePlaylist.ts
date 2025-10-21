@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-import { ENDPOINTS } from '../../../api/endpoints'
+import { ENDPOINTS } from '@/api/endpoints'
 import { Playlist, PlaylistStates } from '../types/playlist'
-import { getVideoId } from '../../../utils/youtube'
+import { getVideoId } from '@/utils/youtube'
 
 export const usePlaylist = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([])

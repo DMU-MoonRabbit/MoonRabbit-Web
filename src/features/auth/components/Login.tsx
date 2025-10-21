@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore, useAuthFormStore } from '../stores/useAuthStore'
-import useUserStore from '../../features/mypage/stores/useUserStore'
+import useUserStore from '@/features/mypage/stores/useUserStore'
 import clsx from 'clsx'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
-import LogoImg from '../assets/images/MoonRabbitSleep2.png'
-import GoogleLoginImg from '../assets/images/GoogleLogin.svg'
-import kakaoLoginImg from '../assets/images/KakaoLogin.png'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import LogoImg from '@/assets/images/MoonRabbitSleep2.png'
+import GoogleLoginImg from '@/assets/images/GoogleLogin.svg'
+import kakaoLoginImg from '@/assets/images/KakaoLogin.png'
 import axios from 'axios'
-import { ENDPOINTS } from '../../../api/endpoints'
-import MiniModal from '../../../common/components/MiniModal'
+import { ENDPOINTS } from '@/api/endpoints'
+import MiniModal from '@/common/components/MiniModal'
 
 export const LogoPanel = () => {
   const res = useResponsiveStore((state) => state.res)

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import axios from 'axios'
-import { ENDPOINTS } from '../../../api/endpoints'
+import { ENDPOINTS } from '@/api/endpoints'
 import { ShopItem, ShopItemListResponse, PurchaseResponse } from '../types/shop'
 
 interface ShopStore {

@@ -1,12 +1,12 @@
 import React from "react"
-import { AdminCategoryBar } from '../features/admin/components/AdminCategoryBar'
-import { SearchBar } from '../features/admin/components/SearchBar'
-import { useAdminStore } from '../features/admin/stores/useAdminStore'
-import { useResponsiveStore } from '../common/hooks/useResponsiveStore'
-import { ManageUsers } from '../features/admin/components/ManageUsers'
-import { ManageBoard } from '../features/admin/components/ManageBoard'
-import { ManageDailyQuestion } from '../features/admin/components/ManageDailyQuestion'
-import { ManageShopItems } from '../features/admin/components/ManageShopItems'
+import { AdminCategoryBar } from '@/features/admin/components/AdminCategoryBar'
+import { SearchBar } from '@/features/admin/components/SearchBar'
+import { useAdminStore } from '@/features/admin/stores/useAdminStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import { ManageUsers } from '@/features/admin/components/ManageUsers'
+import { ManageBoard } from '@/features/admin/components/ManageBoard'
+import { ManageDailyQuestion } from '@/features/admin/components/ManageDailyQuestion'
+import { ManageShopItems } from '@/features/admin/components/ManageShopItems'
 import clsx from "clsx"
 
 export default function AdminPage() {

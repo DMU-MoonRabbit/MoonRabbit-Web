@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import axios from 'axios'
-import { EquippedItem } from '../../features/mypage/types/user'
+import { EquippedItem } from '@/features/mypage/types/user'
 
 // equippedItems에서 테두리와 닉네임 색상 추출하는 헬퍼 함수
 const parseEquippedItems = (equippedItems?: EquippedItem[]) => {

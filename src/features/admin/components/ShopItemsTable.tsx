@@ -1,8 +1,8 @@
 import React from 'react'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import { AdminPagination } from './AdminPagination'
 import clsx from 'clsx'
-import { ShopItemListResponse, ShopItem } from '../../features/shop/types/shop'
+import { ShopItemListResponse, ShopItem } from '@/features/shop/types/shop'
 
 interface ShopItemsTableProps {
   itemsData: ShopItemListResponse | null

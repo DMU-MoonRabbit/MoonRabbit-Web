@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
-import { useManageBoardStore } from '../../features/admin/stores/useManageBoardStore'
-import { usePaginationStore } from '../common/hooks/usePaginationStore'
-import ENDPOINTS from '../../api/endpoints'
+import { useManageBoardStore } from '@/features/admin/stores/useManageBoardStore'
+import { usePaginationStore } from '@/common/hooks/usePaginationStore'
+import ENDPOINTS from '@/api/endpoints'
 import axios from 'axios'
 
 export const useManageBoardAPI = () => {

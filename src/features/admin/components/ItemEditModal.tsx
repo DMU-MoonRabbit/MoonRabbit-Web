@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { AdminModal } from './AdminModal'
-import { ShopItem } from '../../features/shop/types/shop'
+import { ShopItem } from '@/features/shop/types/shop'
 
 interface ItemEditModalProps {
   isOpen: boolean

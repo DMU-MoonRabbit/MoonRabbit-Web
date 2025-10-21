@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import { useShopStore } from '../stores/useShopStore'
 import { useShopPurchase } from '../hooks/useShopPurchase'
-import MiniModal from '../../../common/components/MiniModal'
+import MiniModal from '@/common/components/MiniModal'
 import clsx from 'clsx'
 
 interface BorderShopModalProps {

@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { AdminUserResponse } from '../types/admin'
-import { ENDPOINTS } from '../../../api/endpoints'
+import { ENDPOINTS } from '@/api/endpoints'
 import axios from 'axios'
 
 interface AdminState {

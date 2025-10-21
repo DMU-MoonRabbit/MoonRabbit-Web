@@ -1,11 +1,11 @@
 import React, { memo, useMemo, useEffect, useState } from "react"
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import { useMypageStore } from '../stores/useMypageStore'
 import { useUserProfileStore } from '../stores/useUserProfileStore'
 import clsx from 'clsx'
 import MyBoardContents from './MyBoardContents'
-import CenteredPopup from '../../../common/components/CenteredPopup'
-import NightSkyBg from "../assets/images/NightSkyBackground.png"
+import CenteredPopup from '@/common/components/CenteredPopup'
+import NightSkyBg from "@/assets/images/NightSkyBackground.png"
 
 interface MypageCountSectionProps {
   isOwnPage: boolean

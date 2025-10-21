@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { ENDPOINTS } from '../../../api/endpoints'
-import CategoryBar from '../../../common/components/CategoryBar'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
-import { useAnonymousStore } from '../../features/auth/stores/useAnonymousStore'
+import { ENDPOINTS } from '@/api/endpoints'
+import CategoryBar from '@/common/components/CategoryBar'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import { useAnonymousStore } from '@/features/auth/stores/useAnonymousStore'
 
 const MODAL_STYLES = {
   width: 'w-[1200px]',

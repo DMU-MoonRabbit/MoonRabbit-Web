@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import axios from "axios"
-import { Board, PageInfo, Concern, transformBoardToConcern } from "../../features/concern-board/stores/useUnifiedConcernStore"
-import ENDPOINTS from '../../../api/endpoints'
+import { Board, PageInfo, Concern, transformBoardToConcern } from "@/features/concern-board/stores/useUnifiedConcernStore"
+import ENDPOINTS from '@/api/endpoints'
 
 interface MypageStore {
   concerns: Concern[]

@@ -1,6 +1,6 @@
 import React, { useEffect } from "react"
 import { useManageUsersStore } from "../stores/useManageUsersStore"
-import { usePaginationStore } from "../../../common/hooks/usePaginationStore"
+import { usePaginationStore } from "@/common/hooks/usePaginationStore"
 import { useAdminStore } from "../stores/useAdminStore"
 import { useManageUsersAPI } from "../hooks/useManageUsersAPI"
 import { ManagePointModal } from "./ManagePointModal"

@@ -1,5 +1,5 @@
 import React from 'react'
-import StarSvg from '../assets/images/starBackground.svg'
+import StarSvg from '@/assets/images/starBackground.svg'
 
 interface StarBackgroundProps {
   isMobile: boolean

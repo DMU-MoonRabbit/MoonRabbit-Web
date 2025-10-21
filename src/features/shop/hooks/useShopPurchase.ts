@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useShopStore } from '../stores/useShopStore'
-import { useUserProfileStore } from '../../features/mypage/stores/useUserProfileStore'
+import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
 
 interface MiniModalState {
   isOpen: boolean

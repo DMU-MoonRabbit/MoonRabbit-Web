@@ -2,8 +2,8 @@ import React, { useEffect, memo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useMypageStore } from '../stores/useMypageStore'
-import CategoryBar from '../../../common/components/CategoryBar'
-import ConcernCard from '../../features/concern-board/components/ConcernCard'
+import CategoryBar from '@/common/components/CategoryBar'
+import ConcernCard from '@/features/concern-board/components/ConcernCard'
 
 interface MyBoardContentsProps {
   userId?: number

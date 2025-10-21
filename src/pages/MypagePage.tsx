@@ -1,10 +1,10 @@
 import React, { memo, useMemo, useEffect } from "react"
-import MypageProfile from '../features/mypage/components/MypageProfile'
-import MypageSidebar from '../features/mypage/components/MypageSidebar'
-import MypageCountSection from '../features/mypage/components/MypageCountSection'
+import MypageProfile from '@/features/mypage/components/MypageProfile'
+import MypageSidebar from '@/features/mypage/components/MypageSidebar'
+import MypageCountSection from '@/features/mypage/components/MypageCountSection'
 import clsx from "clsx"
-import { useResponsiveStore } from '../common/hooks/useResponsiveStore'
-import { useUserProfileStore } from '../features/mypage/stores/useUserProfileStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
 import { useParams, useNavigate } from "react-router-dom"
 
 const MypagePage: React.FC = memo(() => {

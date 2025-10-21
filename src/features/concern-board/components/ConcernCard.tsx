@@ -1,5 +1,5 @@
 import React from 'react'
-import { useResponsiveStore } from '../../../common/hooks/useResponsiveStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import clsx from 'clsx'
 
 interface ConcernCardProps {

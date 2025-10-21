@@ -1,5 +1,5 @@
 import React from 'react'
-import PageHeader from '../common/components/PageHeader'
+import PageHeader from '@/common/components/PageHeader'
 
 const PrivacyPage: React.FC = () => {
   return (
