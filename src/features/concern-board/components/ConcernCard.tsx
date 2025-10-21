@@ -1,6 +1,7 @@
-import React from 'react'
-import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import clsx from 'clsx'
+import React from 'react'
+
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 
 interface ConcernCardProps {
   id: number
@@ -15,8 +16,8 @@ interface ConcernCardProps {
   date?: string
   backgroundImage?: string
   onClick?: (id: number) => void
-  borderImageUrl?: string  // 작성자의 장착 테두리 (API 또는 본인)
-  nicknameColor?: string    // 작성자의 장착 닉네임 색상 (API 또는 본인)
+  borderImageUrl?: string // 작성자의 장착 테두리 (API 또는 본인)
+  nicknameColor?: string // 작성자의 장착 닉네임 색상 (API 또는 본인)
 }
 
 const ConcernCard: React.FC<ConcernCardProps> = ({
@@ -49,7 +50,12 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
       }}
       onClick={() => onClick && onClick(id)}
     >
-      <div className={clsx('relative z-10 w-full h-full flex flex-col px-1 sm:px-2', !isMobile && 'px-[0.3125rem]')}>
+      <div
+        className={clsx(
+          'relative z-10 w-full h-full flex flex-col px-1 sm:px-2',
+          !isMobile && 'px-[0.3125rem]',
+        )}
+      >
         {/* 상단 영역 - 프로필, 제목, 카테고리 */}
         <div className="flex-shrink-0">
           {/* 프로필 이미지 + 테두리 */}
@@ -109,7 +115,9 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
                 key={i}
                 className={clsx(
                   'inline-block bg-lightBeige text-mainColor font-semibold rounded-full shadow-md transition-transform hover:-translate-y-[1px] flex-shrink-0 whitespace-nowrap',
-                  isMobile ? 'text-[0.6rem] sm:text-[0.7rem] px-1 sm:px-1.5 py-0.5 sm:py-1' : 'text-sm px-3 py-1 max-w-[5.75rem]',
+                  isMobile
+                    ? 'text-[0.6rem] sm:text-[0.7rem] px-1 sm:px-1.5 py-0.5 sm:py-1'
+                    : 'text-sm px-3 py-1 max-w-[5.75rem]',
                 )}
               >
                 {cat.trim()}
@@ -119,12 +127,14 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
         </div>
 
         {/* 중간 영역 - 본문 */}
-        <div className={clsx(
-          'flex bg-white rounded-xl px-2 sm:px-3 py-1 sm:py-2',
-          isMobile
-            ? 'mt-16 sm:mt-20 mx-12 sm:mx-16 mr-3 mb-2 sm:mb-3'
-            : 'mt-28 ml-[1.875rem] mr-[0.9375rem] max-w-[29.375rem] mb-3',
-        )}>
+        <div
+          className={clsx(
+            'flex bg-white rounded-xl px-2 sm:px-3 py-1 sm:py-2',
+            isMobile
+              ? 'mt-16 sm:mt-20 mx-12 sm:mx-16 mr-3 mb-2 sm:mb-3'
+              : 'mt-28 ml-[1.875rem] mr-[0.9375rem] max-w-[29.375rem] mb-3',
+          )}
+        >
           <p
             className={clsx(
               'text-darkWalnut leading-snug line-clamp-2 h-full flex items-center',

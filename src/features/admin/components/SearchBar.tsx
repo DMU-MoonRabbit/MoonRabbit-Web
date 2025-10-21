@@ -1,14 +1,18 @@
-import React from 'react'
-import { useAdminStore } from '../stores/useAdminStore'
 import clsx from 'clsx'
+import React from 'react'
+
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 
+import { useAdminStore } from '../stores/useAdminStore'
+
 export const SearchBar = () => {
-  const { searchTerm, setSearchTerm, handleSearch, activeTab, clearSearch } = useAdminStore()
+  const { searchTerm, setSearchTerm, handleSearch, activeTab, clearSearch } =
+    useAdminStore()
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
-  const placeholder = activeTab === 'members' ? '닉네임으로 검색' : '제목으로 검색'
+  const placeholder =
+    activeTab === 'members' ? '닉네임으로 검색' : '제목으로 검색'
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
@@ -30,7 +34,12 @@ export const SearchBar = () => {
   }
 
   return (
-    <div className={clsx(`flex justify-between items-center bg-white pl-4 pr-1 py-1 rounded-full shadow-md`, isMobile ? 'w-full' : 'w-1/2')}>
+    <div
+      className={clsx(
+        `flex justify-between items-center bg-white pl-4 pr-1 py-1 rounded-full shadow-md`,
+        isMobile ? 'w-full' : 'w-1/2',
+      )}
+    >
       <input
         type="text"
         placeholder={placeholder}
@@ -48,4 +57,3 @@ export const SearchBar = () => {
     </div>
   )
 }
-

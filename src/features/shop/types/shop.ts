@@ -6,7 +6,7 @@ export interface ShopItem {
   price: number
   type: 'BANNER' | 'BORDER' | 'NAME_COLOR'
   equippable: boolean
-  imageUrl: string  // S3 URL
+  imageUrl: string // S3 URL
 }
 
 export interface ShopItemListResponse {
@@ -54,4 +54,3 @@ export interface PurchaseResponse {
   }
   remainingPoints?: number
 }
-

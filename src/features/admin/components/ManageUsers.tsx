@@ -1,11 +1,14 @@
-import React, { useEffect } from "react"
-import { useManageUsersStore } from "../stores/useManageUsersStore"
-import { usePaginationStore } from "@/common/hooks/usePaginationStore"
-import { useAdminStore } from "../stores/useAdminStore"
-import { useManageUsersAPI } from "../hooks/useManageUsersAPI"
-import { ManagePointModal } from "./ManagePointModal"
-import { UsersTable } from "./UsersTable"
-import { User } from "../types/admin"
+import React, { useEffect } from 'react'
+
+import { usePaginationStore } from '@/common/hooks/usePaginationStore'
+
+import { useManageUsersAPI } from '../hooks/useManageUsersAPI'
+import { useAdminStore } from '../stores/useAdminStore'
+import { useManageUsersStore } from '../stores/useManageUsersStore'
+import { User } from '../types/admin'
+
+import { ManagePointModal } from './ManagePointModal'
+import { UsersTable } from './UsersTable'
 
 export const ManageUsers = () => {
   const {
@@ -18,17 +21,18 @@ export const ManageUsers = () => {
     setPageData,
     setFilteredUsers,
   } = useManageUsersStore()
-  
+
   const { usersPage, setUsersPage } = usePaginationStore()
   const { searchTerm, isSearching } = useAdminStore()
-  const { fetchUsers, searchUsers, updatePoint, updateTrust } = useManageUsersAPI()
+  const { fetchUsers, searchUsers, updatePoint, updateTrust } =
+    useManageUsersAPI()
 
   // 초기 데이터 로딩
   useEffect(() => {
     if (!isSearching) {
       fetchUsers(usersPage)
     }
-  }, [usersPage])
+  }, [usersPage, isSearching, fetchUsers])
 
   useEffect(() => {
     if (isSearching && searchTerm.trim()) {
@@ -39,17 +43,24 @@ export const ManageUsers = () => {
       setUsersPage(0)
       fetchUsers(0)
     }
-  }, [isSearching, searchTerm])
+  }, [
+    isSearching,
+    searchTerm,
+    searchUsers,
+    setUsersPage,
+    setFilteredUsers,
+    fetchUsers,
+  ])
   const handleSave = async (changeValue: number) => {
     if (!editModalState.userId || !editModalState.type) return
-    
+
     try {
       if (editModalState.type === 'point') {
         await updatePoint(editModalState.userId, changeValue)
       } else if (editModalState.type === 'trust') {
         await updateTrust(editModalState.userId, changeValue)
       }
-      
+
       // 성공 후 현재 페이지 데이터 새로고침
       if (isSearching && searchTerm.trim()) {
         await searchUsers(searchTerm)
@@ -58,10 +69,9 @@ export const ManageUsers = () => {
       }
       // 모달 닫기
       closeEditModal()
-      
     } catch (error) {
       let errorMessage = '저장에 실패했습니다. 다시 시도해주세요.'
-      
+
       if (error instanceof Error) {
         if (error.message.includes('로그인이 필요')) {
           errorMessage = '로그인이 필요합니다. 다시 로그인해주세요.'
@@ -74,7 +84,7 @@ export const ManageUsers = () => {
           errorMessage = error.message
         }
       }
-      
+
       alert(errorMessage)
     }
   }
@@ -82,7 +92,7 @@ export const ManageUsers = () => {
   const handlePageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < (pageData?.totalPages || 0)) {
       setUsersPage(newPage)
-      
+
       // 검색 중이면 클라이언트 사이드 페이지네이션
       if (isSearching && searchTerm.trim() && filteredUsers.length > 0) {
         const pageSize = 10
@@ -90,7 +100,7 @@ export const ManageUsers = () => {
         const end = start + pageSize
         const totalElements = filteredUsers.length
         const totalPages = Math.ceil(totalElements / pageSize)
-        
+
         setPageData({
           ...pageData!,
           content: filteredUsers.slice(start, end) as User[],
@@ -105,15 +115,23 @@ export const ManageUsers = () => {
     }
   }
 
-  const handleEditPoint = (userId: number, userName: string, currentValue: number) => {
+  const handleEditPoint = (
+    userId: number,
+    userName: string,
+    currentValue: number,
+  ) => {
     openEditModal('point', userId, userName, currentValue)
   }
 
-  const handleEditTrust = (userId: number, userName: string, currentValue: number) => {
+  const handleEditTrust = (
+    userId: number,
+    userName: string,
+    currentValue: number,
+  ) => {
     openEditModal('trust', userId, userName, currentValue)
   }
 
-  return(
+  return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <UsersTable
         pageData={pageData}

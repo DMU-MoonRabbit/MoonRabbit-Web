@@ -20,16 +20,22 @@ const TalkSection: React.FC = () => {
       <div className="bg-white p-6 md:p-12 rounded-2xl md:rounded-[200px] shadow-md min-h-[180px] md:min-h-[320px] flex items-center justify-center">
         <p
           className="text-sm sm:text-base md:text-lg lg:text-2xl font-gothicFont leading-relaxed text-center mx-auto px-2"
-          style={{ color: 'var(--color-lightWalnut)', wordBreak: 'keep-all', lineHeight: '1.6' }}
+          style={{
+            color: 'var(--color-lightWalnut)',
+            wordBreak: 'keep-all',
+            lineHeight: '1.6',
+          }}
         >
           마음이 답답한데 어디에도 털어놓지 못하고 있다면,
-          <br />여기는 네가 잠시 쉬어갈 수 있는 곳이야.
+          <br />
+          여기는 네가 잠시 쉬어갈 수 있는 곳이야.
           <br />
           무슨 말을 해야 할지 몰라도 괜찮고, 그냥 잠시 머물다 가도 좋아.
           <br />
           <br />
           가끔은 말하지 않아도 괜찮으니까,
-          <br />오늘은 조금 더 편안해지기를 바라면서, 달토끼가 네 곁에 있을게.
+          <br />
+          오늘은 조금 더 편안해지기를 바라면서, 달토끼가 네 곁에 있을게.
         </p>
       </div>
 

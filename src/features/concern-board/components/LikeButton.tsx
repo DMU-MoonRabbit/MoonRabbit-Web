@@ -1,4 +1,5 @@
 import React from 'react'
+
 import Like from '@/assets/images/Like.svg'
 import Liked from '@/assets/images/Liked.svg'
 
@@ -8,15 +9,15 @@ interface LikeButtonProps {
   size?: 'sm' | 'md' | 'lg'
 }
 
-export const LikeButton: React.FC<LikeButtonProps> = ({ 
-  isLiked, 
-  onToggle, 
-  size = 'md' 
+export const LikeButton: React.FC<LikeButtonProps> = ({
+  isLiked,
+  onToggle,
+  size = 'md',
 }) => {
   const sizeClasses = {
     sm: 'w-8 h-8',
     md: 'w-11 h-11',
-    lg: 'w-14 h-14'
+    lg: 'w-14 h-14',
   }
 
   return (

@@ -1,7 +1,9 @@
-import { create } from 'zustand'
-import { AdminUserResponse } from '../types/admin'
-import { ENDPOINTS } from '@/api/endpoints'
 import axios from 'axios'
+import { create } from 'zustand'
+
+import { ENDPOINTS } from '@/api/endpoints'
+
+import { AdminUserResponse } from '../types/admin'
 
 interface AdminState {
   activeTab: 'members' | 'posts' | 'dailyQuestion' | 'shopItems'
@@ -9,7 +11,9 @@ interface AdminState {
   pageData: AdminUserResponse | null
   loading: boolean
   isSearching: boolean
-  setActiveTab: (tab: 'members' | 'posts' | 'dailyQuestion' | 'shopItems') => void
+  setActiveTab: (
+    tab: 'members' | 'posts' | 'dailyQuestion' | 'shopItems',
+  ) => void
   setSearchTerm: (term: string) => void
   setPageData: (data: AdminUserResponse | null) => void
   setLoading: (loading: boolean) => void
@@ -23,7 +27,8 @@ export const useAdminStore = create<AdminState>((set, get) => ({
   pageData: null,
   loading: false,
   isSearching: false,
-  setActiveTab: (tab) => set({ activeTab: tab, searchTerm: '', isSearching: false }),
+  setActiveTab: (tab) =>
+    set({ activeTab: tab, searchTerm: '', isSearching: false }),
   setSearchTerm: (term) => set({ searchTerm: term }),
   setPageData: (data) => set({ pageData: data }),
   setLoading: (loading) => set({ loading }),
@@ -37,28 +42,27 @@ export const useAdminStore = create<AdminState>((set, get) => ({
     // 검색 상태 설정 (컴포넌트가 이를 감지하여 검색 실행)
     set({ isSearching: true })
   },
-  clearSearch: () => set({ searchTerm: '', isSearching: false })
+  clearSearch: () => set({ searchTerm: '', isSearching: false }),
 }))
 
 export const getAdminUsers = async (page = 0, size = 10) => {
   const { setPageData, setLoading } = useAdminStore.getState()
   setLoading(true)
-  
+
   try {
     const token = localStorage.getItem('accessToken')
-    
+
     const response = await axios.get(ENDPOINTS.ADMIN_USERS(page, size), {
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
       },
-      withCredentials: true
+      withCredentials: true,
     })
-    
+
     setPageData(response.data)
     setLoading(false)
-
-  } catch (error) {
+  } catch {
     // 에러 발생 시 빈 데이터로 설정
     setPageData({
       totalElements: 0,
@@ -76,9 +80,9 @@ export const getAdminUsers = async (page = 0, size = 10) => {
         pageNumber: page,
         pageSize: size,
         paged: true,
-        unpaged: false
+        unpaged: false,
       },
-      empty: true
+      empty: true,
     })
     setLoading(false)
   }
@@ -87,25 +91,24 @@ export const getAdminUsers = async (page = 0, size = 10) => {
 export const updateUserPoint = async (userId: number, newPoint: number) => {
   try {
     const token = localStorage.getItem('accessToken')
-    
+
     if (!token) {
       throw new Error('로그인이 필요합니다.')
     }
-    
+
     const response = await axios.put(
       ENDPOINTS.ADMIN_USER_UPDATE_POINT(userId, newPoint),
       {},
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json; charset=utf-8'
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json; charset=utf-8',
         },
-        withCredentials: true
-      }
+        withCredentials: true,
+      },
     )
-    
+
     return response.data
-    
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 403) {
@@ -124,21 +127,20 @@ export const updateUserTrust = async (userId: number, newTrust: number) => {
     if (!token) {
       throw new Error('로그인이 필요합니다.')
     }
-    
+
     const response = await axios.put(
       ENDPOINTS.ADMIN_USER_UPDATE_TRUST(userId, newTrust),
       {},
       {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json; charset=utf-8'
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json; charset=utf-8',
         },
-        withCredentials: true
-      }
+        withCredentials: true,
+      },
     )
-    
-    return response.data
 
+    return response.data
   } catch (error) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 403) {

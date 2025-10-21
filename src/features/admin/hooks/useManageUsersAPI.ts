@@ -1,7 +1,10 @@
-import { useManageUsersStore } from '../stores/useManageUsersStore'
-import { updateUserPoint, updateUserTrust } from '../stores/useAdminStore'
-import ENDPOINTS from '@/api/endpoints'
 import axios from 'axios'
+
+import ENDPOINTS from '@/api/endpoints'
+
+import { updateUserPoint, updateUserTrust } from '../stores/useAdminStore'
+import { useManageUsersStore } from '../stores/useManageUsersStore'
+
 
 export const useManageUsersAPI = () => {
   const { setPageData, setLoading, setFilteredUsers } = useManageUsersStore()
@@ -11,19 +14,18 @@ export const useManageUsersAPI = () => {
     setLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
-      
+
       const response = await axios.get(ENDPOINTS.ADMIN_USERS(page, 10), {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-        withCredentials: true
+        withCredentials: true,
       })
-      
+
       setPageData(response.data)
       setLoading(false)
-
-    } catch (error) {
+    } catch {
       setPageData({
         totalElements: 0,
         totalPages: 0,
@@ -40,9 +42,9 @@ export const useManageUsersAPI = () => {
           pageNumber: page,
           pageSize: 10,
           paged: true,
-          unpaged: false
+          unpaged: false,
         },
-        empty: true
+        empty: true,
       })
       setLoading(false)
     }
@@ -53,27 +55,28 @@ export const useManageUsersAPI = () => {
     setLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
-      
+
       // 전체 데이터 가져오기
       const response = await axios.get(ENDPOINTS.ADMIN_USERS(0, 1000), {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-        withCredentials: true
+        withCredentials: true,
       })
-      
+
       // 닉네임으로 필터링
-      const filteredContent = response.data.content.filter((user: { nickname: string }) => 
-        user.nickname.toLowerCase().includes(nickname.toLowerCase())
+      const filteredContent = response.data.content.filter(
+        (user: { nickname: string }) =>
+          user.nickname.toLowerCase().includes(nickname.toLowerCase()),
       )
       setFilteredUsers(filteredContent)
-      
+
       // 페이지네이션
       const pageSize = 10
       const totalElements = filteredContent.length
       const totalPages = Math.ceil(totalElements / pageSize)
-      
+
       setPageData({
         ...response.data,
         content: filteredContent.slice(0, pageSize),
@@ -83,11 +86,10 @@ export const useManageUsersAPI = () => {
         number: 0,
         first: true,
         last: totalPages <= 1,
-        empty: filteredContent.length === 0
+        empty: filteredContent.length === 0,
       })
       setLoading(false)
-
-    } catch (error) {
+    } catch {
       setFilteredUsers([])
       setPageData({
         totalElements: 0,
@@ -105,9 +107,9 @@ export const useManageUsersAPI = () => {
           pageNumber: 0,
           pageSize: 10,
           paged: true,
-          unpaged: false
+          unpaged: false,
         },
-        empty: true
+        empty: true,
       })
       setLoading(false)
     }
@@ -115,22 +117,14 @@ export const useManageUsersAPI = () => {
 
   // 포인트 수정
   const updatePoint = async (userId: number, newPoint: number) => {
-    try {
-      await updateUserPoint(userId, newPoint)
-      return true
-    } catch (error) {
-      throw error
-    }
+    await updateUserPoint(userId, newPoint)
+    return true
   }
 
   // 신뢰도 수정
   const updateTrust = async (userId: number, newTrust: number) => {
-    try {
-      await updateUserTrust(userId, newTrust)
-      return true
-    } catch (error) {
-      throw error
-    }
+    await updateUserTrust(userId, newTrust)
+    return true
   }
 
   return {
@@ -140,4 +134,3 @@ export const useManageUsersAPI = () => {
     updateTrust,
   }
 }
-

@@ -1,9 +1,15 @@
-import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useState, useEffect } from 'react'
+
 import { ENDPOINTS } from '@/api/endpoints'
-import { DailyQuestion, DailyAnswerRequest, DailyAnswerResponse } from '../types/question'
-import { QuestionCard } from '../types/questionCard'
 import useUserStore from '@/features/mypage/stores/useUserStore'
+
+import {
+  DailyQuestion,
+  DailyAnswerRequest,
+  DailyAnswerResponse,
+} from '../types/question'
+import { QuestionCard } from '../types/questionCard'
 
 export const useQuestionCards = () => {
   const { nickname } = useUserStore()
@@ -18,9 +24,11 @@ export const useQuestionCards = () => {
   useEffect(() => {
     const fetchTodayQuestion = async () => {
       try {
-        const response = await axios.get<DailyQuestion>(ENDPOINTS.DAILY_QUESTION)
+        const response = await axios.get<DailyQuestion>(
+          ENDPOINTS.DAILY_QUESTION,
+        )
         setTodayQuestion(response.data)
-      } catch (error) {
+      } catch {
         // 에러 처리
       } finally {
         setLoading(false)
@@ -36,15 +44,15 @@ export const useQuestionCards = () => {
           ENDPOINTS.DAILY_ANSWER_ME,
           {
             headers: {
-              Authorization: `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
             },
-            withCredentials: true
-          }
+            withCredentials: true,
+          },
         )
-        
+
         if (response.data) {
           setMyAnswer(response.data)
-          
+
           // 답변 카드에도 추가
           const newCard: QuestionCard = {
             type: 'text',
@@ -52,11 +60,11 @@ export const useQuestionCards = () => {
             answerId: response.data.answerId,
             nickname: nickname || '익명',
             answeredAt: response.data.answeredAt,
-            isMyAnswer: true
+            isMyAnswer: true,
           }
           setQuestionCards([newCard])
         }
-      } catch (error) {
+      } catch {
         // 404 에러는 답변이 없는 경우이므로 무시
       }
     }
@@ -67,18 +75,20 @@ export const useQuestionCards = () => {
 
   const handleLikeClick = (cardIndex: number) => {
     if (likedCards.has(cardIndex)) {
-      setLikedCards(prev => {
+      setLikedCards((prev) => {
         const newSet = new Set(Array.from(prev))
         newSet.delete(cardIndex)
         return newSet
       })
     } else {
-      setLikedCards(prev => new Set(Array.from(prev).concat(cardIndex)))
+      setLikedCards((prev) => new Set(Array.from(prev).concat(cardIndex)))
     }
   }
 
   // 오늘의 질문에 답변 제출/수정
-  const submitAnswer = async (answer: string): Promise<DailyAnswerResponse | null> => {
+  const submitAnswer = async (
+    answer: string,
+  ): Promise<DailyAnswerResponse | null> => {
     setSubmitting(true)
     try {
       const token = localStorage.getItem('accessToken')
@@ -89,32 +99,32 @@ export const useQuestionCards = () => {
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: token ? `Bearer ${token}` : ''
+            Authorization: token ? `Bearer ${token}` : '',
           },
-          withCredentials: true // 인증 필요
-        }
+          withCredentials: true, // 인증 필요
+        },
       )
-      
+
       const answerData = response.data
       setMyAnswer(answerData)
       setIsEditing(false)
-      
+
       // 기존 내 답변이 있으면 제거하고 새로운 답변을 맨 앞에 추가
-      setQuestionCards(prev => {
-        const filteredCards = prev.filter(card => !card.isMyAnswer)
+      setQuestionCards((prev) => {
+        const filteredCards = prev.filter((card) => !card.isMyAnswer)
         const newCard: QuestionCard = {
           type: 'text',
           content: answerData.answerContent,
           answerId: answerData.answerId,
           nickname: nickname || '익명',
           answeredAt: answerData.answeredAt,
-          isMyAnswer: true
+          isMyAnswer: true,
         }
         return [newCard, ...filteredCards]
       })
-      
+
       return answerData
-    } catch (error) {
+    } catch {
       return null
     } finally {
       setSubmitting(false)
@@ -140,6 +150,6 @@ export const useQuestionCards = () => {
     myAnswer,
     isEditing,
     startEditing,
-    cancelEditing
+    cancelEditing,
   }
 }

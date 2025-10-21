@@ -1,7 +1,9 @@
-import React from "react"
-import { X } from "lucide-react"
-import { useResponsiveStore } from '../hooks/useResponsiveStore'
 import clsx from 'clsx'
+import { X } from 'lucide-react'
+import React from 'react'
+
+import { useResponsiveStore } from '../hooks/useResponsiveStore'
+
 
 interface CenteredPopupProps {
   title: string
@@ -16,7 +18,7 @@ const CenteredPopup: React.FC<CenteredPopupProps> = ({
   isOpen,
   onClose,
   children,
-  widthClassName = "w-[80vw] max-w-[1200px]",
+  widthClassName = 'w-[80vw] max-w-[1200px]',
 }) => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
@@ -26,7 +28,9 @@ const CenteredPopup: React.FC<CenteredPopupProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose}></div>
-      <div className={`relative z-10 bg-white rounded-2xl shadow-xl p-6 ${widthClassName} max-h-[80vh] overflow-auto hide-scrollbar`}>
+      <div
+        className={`relative z-10 bg-white rounded-2xl shadow-xl p-6 ${widthClassName} max-h-[80vh] overflow-auto hide-scrollbar`}
+      >
         <div className="flex items-start justify-between mb-4">
           <div className="flex">
             <img
@@ -47,15 +51,15 @@ const CenteredPopup: React.FC<CenteredPopupProps> = ({
             <X size={24} className="w-6 h-6" />
           </button>
         </div>
-        <div className={clsx("font-mainFont text-darkWalnut",
-          isMobile ?
-          "mt-8 mb-4 text-[16px]" : "mt-16 mb-4 text-[24px]"
-        )}>
+        <div
+          className={clsx(
+            'font-mainFont text-darkWalnut',
+            isMobile ? 'mt-8 mb-4 text-[16px]' : 'mt-16 mb-4 text-[24px]',
+          )}
+        >
           {title}
         </div>
-        <div className="text-darkWalnut font-gothicFont">
-          {children}
-        </div>
+        <div className="text-darkWalnut font-gothicFont">{children}</div>
       </div>
     </div>
   )

@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
-import { DailyAnswerResponse } from '../types/question'
+
 import MiniModal from '@/common/components/MiniModal'
+
+import { DailyAnswerResponse } from '../types/question'
 
 interface DailyAnswerInputProps {
   onSubmit: (answer: string) => Promise<DailyAnswerResponse | null>
@@ -11,7 +13,7 @@ interface DailyAnswerInputProps {
 export const DailyAnswerInput: React.FC<DailyAnswerInputProps> = ({
   onSubmit,
   submitting,
-  existingAnswer = ''
+  existingAnswer = '',
 }) => {
   const [answer, setAnswer] = useState(existingAnswer)
   const [modalState, setModalState] = useState<{
@@ -21,7 +23,7 @@ export const DailyAnswerInput: React.FC<DailyAnswerInputProps> = ({
   }>({
     isOpen: false,
     type: 'success',
-    message: ''
+    message: '',
   })
 
   const showModal = (type: 'success' | 'error', message: string) => {
@@ -29,12 +31,12 @@ export const DailyAnswerInput: React.FC<DailyAnswerInputProps> = ({
   }
 
   const closeModal = () => {
-    setModalState(prev => ({ ...prev, isOpen: false }))
+    setModalState((prev) => ({ ...prev, isOpen: false }))
   }
 
   const handleSubmit = async () => {
     const token = localStorage.getItem('accessToken')
-    
+
     if (!token) {
       showModal('error', '로그인이 필요합니다.')
       return
@@ -49,7 +51,7 @@ export const DailyAnswerInput: React.FC<DailyAnswerInputProps> = ({
         showModal('error', '로그인이 만료되었습니다. 다시 로그인해주세요.')
         return
       }
-    } catch (err) {
+    } catch {
       localStorage.removeItem('accessToken')
       showModal('error', '유효하지 않은 토큰입니다. 다시 로그인해주세요.')
       return
@@ -63,7 +65,10 @@ export const DailyAnswerInput: React.FC<DailyAnswerInputProps> = ({
 
     const result = await onSubmit(content)
     if (result) {
-      showModal('success', existingAnswer ? '답변이 수정되었습니다!' : '답변이 제출되었습니다!')
+      showModal(
+        'success',
+        existingAnswer ? '답변이 수정되었습니다!' : '답변이 제출되었습니다!',
+      )
     } else {
       showModal('error', '답변 제출에 실패했습니다. 다시 시도해주세요.')
     }
@@ -91,7 +96,11 @@ export const DailyAnswerInput: React.FC<DailyAnswerInputProps> = ({
               onClick={handleSubmit}
               disabled={submitting}
             >
-              {submitting ? '제출 중...' : existingAnswer ? '답변 수정' : '답변 제출'}
+              {submitting
+                ? '제출 중...'
+                : existingAnswer
+                  ? '답변 수정'
+                  : '답변 제출'}
             </button>
           </div>
         </div>
@@ -108,4 +117,3 @@ export const DailyAnswerInput: React.FC<DailyAnswerInputProps> = ({
 }
 
 export default DailyAnswerInput
-

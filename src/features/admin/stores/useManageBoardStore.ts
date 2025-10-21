@@ -1,5 +1,7 @@
 import { create } from 'zustand'
+
 import { BoardPageData } from '@/features/concern-board/types/board'
+
 import { AdminReportsResponse } from '../types/admin'
 
 interface ManageBoardState {
@@ -44,12 +46,15 @@ interface ManageBoardState {
       anonymous: boolean
     } | null
   }) => void
-  openEditModal: (boardId: number, initialData: {
-    title: string
-    content: string
-    category: string
-    anonymous: boolean
-  }) => void
+  openEditModal: (
+    boardId: number,
+    initialData: {
+      title: string
+      content: string
+      category: string
+      anonymous: boolean
+    },
+  ) => void
   closeEditModal: () => void
 
   // 초기화 함수
@@ -84,34 +89,37 @@ export const useManageBoardStore = create<ManageBoardState>((set) => ({
     initialData: null,
   },
   setEditModalState: (state) => set({ editModalState: state }),
-  openEditModal: (boardId, initialData) => set({
-    editModalState: {
-      isOpen: true,
-      boardId,
-      initialData,
-    }
-  }),
-  closeEditModal: () => set({
-    editModalState: {
-      isOpen: false,
-      boardId: null,
-      initialData: null,
-    }
-  }),
+  openEditModal: (boardId, initialData) =>
+    set({
+      editModalState: {
+        isOpen: true,
+        boardId,
+        initialData,
+      },
+    }),
+  closeEditModal: () =>
+    set({
+      editModalState: {
+        isOpen: false,
+        boardId: null,
+        initialData: null,
+      },
+    }),
 
   // 초기화 함수
-  reset: () => set({
-    activeTab: 'posts',
-    boardData: null,
-    reportedBoardsData: null,
-    reportedCommentsData: null,
-    filteredBoards: [],
-    loading: false,
-    reportsLoading: false,
-    editModalState: {
-      isOpen: false,
-      boardId: null,
-      initialData: null,
-    }
-  })
+  reset: () =>
+    set({
+      activeTab: 'posts',
+      boardData: null,
+      reportedBoardsData: null,
+      reportedCommentsData: null,
+      filteredBoards: [],
+      loading: false,
+      reportsLoading: false,
+      editModalState: {
+        isOpen: false,
+        boardId: null,
+        initialData: null,
+      },
+    }),
 }))

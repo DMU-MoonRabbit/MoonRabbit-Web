@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+
 import { AdminUserResponse } from '../types/admin'
 
 interface ManageUsersState {
@@ -18,7 +19,12 @@ interface ManageUsersState {
     userName: string
     currentValue: number
   }
-  openEditModal: (type: 'point' | 'trust', userId: number, userName: string, currentValue: number) => void
+  openEditModal: (
+    type: 'point' | 'trust',
+    userId: number,
+    userName: string,
+    currentValue: number,
+  ) => void
   closeEditModal: () => void
 
   // 초기화 함수
@@ -42,37 +48,39 @@ export const useManageUsersStore = create<ManageUsersState>((set) => ({
     userName: '',
     currentValue: 0,
   },
-  openEditModal: (type, userId, userName, currentValue) => set({
-    editModalState: {
-      isOpen: true,
-      type,
-      userId,
-      userName,
-      currentValue,
-    }
-  }),
-  closeEditModal: () => set({
-    editModalState: {
-      isOpen: false,
-      type: null,
-      userId: null,
-      userName: '',
-      currentValue: 0,
-    }
-  }),
+  openEditModal: (type, userId, userName, currentValue) =>
+    set({
+      editModalState: {
+        isOpen: true,
+        type,
+        userId,
+        userName,
+        currentValue,
+      },
+    }),
+  closeEditModal: () =>
+    set({
+      editModalState: {
+        isOpen: false,
+        type: null,
+        userId: null,
+        userName: '',
+        currentValue: 0,
+      },
+    }),
 
   // 초기화 함수
-  reset: () => set({
-    pageData: null,
-    loading: false,
-    filteredUsers: [],
-    editModalState: {
-      isOpen: false,
-      type: null,
-      userId: null,
-      userName: '',
-      currentValue: 0,
-    },
-  })
+  reset: () =>
+    set({
+      pageData: null,
+      loading: false,
+      filteredUsers: [],
+      editModalState: {
+        isOpen: false,
+        type: null,
+        userId: null,
+        userName: '',
+        currentValue: 0,
+      },
+    }),
 }))
-

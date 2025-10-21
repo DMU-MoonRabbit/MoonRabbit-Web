@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react'
-import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
-import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import clsx from 'clsx'
-import MoonRabbitStarsDark from '@/assets/images/MoonRabbitStarsDark.png'
+import React, { useState, useEffect } from 'react'
+
 import LogoImg from '@/assets/images/MoonRabbitSleep2.png'
-import SettingsHeader from '@/common/components/SettingsHeader'
+import MoonRabbitStarsDark from '@/assets/images/MoonRabbitStarsDark.png'
 import AccountSection from '@/common/components/AccountSection'
-import SecuritySection from '@/common/components/SecuritySection'
-import PreferencesSection from '@/common/components/PreferencesSection'
 import AppInfoSection from '@/common/components/AppInfoSection'
+import PreferencesSection from '@/common/components/PreferencesSection'
+import SecuritySection from '@/common/components/SecuritySection'
+import SettingsHeader from '@/common/components/SettingsHeader'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
 
 const SettingsPage: React.FC = () => {
   const { fetchUserProfile } = useUserProfileStore()
@@ -27,7 +28,7 @@ const SettingsPage: React.FC = () => {
       style={{ backgroundImage: `url('${MoonRabbitStarsDark}')` }}
       className={clsx(
         'w-full min-h-screen bg-mainBlack bg-repeat flex items-center justify-center',
-        isMobile ? 'py-4' : 'py-10'
+        isMobile ? 'py-4' : 'py-10',
       )}
     >
       <div
@@ -50,13 +51,21 @@ const SettingsPage: React.FC = () => {
             alt="logo"
             className={clsx(isMobile ? 'w-[100px] pb-2' : 'w-[70%] pb-[10px]')}
           />
-          <p className={clsx(isMobile ? 'text-[32px]' : 'text-[4vw] xl:text-[48px]')}>
+          <p
+            className={clsx(
+              isMobile ? 'text-[32px]' : 'text-[4vw] xl:text-[48px]',
+            )}
+          >
             <span className="text-lightCaramel">달</span>토끼
           </p>
-          <p className={clsx(
-            'leading-[0.6]',
-            isMobile ? 'text-[12px]' : 'text-[8px] sm:text-[1.2vw] xl:text-[16px]'
-          )}>
+          <p
+            className={clsx(
+              'leading-[0.6]',
+              isMobile
+                ? 'text-[12px]'
+                : 'text-[8px] sm:text-[1.2vw] xl:text-[16px]',
+            )}
+          >
             <span className="text-lightCaramel">Moon</span>Rabbit
           </p>
         </div>
@@ -71,7 +80,7 @@ const SettingsPage: React.FC = () => {
           <SettingsHeader />
           <AccountSection />
           <SecuritySection />
-          <PreferencesSection 
+          <PreferencesSection
             isDarkMode={isDarkMode}
             setIsDarkMode={setIsDarkMode}
             language={language}
@@ -84,4 +93,3 @@ const SettingsPage: React.FC = () => {
 }
 
 export default SettingsPage
-

@@ -1,5 +1,5 @@
-import React from 'react'
 import { X } from 'lucide-react'
+import React from 'react'
 
 interface AdminModalProps {
   isOpen: boolean
@@ -22,8 +22,11 @@ export const AdminModal: React.FC<AdminModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
-      <div className="absolute inset-0 bg-black/50" onClick={disabled ? undefined : onClose}></div>
-      <div 
+      <div
+        className="absolute inset-0 bg-black/50"
+        onClick={disabled ? undefined : onClose}
+      ></div>
+      <div
         className="relative z-10 bg-neutral-50 rounded-[20px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.16)] p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
@@ -46,8 +49,8 @@ export const AdminModal: React.FC<AdminModalProps> = ({
               </div>
             </div>
           </div>
-          <button 
-            onClick={onClose} 
+          <button
+            onClick={onClose}
             className="text-darkWalnut hover:text-gray-600"
             disabled={disabled}
           >
@@ -56,9 +59,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({
         </div>
 
         {/* 타이틀 */}
-        <h3 className="text-xl font-mainFont text-darkWalnut mb-6">
-          {title}
-        </h3>
+        <h3 className="text-xl font-mainFont text-darkWalnut mb-6">{title}</h3>
 
         {/* 콘텐츠 */}
         {children}
@@ -66,4 +67,3 @@ export const AdminModal: React.FC<AdminModalProps> = ({
     </div>
   )
 }
-

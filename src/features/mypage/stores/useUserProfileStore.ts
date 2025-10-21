@@ -1,8 +1,10 @@
-import { create } from 'zustand'
 import axios from 'axios'
+import { create } from 'zustand'
+
 import { ENDPOINTS } from '@/api/endpoints'
-import { UserProfile, UserInventory, LikedBoard, UserItem } from '../types/user'
 import { NICKNAME_COLOR_MAP } from '@/common/constants/colors'
+
+import { UserProfile, UserInventory, LikedBoard, UserItem } from '../types/user'
 
 interface UserProfileStore {
   // 상태
@@ -24,7 +26,7 @@ interface UserProfileStore {
   clearError: () => void
   resetProfileLoadState: () => void
   clearOtherUserProfile: () => void
-  
+
   // Selectors
   getEquippedBorder: () => UserItem | null
   getEquippedBanner: () => UserItem | null
@@ -49,7 +51,7 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
       if (isProfileLoaded && !force) return
 
       set({ loading: true, error: null })
-      
+
       const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
         throw new Error('로그인이 필요합니다.')
@@ -64,18 +66,21 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
       // 백엔드 응답의 profileImg를 profileImage로도 매핑
       const userProfile = {
         ...response.data,
-        profileImage: response.data.profileImg || response.data.profileImage
+        profileImage: response.data.profileImg || response.data.profileImage,
       }
 
-      set({ 
+      set({
         userProfile,
         loading: false,
-        isProfileLoaded: true
+        isProfileLoaded: true,
       })
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : '프로필 조회에 실패했습니다.',
-        loading: false 
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : '프로필 조회에 실패했습니다.',
+        loading: false,
       })
     }
   },
@@ -84,23 +89,26 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
   fetchUserProfileById: async (userId: number) => {
     try {
       set({ loading: true, error: null })
-      
+
       const response = await axios.get(ENDPOINTS.USER_PROFILE_BY_ID(userId))
 
       // 백엔드 응답의 profileImg를 profileImage로도 매핑
       const otherUserProfile = {
         ...response.data,
-        profileImage: response.data.profileImg || response.data.profileImage
+        profileImage: response.data.profileImg || response.data.profileImage,
       }
 
-      set({ 
+      set({
         otherUserProfile,
-        loading: false
+        loading: false,
       })
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : '프로필 조회에 실패했습니다.',
-        loading: false 
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : '프로필 조회에 실패했습니다.',
+        loading: false,
       })
     }
   },
@@ -109,7 +117,7 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
   fetchUserInventory: async (userId: number) => {
     try {
       set({ loading: true, error: null })
-      
+
       const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
         throw new Error('로그인이 필요합니다.')
@@ -125,17 +133,20 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
       const inventoryData = {
         userId,
         items: response.data.content || [],
-        totalItems: response.data.totalElements || 0
+        totalItems: response.data.totalElements || 0,
       }
 
-      set({ 
+      set({
         userInventory: inventoryData,
-        loading: false 
+        loading: false,
       })
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : '인벤토리 조회에 실패했습니다.',
-        loading: false 
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : '인벤토리 조회에 실패했습니다.',
+        loading: false,
       })
     }
   },
@@ -144,7 +155,7 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
   fetchLikedBoards: async () => {
     try {
       set({ loading: true, error: null })
-      
+
       const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
         throw new Error('로그인이 필요합니다.')
@@ -156,14 +167,17 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         },
       })
 
-      set({ 
+      set({
         likedBoards: response.data,
-        loading: false 
+        loading: false,
       })
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : '좋아요한 게시글 조회에 실패했습니다.',
-        loading: false 
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : '좋아요한 게시글 조회에 실패했습니다.',
+        loading: false,
       })
     }
   },
@@ -172,17 +186,21 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
   equipItem: async (userItemId: number) => {
     try {
       set({ loading: true, error: null })
-      
+
       const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
         throw new Error('로그인이 필요합니다.')
       }
 
-      await axios.put(ENDPOINTS.USER_ITEM_EQUIP(userItemId), {}, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      await axios.put(
+        ENDPOINTS.USER_ITEM_EQUIP(userItemId),
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      })
+      )
 
       // 인벤토리 다시 조회 (강제 재로드)
       const { userProfile } = get()
@@ -193,9 +211,12 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
 
       set({ loading: false })
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : '아이템 장착에 실패했습니다.',
-        loading: false 
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : '아이템 장착에 실패했습니다.',
+        loading: false,
       })
     }
   },
@@ -204,17 +225,21 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
   unequipItem: async (userItemId: number) => {
     try {
       set({ loading: true, error: null })
-      
+
       const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
         throw new Error('로그인이 필요합니다.')
       }
 
-      await axios.put(ENDPOINTS.USER_ITEM_UNEQUIP(userItemId), {}, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
+      await axios.put(
+        ENDPOINTS.USER_ITEM_UNEQUIP(userItemId),
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      })
+      )
 
       // 인벤토리 다시 조회 (강제 재로드)
       const { userProfile } = get()
@@ -225,9 +250,12 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
 
       set({ loading: false })
     } catch (error) {
-      set({ 
-        error: error instanceof Error ? error.message : '아이템 해제에 실패했습니다.',
-        loading: false 
+      set({
+        error:
+          error instanceof Error
+            ? error.message
+            : '아이템 해제에 실패했습니다.',
+        loading: false,
       })
     }
   },
@@ -245,29 +273,39 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
   getEquippedBorder: () => {
     const { userInventory } = get()
     if (!userInventory?.items) return null
-    return userInventory.items.find(item => item.type === 'BORDER' && item.equipped) || null
+    return (
+      userInventory.items.find(
+        (item) => item.type === 'BORDER' && item.equipped,
+      ) || null
+    )
   },
 
   getEquippedBanner: () => {
     const { userInventory } = get()
     if (!userInventory?.items) return null
-    return userInventory.items.find(item => item.type === 'BANNER' && item.equipped) || null
+    return (
+      userInventory.items.find(
+        (item) => item.type === 'BANNER' && item.equipped,
+      ) || null
+    )
   },
 
   getEquippedNicknameColor: () => {
     const { userInventory } = get()
     if (!userInventory?.items) return null
-    
-    const item = userInventory.items.find(item => 
-      (item.type === 'NICKNAME_COLOR' || item.type === 'NAME_COLOR') && item.equipped
+
+    const item = userInventory.items.find(
+      (item) =>
+        (item.type === 'NICKNAME_COLOR' || item.type === 'NAME_COLOR') &&
+        item.equipped,
     )
-    
+
     if (!item) return null
-    
+
     // 아이템 이름으로 색상 찾기
     const itemNameLower = item.itemName.toLowerCase()
     const colorValue = NICKNAME_COLOR_MAP[itemNameLower] || item.content
-    
+
     return colorValue || null
   },
 }))

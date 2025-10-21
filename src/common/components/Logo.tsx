@@ -1,5 +1,6 @@
-import React from 'react'
 import clsx from 'clsx'
+import React from 'react'
+
 import { useResponsiveStore } from '../hooks/useResponsiveStore'
 
 const Logo: React.FC = () => {

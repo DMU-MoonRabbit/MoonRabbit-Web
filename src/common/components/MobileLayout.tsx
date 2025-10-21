@@ -1,7 +1,8 @@
 import React from 'react'
-import { Playlist, PlaylistStates } from '../../features/shop/types/playlist'
-import VideoPlayer from '../../features/shop/components/VideoPlayer'
+
 import PlaylistCard from '../../features/shop/components/PlaylistCard'
+import VideoPlayer from '../../features/shop/components/VideoPlayer'
+import { Playlist, PlaylistStates } from '../../features/shop/types/playlist'
 
 interface MobileLayoutProps {
   playlists: Playlist[]
@@ -11,12 +12,12 @@ interface MobileLayoutProps {
   onToggleLike: (index: number) => void
 }
 
-const MobileLayout: React.FC<MobileLayoutProps> = ({ 
-  playlists, 
-  playlistStates, 
-  getEmbedUrl, 
-  onTogglePlay, 
-  onToggleLike 
+const MobileLayout: React.FC<MobileLayoutProps> = ({
+  playlists,
+  playlistStates,
+  getEmbedUrl,
+  onTogglePlay,
+  onToggleLike,
 }) => {
   return (
     <div className="space-y-8">
@@ -28,11 +29,17 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({
             showVideo={playlistStates[index]?.showVideo || false}
             getEmbedUrl={getEmbedUrl}
           />
-          
+
           {/* 플레이리스트 카드 */}
           <PlaylistCard
             playlist={playlist}
-            playlistState={playlistStates[index] || { isPlaying: false, isLiked: false, showVideo: false }}
+            playlistState={
+              playlistStates[index] || {
+                isPlaying: false,
+                isLiked: false,
+                showVideo: false,
+              }
+            }
             onTogglePlay={() => onTogglePlay(index)}
             onToggleLike={() => onToggleLike(index)}
             isMobile={true}

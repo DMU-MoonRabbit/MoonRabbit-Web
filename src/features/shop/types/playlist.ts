@@ -13,4 +13,4 @@ export interface PlaylistState {
   showVideo: boolean
 }
 
-export type PlaylistStates = {[key: number]: PlaylistState}
+export type PlaylistStates = { [key: number]: PlaylistState }

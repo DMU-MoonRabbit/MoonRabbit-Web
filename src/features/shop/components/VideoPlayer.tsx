@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { Playlist } from '../types/playlist'
 
 interface VideoPlayerProps {
@@ -8,14 +9,16 @@ interface VideoPlayerProps {
   className?: string
 }
 
-const VideoPlayer: React.FC<VideoPlayerProps> = ({ 
-  playlist, 
-  showVideo, 
-  getEmbedUrl, 
-  className = "" 
+const VideoPlayer: React.FC<VideoPlayerProps> = ({
+  playlist,
+  showVideo,
+  getEmbedUrl,
+  className = '',
 }) => {
   return (
-    <div className={`bg-mainWhite rounded-lg aspect-video hover:shadow-lg transition-shadow duration-300 relative overflow-hidden ${className}`}>
+    <div
+      className={`bg-mainWhite rounded-lg aspect-video hover:shadow-lg transition-shadow duration-300 relative overflow-hidden ${className}`}
+    >
       {showVideo ? (
         <iframe
           src={getEmbedUrl(playlist.videoUrl)}
@@ -27,8 +30,8 @@ const VideoPlayer: React.FC<VideoPlayerProps> = ({
       ) : (
         <div className="w-full h-full relative">
           {playlist.thumbnailUrl ? (
-            <img 
-              src={playlist.thumbnailUrl} 
+            <img
+              src={playlist.thumbnailUrl}
               alt={playlist.title}
               className="w-full h-full object-cover rounded-lg"
             />

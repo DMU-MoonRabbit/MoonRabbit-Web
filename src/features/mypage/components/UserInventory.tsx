@@ -1,19 +1,20 @@
-import React, { memo, useCallback, useEffect } from "react"
+import clsx from 'clsx'
+import React, { memo, useCallback, useEffect } from 'react'
+
 import { useUserProfileStore } from '../stores/useUserProfileStore'
-import clsx from "clsx"
 
 interface UserInventoryProps {
   userId?: number
 }
 
 const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {
-  const { 
-    userInventory, 
-    loading, 
-    error, 
-    fetchUserInventory, 
-    equipItem, 
-    unequipItem 
+  const {
+    userInventory,
+    loading,
+    error,
+    fetchUserInventory,
+    equipItem,
+    unequipItem,
   } = useUserProfileStore()
 
   useEffect(() => {
@@ -22,13 +23,19 @@ const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {
     }
   }, [userId, fetchUserInventory])
 
-  const handleEquipItem = useCallback(async (userItemId: number) => {
-    await equipItem(userItemId)
-  }, [equipItem])
+  const handleEquipItem = useCallback(
+    async (userItemId: number) => {
+      await equipItem(userItemId)
+    },
+    [equipItem],
+  )
 
-  const handleUnequipItem = useCallback(async (userItemId: number) => {
-    await unequipItem(userItemId)
-  }, [unequipItem])
+  const handleUnequipItem = useCallback(
+    async (userItemId: number) => {
+      await unequipItem(userItemId)
+    },
+    [unequipItem],
+  )
 
   if (loading) {
     return (
@@ -61,16 +68,16 @@ const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {
           내 아이템 ({userInventory.totalItems}개)
         </h3>
       </div>
-      
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-h-96 overflow-y-auto">
         {userInventory.items.map((item) => (
           <div
             key={item.id}
             className={clsx(
-              "border rounded-lg p-4 transition-all duration-200",
-              item.equipped 
-                ? "border-mainColor bg-lightBeige" 
-                : "border-gray-200 bg-white hover:border-gray-300"
+              'border rounded-lg p-4 transition-all duration-200',
+              item.equipped
+                ? 'border-mainColor bg-lightBeige'
+                : 'border-gray-200 bg-white hover:border-gray-300',
             )}
           >
             <div className="flex items-start justify-between mb-3">
@@ -79,20 +86,20 @@ const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {
                   {item.itemName}
                 </h4>
                 {item.content && (
-                  <p className="text-xs text-gray-600 mb-2">
-                    {item.content}
-                  </p>
+                  <p className="text-xs text-gray-600 mb-2">{item.content}</p>
                 )}
-                <span className={clsx(
-                  "inline-block px-2 py-1 rounded-full text-xs",
-                  item.equipped 
-                    ? "bg-mainColor text-white" 
-                    : "bg-gray-100 text-gray-600"
-                )}>
-                  {item.equipped ? "장착 중" : "미장착"}
+                <span
+                  className={clsx(
+                    'inline-block px-2 py-1 rounded-full text-xs',
+                    item.equipped
+                      ? 'bg-mainColor text-white'
+                      : 'bg-gray-100 text-gray-600',
+                  )}
+                >
+                  {item.equipped ? '장착 중' : '미장착'}
                 </span>
               </div>
-              
+
               {item.imageUrl && (
                 <img
                   src={item.imageUrl}
@@ -104,7 +111,7 @@ const UserInventory: React.FC<UserInventoryProps> = memo(({ userId }) => {
                 />
               )}
             </div>
-            
+
             <div className="flex gap-2">
               {item.equipped ? (
                 <button

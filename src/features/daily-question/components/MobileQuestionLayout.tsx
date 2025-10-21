@@ -1,5 +1,7 @@
 import React from 'react'
+
 import { QuestionCard as QuestionCardType } from '../types/questionCard'
+
 import QuestionCard from './QuestionCard'
 
 interface MobileQuestionLayoutProps {
@@ -11,7 +13,7 @@ interface MobileQuestionLayoutProps {
 const MobileQuestionLayout: React.FC<MobileQuestionLayoutProps> = ({
   cards,
   likedCards,
-  onLikeClick
+  onLikeClick,
 }) => {
   return (
     <div className="space-y-6">

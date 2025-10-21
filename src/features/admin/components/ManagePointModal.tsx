@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { X } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
 
 interface ManagePointModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSave: (changeValue: number) => void;
-  title: string;
-  initialValue: number;
-  type: 'point' | 'trust';
+  isOpen: boolean
+  onClose: () => void
+  onSave: (changeValue: number) => void
+  title: string
+  initialValue: number
+  type: 'point' | 'trust'
 }
 
 export const ManagePointModal: React.FC<ManagePointModalProps> = ({
@@ -18,44 +18,44 @@ export const ManagePointModal: React.FC<ManagePointModalProps> = ({
   initialValue,
   type,
 }) => {
-  const [changeValue, setChangeValue] = useState(0);
+  const [changeValue, setChangeValue] = useState(0)
 
   useEffect(() => {
-    setChangeValue(0); // 모달이 열릴 때마다 0으로 초기화
-  }, [isOpen]);
+    setChangeValue(0) // 모달이 열릴 때마다 0으로 초기화
+  }, [isOpen])
 
   if (!isOpen) {
-    return null;
+    return null
   }
 
   const handleSave = () => {
     if (changeValue === 0) {
-      alert('변경할 값을 입력해주세요.');
-      return;
+      alert('변경할 값을 입력해주세요.')
+      return
     }
-    onSave(Number(changeValue));
-    onClose();
-  };
+    onSave(Number(changeValue))
+    onClose()
+  }
 
   const getPreviewValue = () => {
-    return initialValue + changeValue;
-  };
+    return initialValue + changeValue
+  }
 
   const getChangeType = () => {
-    if (changeValue > 0) return '증가';
-    if (changeValue < 0) return '감소';
-    return '변경 없음';
-  };
+    if (changeValue > 0) return '증가'
+    if (changeValue < 0) return '감소'
+    return '변경 없음'
+  }
 
   const getChangeColor = () => {
-    if (changeValue > 0) return 'text-green-600';
-    if (changeValue < 0) return 'text-red-600';
-    return 'text-gray-500';
-  };
+    if (changeValue > 0) return 'text-green-600'
+    if (changeValue < 0) return 'text-red-600'
+    return 'text-gray-500'
+  }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose}></div>
-      <div 
+      <div
         className="relative z-10 bg-neutral-50 rounded-[20px] shadow-[0px_8px_24px_0px_rgba(0,0,0,0.16)] p-6 w-full max-w-md mx-4"
         onClick={(e) => e.stopPropagation()}
       >
@@ -78,7 +78,10 @@ export const ManagePointModal: React.FC<ManagePointModalProps> = ({
               </div>
             </div>
           </div>
-          <button onClick={onClose} className="text-darkWalnut hover:text-gray-600">
+          <button
+            onClick={onClose}
+            className="text-darkWalnut hover:text-gray-600"
+          >
             <X size={24} />
           </button>
         </div>
@@ -87,10 +90,14 @@ export const ManagePointModal: React.FC<ManagePointModalProps> = ({
         <h3 className="text-xl font-mainFont text-darkWalnut mb-6">{title}</h3>
         {/* 현재 값 표시 */}
         <div className="mb-4 p-3 bg-gray-50 rounded-lg">
-          <div className="text-sm text-gray-600 mb-1">현재 {type === 'point' ? '포인트' : '신뢰도'}</div>
-          <div className="text-lg font-bold text-darkWalnut">{initialValue.toLocaleString()}</div>
+          <div className="text-sm text-gray-600 mb-1">
+            현재 {type === 'point' ? '포인트' : '신뢰도'}
+          </div>
+          <div className="text-lg font-bold text-darkWalnut">
+            {initialValue.toLocaleString()}
+          </div>
         </div>
-        
+
         {/* 변경 값 입력 필드 */}
         <div className="mb-4">
           <label className="block text-sm font-mainFont text-darkWalnut mb-2">
@@ -122,15 +129,18 @@ export const ManagePointModal: React.FC<ManagePointModalProps> = ({
 
         {/* 미리보기 */}
         <div className="mb-6 p-3 bg-blue-50 rounded-lg">
-          <div className="text-sm text-gray-600 mb-1">변경 후 {type === 'point' ? '포인트' : '신뢰도'}</div>
+          <div className="text-sm text-gray-600 mb-1">
+            변경 후 {type === 'point' ? '포인트' : '신뢰도'}
+          </div>
           <div className="text-lg font-bold text-darkWalnut">
             {getPreviewValue().toLocaleString()}
             <span className={`ml-2 text-sm ${getChangeColor()}`}>
-              ({changeValue > 0 ? '+' : ''}{changeValue} {getChangeType()})
+              ({changeValue > 0 ? '+' : ''}
+              {changeValue} {getChangeType()})
             </span>
           </div>
         </div>
-        
+
         {/* 버튼 */}
         <div className="flex justify-center gap-3">
           <button
@@ -148,5 +158,5 @@ export const ManagePointModal: React.FC<ManagePointModalProps> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

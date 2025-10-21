@@ -4,8 +4,8 @@ export interface UserProfile {
   nickname: string
   email: string
   password?: string
-  profileImg?: string  // 백엔드 API 응답 필드명
-  profileImage?: string  // 프론트엔드 호환성을 위한 별칭
+  profileImg?: string // 백엔드 API 응답 필드명
+  profileImage?: string // 프론트엔드 호환성을 위한 별칭
   level: number
   point: number
   trustPoint: number
@@ -16,15 +16,15 @@ export interface UserProfile {
 
 // 사용자 아이템 관련 타입 정의 (백엔드 API 응답 기반)
 export interface UserItem {
-  id: number  // userItemId
+  id: number // userItemId
   itemId: number
   itemName: string
   price: number
-  type: string  // itemType
-  equipped: boolean  // isEquipped
-  createdAt: string  // purchasedAt
-  imageUrl: string  // itemImage
-  content?: string  // itemDescription
+  type: string // itemType
+  equipped: boolean // isEquipped
+  createdAt: string // purchasedAt
+  imageUrl: string // itemImage
+  content?: string // itemDescription
 }
 
 // API 응답에서 제공되는 장착 아이템 타입

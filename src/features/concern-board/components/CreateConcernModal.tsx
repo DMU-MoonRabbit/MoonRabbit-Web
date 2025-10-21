@@ -1,6 +1,7 @@
+import axios from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+
 import { ENDPOINTS } from '@/api/endpoints'
 import CategoryBar from '@/common/components/CategoryBar'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
@@ -95,17 +96,14 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
 
       const category = categoryMap[selectedCategory]
       const boardId = response.data.boardId
-      const assistantRes = await axios.post(
-        ENDPOINTS.ASSISTANT_ANSWER(boardId, category),
-        {
-          message: content,
-        },
-      )
+      await axios.post(ENDPOINTS.ASSISTANT_ANSWER(boardId, category), {
+        message: content,
+      })
 
       onCreateConcern()
       handleClose()
       navigate('/night-sky/' + response.data.boardId)
-    } catch (err) {
+    } catch {
       setError('게시글 생성 중 오류가 발생했습니다. 다시 시도해주세요.')
     } finally {
       setLoading(false)

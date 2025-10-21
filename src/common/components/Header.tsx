@@ -1,10 +1,12 @@
+import axios from 'axios'
+import { Menu, X } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Menu, X } from 'lucide-react'
-import { useResponsiveStore } from '../hooks/useResponsiveStore'
+
 import { useAuthStore } from '../../features/auth/stores/useAuthStore'
 import useUserStore from '../../features/mypage/stores/useUserStore'
-import axios from 'axios'
+import { useResponsiveStore } from '../hooks/useResponsiveStore'
+
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -30,12 +32,12 @@ const Header = () => {
         const token = localStorage.getItem('accessToken')
         try {
           const response = await axios.get(
-            `https://moonrabbit-api.kro.kr/api/users/profile`, 
+            `https://moonrabbit-api.kro.kr/api/users/profile`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
               },
-            }
+            },
           )
           setNickname(response.data.nickname)
         } catch (error) {

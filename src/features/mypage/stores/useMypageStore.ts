@@ -1,7 +1,13 @@
+import axios from 'axios'
 import { create } from 'zustand'
-import axios from "axios"
-import { Board, PageInfo, Concern, transformBoardToConcern } from "@/features/concern-board/stores/useUnifiedConcernStore"
+
 import ENDPOINTS from '@/api/endpoints'
+import {
+  Board,
+  PageInfo,
+  Concern,
+  transformBoardToConcern,
+} from '@/features/concern-board/stores/useUnifiedConcernStore'
 
 interface MypageStore {
   concerns: Concern[]
@@ -53,7 +59,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
   setSelectedCategory: (category) => {
     const { concerns, otherUserConcerns } = get()
     const selectedCategory = category || '전체'
-    
+
     // 내 글 필터링
     const filtered =
       selectedCategory === '전체'
@@ -64,7 +70,9 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
     const otherUserFiltered =
       selectedCategory === '전체'
         ? otherUserConcerns
-        : otherUserConcerns.filter((concern) => concern.category === selectedCategory)
+        : otherUserConcerns.filter(
+            (concern) => concern.category === selectedCategory,
+          )
 
     set({
       selectedCategory,
@@ -95,9 +103,9 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
 
   fetchMyConcerns: async (page = 0) => {
     try {
-      const accessToken = localStorage.getItem('accessToken');
+      const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
-        return;
+        return
       }
 
       const response = await axios.get(
@@ -106,7 +114,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       )
 
       const boards: Board[] = response.data.content || []
@@ -119,14 +127,16 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
           totalPages: response.data.totalPages || 0,
           totalElements: response.data.totalCount || boards.length,
           first: (response.data.pageNumber || page) === 0,
-          last: (response.data.pageNumber || page) >= (response.data.totalPages || 1) - 1,
+          last:
+            (response.data.pageNumber || page) >=
+            (response.data.totalPages || 1) - 1,
           size: response.data.pageSize || 2,
           number: response.data.pageNumber || page,
           numberOfElements: response.data.content?.length || boards.length,
           empty: boards.length === 0,
         },
       })
-    } catch (error) {
+    } catch {
       // 에러 발생 시 기존 데이터는 유지하고 빈 결과만 설정
       set({
         concerns: [],
@@ -147,9 +157,9 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
 
   fetchTotalBoardCount: async () => {
     try {
-      const accessToken = localStorage.getItem('accessToken');
+      const accessToken = localStorage.getItem('accessToken')
       if (!accessToken) {
-        return;
+        return
       }
 
       const response = await axios.get(
@@ -158,13 +168,13 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
-        }
+        },
       )
 
       set({
         totalBoardCount: response.data.totalCount || 0,
       })
-    } catch (error) {
+    } catch {
       set({
         totalBoardCount: 0,
       })
@@ -173,7 +183,9 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
 
   fetchOtherUserConcerns: async (userId: number, page = 0) => {
     try {
-      const response = await axios.get(ENDPOINTS.USER_BOARDS_BY_ID(userId, page, 2))
+      const response = await axios.get(
+        ENDPOINTS.USER_BOARDS_BY_ID(userId, page, 2),
+      )
       const boards: Board[] = response.data.content || []
       const concerns = boards.map(transformBoardToConcern)
 
@@ -191,14 +203,16 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
           totalPages: response.data.totalPages || 0,
           totalElements: response.data.totalCount || boards.length,
           first: (response.data.pageNumber || page) === 0,
-          last: (response.data.pageNumber || page) >= (response.data.totalPages || 1) - 1,
+          last:
+            (response.data.pageNumber || page) >=
+            (response.data.totalPages || 1) - 1,
           size: response.data.pageSize || 2,
           number: response.data.pageNumber || page,
           numberOfElements: response.data.content?.length || boards.length,
           empty: boards.length === 0,
         },
       })
-    } catch (error) {
+    } catch {
       set({
         otherUserConcerns: [],
         otherUserFilteredConcerns: [],
@@ -216,5 +230,4 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
       })
     }
   },
-
 }))

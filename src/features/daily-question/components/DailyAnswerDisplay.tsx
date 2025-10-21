@@ -1,4 +1,5 @@
 import React from 'react'
+
 import { DailyAnswerResponse } from '../types/question'
 
 interface DailyAnswerDisplayProps {
@@ -8,7 +9,7 @@ interface DailyAnswerDisplayProps {
 
 export const DailyAnswerDisplay: React.FC<DailyAnswerDisplayProps> = ({
   answer,
-  onEdit
+  onEdit,
 }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -17,7 +18,7 @@ export const DailyAnswerDisplay: React.FC<DailyAnswerDisplayProps> = ({
       month: 'long',
       day: 'numeric',
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     })
   }
 
@@ -35,11 +36,11 @@ export const DailyAnswerDisplay: React.FC<DailyAnswerDisplayProps> = ({
             수정하기
           </button>
         </div>
-        
+
         <div className="font-gothicFont text-darkWalnut text-base md:text-lg leading-relaxed mb-4 whitespace-pre-wrap">
           {answer.answerContent}
         </div>
-        
+
         <div className="font-gothicFont text-gray-500 text-sm">
           {formatDate(answer.answeredAt)}
         </div>
@@ -49,4 +50,3 @@ export const DailyAnswerDisplay: React.FC<DailyAnswerDisplayProps> = ({
 }
 
 export default DailyAnswerDisplay
-
