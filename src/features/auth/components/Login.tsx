@@ -7,7 +7,7 @@ import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import LogoImg from '@/assets/images/MoonRabbitSleep2.png'
 import GoogleLoginImg from '@/assets/images/GoogleLogin.svg'
 import kakaoLoginImg from '@/assets/images/KakaoLogin.png'
-import axiosInstance from '@/api/axiosInstance'
+import axios from 'axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import MiniModal from '@/common/components/MiniModal'
 
@@ -63,7 +63,7 @@ export const LoginForm = () => {
 
   const handleLogin = async () => {
     try {
-      const response = await axiosInstance.post(
+      const response = await axios.post(
         ENDPOINTS.LOGIN,
         {
           email,
@@ -199,7 +199,7 @@ export const SignupForm = () => {
     }
 
     try {
-      await axiosInstance.post(
+      await axios.post(
         ENDPOINTS.SIGNUP,
         {
           email,
@@ -220,7 +220,7 @@ export const SignupForm = () => {
 
   const handleVerification = async () => {
     try {
-      await axiosInstance.post(
+      await axios.post(
         ENDPOINTS.VERIFY,
         {
           phoneNum,
