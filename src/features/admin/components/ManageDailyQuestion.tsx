@@ -33,7 +33,6 @@ export const ManageDailyQuestion = () => {
   const handleCreateSuccess = () => {
     setIsCreateModalOpen(false)
     fetchDailyQuestion()
-    setCurrentPage(0)
   }
 
   // 초기 데이터 로딩
