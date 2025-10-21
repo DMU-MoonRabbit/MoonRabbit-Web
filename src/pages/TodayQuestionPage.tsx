@@ -1,28 +1,29 @@
 import React from 'react'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
-import { useQuestionCards } from '../hooks/useQuestionCards'
-import StarBackground from '../components/StarBackground'
-import PageHeader from '../components/PageHeader'
-import MobileQuestionLayout from '../components/MobileQuestionLayout'
-import DesktopQuestionLayout from '../components/DesktopQuestionLayout'
-import DailyAnswerInput from '../components/DailyAnswerInput'
-import DailyAnswerDisplay from '../components/DailyAnswerDisplay'
+
+import PageHeader from '@/common/components/PageHeader'
+import StarBackground from '@/common/components/StarBackground'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import DailyAnswerDisplay from '@/features/daily-question/components/DailyAnswerDisplay'
+import DailyAnswerInput from '@/features/daily-question/components/DailyAnswerInput'
+import DesktopQuestionLayout from '@/features/daily-question/components/DesktopQuestionLayout'
+import MobileQuestionLayout from '@/features/daily-question/components/MobileQuestionLayout'
+import { useQuestionCards } from '@/features/daily-question/hooks/useQuestionCards'
 
 const TodayQuestionPage: React.FC = () => {
   const { res } = useResponsiveStore()
   const isMobile = res === 'mo'
-  
-  const { 
-    todayQuestion, 
-    loading, 
-    likedCards, 
-    handleLikeClick, 
+
+  const {
+    todayQuestion,
+    loading,
+    likedCards,
+    handleLikeClick,
     questionCards,
     submitAnswer,
     submitting,
     myAnswer,
     isEditing,
-    startEditing
+    startEditing,
   } = useQuestionCards()
 
   return (
@@ -31,11 +32,13 @@ const TodayQuestionPage: React.FC = () => {
 
       <div className="container mx-auto px-4 py-8 lg:py-16">
         <PageHeader showSubtitle={false} />
-        
+
         {/* 오늘의 질문 */}
         <div className="text-center mb-8 lg:mb-16">
           <div className="text-darkWalnut text-lg lg:text-2xl xl:text-3xl font-normal font-mainFont max-w-4xl mx-auto leading-relaxed">
-            {loading ? "질문을 불러오는 중..." : (todayQuestion?.content || "자신만의 스트레스 해소법은 뭔가요?")}
+            {loading
+              ? '질문을 불러오는 중...'
+              : todayQuestion?.content || '자신만의 스트레스 해소법은 뭔가요?'}
           </div>
         </div>
 
@@ -43,10 +46,7 @@ const TodayQuestionPage: React.FC = () => {
         {!loading && (
           <div className="mb-8 lg:mb-16 relative z-10">
             {myAnswer && !isEditing ? (
-              <DailyAnswerDisplay
-                answer={myAnswer}
-                onEdit={startEditing}
-              />
+              <DailyAnswerDisplay answer={myAnswer} onEdit={startEditing} />
             ) : (
               <DailyAnswerInput
                 onSubmit={submitAnswer}

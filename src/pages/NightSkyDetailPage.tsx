@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { useBoardDetailStore } from '../stores/useBoardDetailStore'
-import { ConcernContent, ConcernAnswer } from '../components/ConcernPost'
-import { ConcernComment } from '../components/ConcernComment'
+
+import { ConcernComment } from '@/features/concern-board/components/ConcernComment'
+import {
+  ConcernContent,
+  ConcernAnswer,
+} from '@/features/concern-board/components/ConcernPost'
+import { useBoardDetailStore } from '@/features/concern-board/stores/useBoardDetailStore'
 
 export const NightSkyDetailPage: React.FC = () => {
   const { pageNumber } = useParams<{ pageNumber: string }>()

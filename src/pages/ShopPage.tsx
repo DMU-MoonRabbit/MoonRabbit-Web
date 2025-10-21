@@ -1,25 +1,27 @@
-import React, { memo, useState, useEffect } from 'react'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
-import { useShopStore } from '../stores/useShopStore'
-import PageHeader from '../components/PageHeader'
-import StarBackground from '../components/StarBackground'
-import BannerShopModal from '../components/BannerShopModal'
-import BorderShopModal from '../components/BorderShopModal'
-import NicknameColorModal from '../components/NicknameColorModal'
 import clsx from 'clsx'
-import bannerBackgroundImg from '../assets/images/bannerBackground.png'
-import borderBackgroundImg from '../assets/images/borderBackground.png'
-import nicknameBackgroundImg from '../assets/images/nicknameBackground.png'
+import React, { memo, useState, useEffect } from 'react'
+
+import bannerBackgroundImg from '@/assets/images/bannerBackground.png'
+import borderBackgroundImg from '@/assets/images/borderBackground.png'
+import nicknameBackgroundImg from '@/assets/images/nicknameBackground.png'
+import PageHeader from '@/common/components/PageHeader'
+import StarBackground from '@/common/components/StarBackground'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import NicknameColorModal from '@/features/mypage/components/NicknameColorModal'
+import BannerShopModal from '@/features/shop/components/BannerShopModal'
+import BorderShopModal from '@/features/shop/components/BorderShopModal'
+import { useShopStore } from '@/features/shop/stores/useShopStore'
 
 const ShopPage: React.FC = memo(() => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false)
   const [isBorderModalOpen, setIsBorderModalOpen] = useState(false)
-  const [isNicknameColorModalOpen, setIsNicknameColorModalOpen] = useState(false)
-  
+  const [isNicknameColorModalOpen, setIsNicknameColorModalOpen] =
+    useState(false)
+
   const { fetchShopItems } = useShopStore()
-  
+
   useEffect(() => {
     fetchShopItems()
   }, [fetchShopItems])
@@ -59,19 +61,21 @@ const ShopPage: React.FC = memo(() => {
         <PageHeader showSubtitle={true} subtitleText="상점" />
 
         {/* 상품 그리드 */}
-        <div className={clsx(
-          "grid gap-6 lg:gap-8 max-w-7xl mx-auto",
-          isMobile ? "grid-cols-1" : "grid-cols-3"
-        )}>
+        <div
+          className={clsx(
+            'grid gap-6 lg:gap-8 max-w-7xl mx-auto',
+            isMobile ? 'grid-cols-1' : 'grid-cols-3',
+          )}
+        >
           {shopItems.map((item) => (
             <div
               key={item.id}
               onClick={item.onClick}
               className={clsx(
-                "relative rounded-[10px] border-3 border-mainColor overflow-hidden",
-                "bg-white/25 backdrop-blur-sm",
-                "transition-transform duration-200 hover:scale-105 cursor-pointer",
-                isMobile ? "h-80" : "h-80"
+                'relative rounded-[10px] border-3 border-mainColor overflow-hidden',
+                'bg-white/25 backdrop-blur-sm',
+                'transition-transform duration-200 hover:scale-105 cursor-pointer',
+                isMobile ? 'h-80' : 'h-80',
               )}
             >
               {/* 상품 이미지 */}
@@ -80,7 +84,7 @@ const ShopPage: React.FC = memo(() => {
                 alt={item.name}
                 className="w-full h-full object-cover absolute inset-0"
               />
-              
+
               {/* 오버레이 */}
               <div className="absolute inset-0 bg-white/70 flex flex-col items-center justify-center">
                 <h3 className="text-darkWalnut text-2xl lg:text-3xl font-normal font-mainFont">
@@ -114,4 +118,3 @@ const ShopPage: React.FC = memo(() => {
 })
 
 export default ShopPage
-

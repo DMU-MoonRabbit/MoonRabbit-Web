@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --project ./config/tsconfig.json && vite build",
-    "lint": "eslint --config ./config/eslint.config.js src",
-    "prettier": "prettier --write --config ./config/.prettierrc.json 'src/**/*.{js,jsx,ts,tsx,css,md,json}'",
+    "lint:check": "eslint --config ./config/eslint.config.js src",
+    "lint:fix": "eslint --config ./config/eslint.config.js src --fix",
+    "format:fix": "prettier --write --config ./config/.prettierrc.json 'src/**/*.{js,jsx,ts,tsx,css,md,json}'",
+    "fix": "npm run format:fix && npm run lint:fix",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -36,6 +38,7 @@
     "autoprefixer": "^10.4.21",
     "eslint": "^9.22.0",
     "eslint-config-prettier": "^10.1.1",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prettier": "^5.2.3",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.2.0",

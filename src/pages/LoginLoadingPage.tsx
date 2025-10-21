@@ -10,10 +10,7 @@ const LoginLoadingPage: React.FC = () => {
 
     if (token) {
       localStorage.setItem('accessToken', token)
-      console.log(token)
       navigate('/')
-    } else {
-      console.error('토큰 없음')
     }
   }, [navigate])
 

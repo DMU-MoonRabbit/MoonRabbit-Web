@@ -1,11 +1,12 @@
-import React, { memo, useMemo, useEffect } from "react"
-import MypageProfile from "../components/MypageProfile"
-import MypageSidebar from "../components/MypageSidebar"
-import MypageCountSection from "../components/MypageCountSection"
-import clsx from "clsx"
-import { useResponsiveStore } from "../stores/useResponsiveStore"
-import { useUserProfileStore } from "../stores/useUserProfileStore"
-import { useParams, useNavigate } from "react-router-dom"
+import clsx from 'clsx'
+import React, { memo, useMemo, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import MypageCountSection from '@/features/mypage/components/MypageCountSection'
+import MypageProfile from '@/features/mypage/components/MypageProfile'
+import MypageSidebar from '@/features/mypage/components/MypageSidebar'
+import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
 
 const MypagePage: React.FC = memo(() => {
   const res = useResponsiveStore((state) => state.res)
@@ -27,17 +28,21 @@ const MypagePage: React.FC = memo(() => {
     if (userId && userProfile) {
       const targetUserId = parseInt(userId, 10)
       const currentUserId = userProfile.id
-      
+
       if (currentUserId === targetUserId) {
         navigate('/mypage', { replace: true })
       }
     }
   }, [userId, userProfile, navigate])
 
-  const containerClasses = useMemo(() => clsx("flex justify-between", 
-    isMobile ? 
-    "flex-col min-h-[500px]" : "min-h-[700px]"
-  ), [isMobile])
+  const containerClasses = useMemo(
+    () =>
+      clsx(
+        'flex justify-between',
+        isMobile ? 'flex-col min-h-[500px]' : 'min-h-[700px]',
+      ),
+    [isMobile],
+  )
 
   // url에 userId가 있으면 다른 사람의 페이지, 없으면 본인 페이지
   const targetUserId = userId ? parseInt(userId, 10) : undefined

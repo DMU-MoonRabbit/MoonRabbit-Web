@@ -1,23 +1,19 @@
 import React from 'react'
-import { useResponsiveStore } from '../stores/useResponsiveStore'
-import { usePlaylist } from '../hooks/usePlaylist'
-import { getEmbedUrl } from '../utils/youtube'
-import StarBackground from '../components/StarBackground'
-import PageHeader from '../components/PageHeader'
-import MobileLayout from '../components/MobileLayout'
-import DesktopLayout from '../components/DesktopLayout'
+
+import DesktopLayout from '@/common/components/DesktopLayout'
+import MobileLayout from '@/common/components/MobileLayout'
+import PageHeader from '@/common/components/PageHeader'
+import StarBackground from '@/common/components/StarBackground'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import { usePlaylist } from '@/features/shop/hooks/usePlaylist'
+import { getEmbedUrl } from '@/utils/youtube'
 
 const ConstellationPage: React.FC = () => {
   const { res } = useResponsiveStore()
   const isMobile = res === 'mo'
-  
-  const { 
-    playlists, 
-    loading, 
-    playlistStates, 
-    togglePlay, 
-    toggleLike 
-  } = usePlaylist()
+
+  const { playlists, loading, playlistStates, togglePlay, toggleLike } =
+    usePlaylist()
 
   return (
     <div className="min-h-screen bg-lightBeige relative overflow-hidden">
@@ -29,7 +25,9 @@ const ConstellationPage: React.FC = () => {
         <div className="mb-8 relative z-10">
           {loading ? (
             <div className="text-center py-8">
-              <span className="text-darkWalnut text-lg font-mainFont">플레이리스트를 불러오는 중...</span>
+              <span className="text-darkWalnut text-lg font-mainFont">
+                플레이리스트를 불러오는 중...
+              </span>
             </div>
           ) : (
             <>

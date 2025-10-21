@@ -1,9 +1,10 @@
 import React from 'react'
-import Logo from '../components/Logo'
-import TalkSection from '../components/TalkSection'
-import ConcernSection from '../components/ConcernSection'
-import ServiceIntro from '../components/ServiceIntro'
-import ServiceExplainSection from '../components/ServiceExplainSection'
+
+import Logo from '@/common/components/Logo'
+import ServiceExplainSection from '@/common/components/ServiceExplainSection'
+import ServiceIntro from '@/common/components/ServiceIntro'
+import ConcernSection from '@/features/concern-board/components/ConcernSection'
+import TalkSection from '@/features/daily-question/components/TalkSection'
 
 const MainPage: React.FC = () => {
   return (
