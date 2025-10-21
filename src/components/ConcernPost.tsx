@@ -341,6 +341,7 @@ export const ConcernContent: React.FC = () => {
                 onError={(e) => {
                   e.currentTarget.src = '/images/MoonRabbitSleep2.png'
                 }}
+                onClick={() => navigate(`/mypage/${userId}`)}
               />
               {/* 장착된 테두리 - 본인 게시글일 때만 표시 */}
               {borderImageUrl && (

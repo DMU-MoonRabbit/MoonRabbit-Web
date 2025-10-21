@@ -5,31 +5,51 @@ import { useMypageStore } from '../stores/useMypageStore'
 import CategoryBar from './CategoryBar'
 import ConcernCard from './ConcernCard'
 
-const MyBoardContents: React.FC = memo(() => {
+interface MyBoardContentsProps {
+  userId?: number
+  isOwnPage?: boolean
+}
+
+const MyBoardContents: React.FC<MyBoardContentsProps> = memo(({ userId, isOwnPage = true }) => {
   const {
     selectedCategory,
     filteredConcerns,
     pageInfo,
+    otherUserConcerns,
+    otherUserFilteredConcerns,
+    otherUserPageInfo,
     setSelectedCategory,
     fetchMyConcerns,
+    fetchOtherUserConcerns,
     setPage,
+    setOtherUserPage,
   } = useMypageStore()
 
   const navigate = useNavigate()
 
+  // 현재 사용할 데이터와 함수들 결정
+  const concerns = isOwnPage ? filteredConcerns : otherUserFilteredConcerns
+  const currentPageInfo = isOwnPage ? pageInfo : otherUserPageInfo
+  const fetchFunction = isOwnPage ? fetchMyConcerns : fetchOtherUserConcerns
+  const setPageFunction = isOwnPage ? setPage : setOtherUserPage
+
   useEffect(() => {
-    fetchMyConcerns(pageInfo.number)
-  }, [fetchMyConcerns, pageInfo.number])
+    if (isOwnPage) {
+      fetchMyConcerns(pageInfo.number)
+    } else if (userId) {
+      fetchOtherUserConcerns(userId, otherUserPageInfo.number)
+    }
+  }, [fetchMyConcerns, fetchOtherUserConcerns, pageInfo.number, otherUserPageInfo.number, userId, isOwnPage])
 
   const handleCardClick = useCallback((id: number) => {
     navigate(`/night-sky/${id}`)
   }, [navigate])
 
   const handlePageChange = useCallback((newPage: number) => {
-    if (newPage >= 0 && newPage < pageInfo.totalPages) {
-      setPage(newPage)
+    if (newPage >= 0 && newPage < currentPageInfo.totalPages) {
+      setPageFunction(newPage)
     }
-  }, [pageInfo.totalPages, setPage])
+  }, [currentPageInfo.totalPages, setPageFunction])
 
   return (
     <>
@@ -42,7 +62,7 @@ const MyBoardContents: React.FC = memo(() => {
 
       {/* 고민 카드 목록 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-        {filteredConcerns.map((concern) => (
+        {concerns.map((concern) => (
           <ConcernCard
             key={concern.id}
             id={concern.id}
@@ -59,13 +79,13 @@ const MyBoardContents: React.FC = memo(() => {
       </div>
 
       {/* 페이징 UI */}
-      {!pageInfo.empty && (
+      {!currentPageInfo.empty && (
         <div className="flex justify-center items-center mt-8 gap-2">
           <button
-            onClick={() => handlePageChange(pageInfo.number - 1)}
-            disabled={pageInfo.first}
+            onClick={() => handlePageChange(currentPageInfo.number - 1)}
+            disabled={currentPageInfo.first}
             className={`px-4 py-2 rounded-lg ${
-              pageInfo.first
+              currentPageInfo.first
                 ? 'cursor-not-allowed opacity-50'
                 : 'cursor-pointer hover:bg-gray-100'
             }`}
@@ -73,13 +93,13 @@ const MyBoardContents: React.FC = memo(() => {
             <ChevronLeft size={16} className="text-darkWalnut" />
           </button>
           <span className="mx-4 text-darkWalnut font-mainFont">
-            {pageInfo.number + 1} / {pageInfo.totalPages}
+            {currentPageInfo.number + 1} / {currentPageInfo.totalPages}
           </span>
           <button
-            onClick={() => handlePageChange(pageInfo.number + 1)}
-            disabled={pageInfo.last}
+            onClick={() => handlePageChange(currentPageInfo.number + 1)}
+            disabled={currentPageInfo.last}
             className={`px-4 py-2 rounded-lg ${
-              pageInfo.last
+              currentPageInfo.last
                 ? 'cursor-not-allowed opacity-50'
                 : 'cursor-pointer hover:bg-gray-100'
             }`}

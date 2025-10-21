@@ -60,6 +60,7 @@ function App() {
           <Route path="/faq" element={<FAQPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/admin" element={<AdminPage />} />
+          <Route path="/mypage/:userId" element={<MypagePage />} />
         </Routes>
         <Footer />
       </div>
