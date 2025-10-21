@@ -1,20 +1,23 @@
-import React, { useEffect } from 'react'
-import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
-import { useManageBoardStore } from '../stores/useManageBoardStore'
-import { usePaginationStore } from '@/common/hooks/usePaginationStore'
-import { useAdminStore } from '../stores/useAdminStore'
-import { useManageBoardAPI } from '@/features/concern-board/hooks/useManageBoardAPI'
-import { ReportedBoard } from './ReportedBoard'
-import { BoardPostsTable } from './BoardPostsTable'
-import { BoardEditModal } from './BoardEditModal'
-import { BoardPost } from '@/features/concern-board/types/board'
 import clsx from 'clsx'
+import React, { useEffect } from 'react'
+
+import { usePaginationStore } from '@/common/hooks/usePaginationStore'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import { useManageBoardAPI } from '@/features/concern-board/hooks/useManageBoardAPI'
+import { BoardPost } from '@/features/concern-board/types/board'
+
+import { useAdminStore } from '../stores/useAdminStore'
+import { useManageBoardStore } from '../stores/useManageBoardStore'
 import { BoardUpdateRequest } from '../types/admin'
+
+import { BoardEditModal } from './BoardEditModal'
+import { BoardPostsTable } from './BoardPostsTable'
+import { ReportedBoard } from './ReportedBoard'
 
 export const ManageBoard = () => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
-  
+
   const {
     activeTab,
     boardData,
@@ -30,7 +33,7 @@ export const ManageBoard = () => {
     setBoardData,
     setFilteredBoards,
   } = useManageBoardStore()
-  
+
   const {
     boardPostsPage,
     reportedBoardsPage,
@@ -39,17 +42,18 @@ export const ManageBoard = () => {
     setReportedBoardsPage,
     setReportedCommentsPage,
   } = usePaginationStore()
-  
+
   const { searchTerm, isSearching } = useAdminStore()
-  
-  const { fetchBoardPosts, searchBoardPosts, updateBoard, deleteBoard } = useManageBoardAPI()
+
+  const { fetchBoardPosts, searchBoardPosts, updateBoard, deleteBoard } =
+    useManageBoardAPI()
 
   // 초기 데이터 로딩
   useEffect(() => {
     if (activeTab === 'posts' && !isSearching) {
       fetchBoardPosts(boardPostsPage)
     }
-  }, [boardPostsPage, activeTab])
+  }, [boardPostsPage, activeTab, isSearching, fetchBoardPosts])
 
   // 검색 실행
   useEffect(() => {
@@ -63,12 +67,20 @@ export const ManageBoard = () => {
         fetchBoardPosts(0)
       }
     }
-  }, [isSearching, searchTerm, activeTab])
+  }, [
+    isSearching,
+    searchTerm,
+    activeTab,
+    searchBoardPosts,
+    setBoardPostsPage,
+    setFilteredBoards,
+    fetchBoardPosts,
+  ])
 
   const handlePostPageChange = (newPage: number) => {
     if (newPage >= 0 && newPage < (boardData?.totalPages || 0)) {
       setBoardPostsPage(newPage)
-      
+
       // 검색 중일 때
       if (isSearching && searchTerm.trim() && filteredBoards.length > 0) {
         const pageSize = 9
@@ -76,7 +88,7 @@ export const ManageBoard = () => {
         const end = start + pageSize
         const totalElements = filteredBoards.length
         const totalPages = Math.ceil(totalElements / pageSize)
-        
+
         setBoardData({
           ...boardData!,
           content: filteredBoards.slice(start, end) as BoardPost[],
@@ -105,7 +117,11 @@ export const ManageBoard = () => {
 
   // 게시글 수정 모달 열기
   const handleOpenEditModal = (boardId: number, boardData: unknown) => {
-    const data = boardData as { title: string; content: string; category: string }
+    const data = boardData as {
+      title: string
+      content: string
+      category: string
+    }
     openEditModal(boardId, {
       title: data.title,
       content: data.content,
@@ -121,7 +137,7 @@ export const ManageBoard = () => {
     try {
       await updateBoard(editModalState.boardId, updateData)
       alert('게시글이 성공적으로 수정되었습니다.')
-      
+
       // 현재 페이지 데이터 새로고침
       if (isSearching && searchTerm.trim()) {
         searchBoardPosts(searchTerm)
@@ -129,7 +145,6 @@ export const ManageBoard = () => {
         fetchBoardPosts(boardPostsPage)
       }
       closeEditModal()
-      
     } catch {
       alert('게시글 수정에 실패했습니다.')
     }
@@ -144,30 +159,34 @@ export const ManageBoard = () => {
     try {
       await deleteBoard(boardId)
       alert('게시글이 성공적으로 삭제되었습니다.')
-      
+
       // 현재 페이지 데이터 새로고침
       if (isSearching && searchTerm.trim()) {
         searchBoardPosts(searchTerm)
       } else {
         fetchBoardPosts(boardPostsPage)
       }
-      
     } catch {
       alert('게시글 삭제에 실패했습니다.')
     }
   }
 
   return (
-    <div className={clsx("bg-white rounded-lg shadow-sm", isMobile ? "p-4" : "p-6")}>
+    <div
+      className={clsx(
+        'bg-white rounded-lg shadow-sm',
+        isMobile ? 'p-4' : 'p-6',
+      )}
+    >
       {/* 탭 헤더 */}
       <div className="flex border-b border-gray-200 mb-6">
         <button
           onClick={() => setActiveTab('posts')}
           className={clsx(
-            "px-6 py-3 font-mainFont transition-colors",
+            'px-6 py-3 font-mainFont transition-colors',
             activeTab === 'posts'
-              ? "border-b-2 border-mainColor text-mainColor font-bold"
-              : "text-gray-600 hover:text-gray-800"
+              ? 'border-b-2 border-mainColor text-mainColor font-bold'
+              : 'text-gray-600 hover:text-gray-800',
           )}
         >
           게시글 목록
@@ -175,10 +194,10 @@ export const ManageBoard = () => {
         <button
           onClick={() => setActiveTab('reportedBoards')}
           className={clsx(
-            "px-6 py-3 font-mainFont transition-colors",
+            'px-6 py-3 font-mainFont transition-colors',
             activeTab === 'reportedBoards'
-              ? "border-b-2 border-mainColor text-mainColor font-bold"
-              : "text-gray-600 hover:text-gray-800"
+              ? 'border-b-2 border-mainColor text-mainColor font-bold'
+              : 'text-gray-600 hover:text-gray-800',
           )}
         >
           신고된 게시글
@@ -186,10 +205,10 @@ export const ManageBoard = () => {
         <button
           onClick={() => setActiveTab('reportedComments')}
           className={clsx(
-            "px-6 py-3 font-mainFont transition-colors",
+            'px-6 py-3 font-mainFont transition-colors',
             activeTab === 'reportedComments'
-              ? "border-b-2 border-mainColor text-mainColor font-bold"
-              : "text-gray-600 hover:text-gray-800"
+              ? 'border-b-2 border-mainColor text-mainColor font-bold'
+              : 'text-gray-600 hover:text-gray-800',
           )}
         >
           신고된 댓글
@@ -230,11 +249,13 @@ export const ManageBoard = () => {
           )}
 
           {/* 빈 데이터 */}
-          {!reportsLoading && reportedBoardsData && reportedBoardsData.empty && (
-            <div className="text-center py-8 text-gray-500">
-              신고된 게시글이 없습니다.
-            </div>
-          )}
+          {!reportsLoading &&
+            reportedBoardsData &&
+            reportedBoardsData.empty && (
+              <div className="text-center py-8 text-gray-500">
+                신고된 게시글이 없습니다.
+              </div>
+            )}
         </>
       )}
 
@@ -260,11 +281,13 @@ export const ManageBoard = () => {
           )}
 
           {/* 빈 데이터 */}
-          {!reportsLoading && reportedCommentsData && reportedCommentsData.empty && (
-            <div className="text-center py-8 text-gray-500">
-              신고된 댓글이 없습니다.
-            </div>
-          )}
+          {!reportsLoading &&
+            reportedCommentsData &&
+            reportedCommentsData.empty && (
+              <div className="text-center py-8 text-gray-500">
+                신고된 댓글이 없습니다.
+              </div>
+            )}
         </>
       )}
 

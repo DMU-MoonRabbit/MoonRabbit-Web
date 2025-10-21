@@ -1,18 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
-import { DailyQuestion } from '@/features/daily-question/types/question'
-import { ENDPOINTS } from '@/api/endpoints'
 import axios from 'axios'
 import clsx from 'clsx'
+import React, { useEffect, useState } from 'react'
+
+import { ENDPOINTS } from '@/api/endpoints'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import { DailyQuestion } from '@/features/daily-question/types/question'
+
 import { DailyQuestionCreateModal } from './DailyQuestionCreateModal'
 
 export const ManageDailyQuestion = () => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
-  
+
   const [question, setQuestion] = useState<DailyQuestion | null>(null)
   const [loading, setLoading] = useState(false)
-  const [currentPage, setCurrentPage] = useState(0)
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   // 오늘의질문 조회
@@ -21,7 +22,7 @@ export const ManageDailyQuestion = () => {
     try {
       const response = await axios.get(ENDPOINTS.DAILY_QUESTION)
       setQuestion(response.data)
-    } catch (error) {
+    } catch {
       alert('오늘의질문을 불러오는데 실패했습니다.')
     } finally {
       setLoading(false)
@@ -41,7 +42,12 @@ export const ManageDailyQuestion = () => {
   }, [])
 
   return (
-    <div className={clsx("bg-white rounded-lg shadow-sm", isMobile ? "p-4" : "p-6")}>
+    <div
+      className={clsx(
+        'bg-white rounded-lg shadow-sm',
+        isMobile ? 'p-4' : 'p-6',
+      )}
+    >
       {/* 헤더 */}
       <div className="flex justify-end items-center mb-6">
         <button
@@ -59,7 +65,7 @@ export const ManageDailyQuestion = () => {
         </div>
       )}
 
-      {/* 오늘의 질문 */} 
+      {/* 오늘의 질문 */}
       {!loading && question && (
         <div className="mx-auto">
           {/* 날짜 배지 */}
@@ -78,7 +84,7 @@ export const ManageDailyQuestion = () => {
           </div>
         </div>
       )}
-      
+
       {/* 질문이 없을 때 */}
       {!loading && !question && (
         <div className="mx-auto">

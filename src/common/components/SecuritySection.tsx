@@ -1,10 +1,12 @@
+import axios from 'axios'
+import clsx from 'clsx'
 import React, { useState } from 'react'
+
+import { ENDPOINTS } from '../../api/endpoints'
 import { useUserProfileStore } from '../../features/mypage/stores/useUserProfileStore'
 import { useResponsiveStore } from '../hooks/useResponsiveStore'
-import clsx from 'clsx'
+
 import MiniModal from './MiniModal'
-import axios from 'axios'
-import { ENDPOINTS } from '../../api/endpoints'
 
 const SecuritySection: React.FC = () => {
   const { userProfile } = useUserProfileStore()
@@ -16,7 +18,7 @@ const SecuritySection: React.FC = () => {
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: '',
     newPassword: '',
-    newPasswordConfirm: ''
+    newPasswordConfirm: '',
   })
 
   // 모달 상태 관리
@@ -27,7 +29,7 @@ const SecuritySection: React.FC = () => {
   }>({
     isOpen: false,
     type: 'success',
-    message: ''
+    message: '',
   })
 
   const showModal = (type: 'success' | 'error', message: string) => {
@@ -43,7 +45,7 @@ const SecuritySection: React.FC = () => {
     setPasswordForm({
       currentPassword: '',
       newPassword: '',
-      newPasswordConfirm: ''
+      newPasswordConfirm: '',
     })
   }
 
@@ -52,7 +54,7 @@ const SecuritySection: React.FC = () => {
     setPasswordForm({
       currentPassword: '',
       newPassword: '',
-      newPasswordConfirm: ''
+      newPasswordConfirm: '',
     })
   }
 
@@ -91,26 +93,27 @@ const SecuritySection: React.FC = () => {
         {
           currentPassword: passwordForm.currentPassword,
           newPassword: passwordForm.newPassword,
-          newPasswordConfirm: passwordForm.newPasswordConfirm
+          newPasswordConfirm: passwordForm.newPasswordConfirm,
         },
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json; charset=utf-8',
           },
-        }
+        },
       )
 
       setIsChangingPassword(false)
       setPasswordForm({
         currentPassword: '',
         newPassword: '',
-        newPasswordConfirm: ''
+        newPasswordConfirm: '',
       })
       showModal('success', '비밀번호가 변경되었습니다.')
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {
-        const errorMessage = error.response.data?.message || '비밀번호 변경에 실패했습니다.'
+        const errorMessage =
+          error.response.data?.message || '비밀번호 변경에 실패했습니다.'
         showModal('error', errorMessage)
       } else {
         showModal('error', '비밀번호 변경에 실패했습니다.')
@@ -120,19 +123,19 @@ const SecuritySection: React.FC = () => {
 
   return (
     <section className={clsx(isMobile ? 'mb-5' : 'mb-6')}>
-      <h2 className={clsx(
-        'font-bold text-zinc-900 font-gothicFont',
-        isMobile ? 'text-base mb-2' : 'text-lg lg:text-xl mb-3'
-      )}>
+      <h2
+        className={clsx(
+          'font-bold text-zinc-900 font-gothicFont',
+          isMobile ? 'text-base mb-2' : 'text-lg lg:text-xl mb-3',
+        )}
+      >
         보안
       </h2>
       <div className="w-full h-[1px] bg-zinc-900 mb-4"></div>
 
       {/* 이메일 */}
       <div className={clsx(isMobile ? 'mb-3' : 'mb-4')}>
-        <div className="text-sm text-zinc-900 mb-1 font-gothicFont">
-          이메일
-        </div>
+        <div className="text-sm text-zinc-900 mb-1 font-gothicFont">이메일</div>
         <div className="text-xs text-neutral-400 font-gothicFont break-all">
           {userProfile?.email || 'user@example.com'}
         </div>
@@ -145,7 +148,7 @@ const SecuritySection: React.FC = () => {
             onClick={handlePasswordChange}
             className={clsx(
               'font-gothicFont text-zinc-900 hover:text-mainColor transition-colors',
-              isMobile ? 'text-sm' : 'text-sm'
+              isMobile ? 'text-sm' : 'text-sm',
             )}
           >
             비밀번호 변경
@@ -159,12 +162,17 @@ const SecuritySection: React.FC = () => {
               <input
                 type="password"
                 value={passwordForm.currentPassword}
-                onChange={(e) => setPasswordForm({ ...passwordForm, currentPassword: e.target.value })}
+                onChange={(e) =>
+                  setPasswordForm({
+                    ...passwordForm,
+                    currentPassword: e.target.value,
+                  })
+                }
                 className="w-full px-3 py-2 border border-zinc-300 rounded text-sm font-gothicFont focus:outline-none focus:ring-2 focus:ring-mainColor/30"
                 placeholder="현재 비밀번호를 입력하세요"
               />
             </div>
-            
+
             <div>
               <label className="block text-xs text-zinc-900 mb-1 font-gothicFont">
                 새 비밀번호
@@ -172,12 +180,17 @@ const SecuritySection: React.FC = () => {
               <input
                 type="password"
                 value={passwordForm.newPassword}
-                onChange={(e) => setPasswordForm({ ...passwordForm, newPassword: e.target.value })}
+                onChange={(e) =>
+                  setPasswordForm({
+                    ...passwordForm,
+                    newPassword: e.target.value,
+                  })
+                }
                 className="w-full px-3 py-2 border border-zinc-300 rounded text-sm font-gothicFont focus:outline-none focus:ring-2 focus:ring-mainColor/30"
                 placeholder="새 비밀번호를 입력하세요 (8자 이상)"
               />
             </div>
-            
+
             <div>
               <label className="block text-xs text-zinc-900 mb-1 font-gothicFont">
                 새 비밀번호 확인
@@ -185,12 +198,17 @@ const SecuritySection: React.FC = () => {
               <input
                 type="password"
                 value={passwordForm.newPasswordConfirm}
-                onChange={(e) => setPasswordForm({ ...passwordForm, newPasswordConfirm: e.target.value })}
+                onChange={(e) =>
+                  setPasswordForm({
+                    ...passwordForm,
+                    newPasswordConfirm: e.target.value,
+                  })
+                }
                 className="w-full px-3 py-2 border border-zinc-300 rounded text-sm font-gothicFont focus:outline-none focus:ring-2 focus:ring-mainColor/30"
                 placeholder="새 비밀번호를 다시 입력하세요"
               />
             </div>
-            
+
             <div className="flex gap-2">
               <button
                 onClick={handleSavePassword}
@@ -221,4 +239,3 @@ const SecuritySection: React.FC = () => {
 }
 
 export default SecuritySection
-

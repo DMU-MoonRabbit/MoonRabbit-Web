@@ -1,5 +1,6 @@
-import { create } from 'zustand'
 import axios from 'axios'
+import { create } from 'zustand'
+
 import { EquippedItem } from '@/features/mypage/types/user'
 
 // 기존 ConcernStore Concern, Board, PageInfo 타입 등 복사
@@ -13,7 +14,7 @@ interface Answer {
   userId: number
   nickname: string
   profileImg: string
-  equippedItems?: EquippedItem[]  // API에서 제공되는 장착 아이템
+  equippedItems?: EquippedItem[] // API에서 제공되는 장착 아이템
 }
 
 export interface Board {
@@ -25,12 +26,12 @@ export interface Board {
   answers: Answer[]
   nickname: string
   profileImg: string
-  equippedItems?: EquippedItem[]  // API에서 제공되는 장착 아이템
+  equippedItems?: EquippedItem[] // API에서 제공되는 장착 아이템
 }
 
 export interface Concern {
   id: number
-  userId: number  // 작성자 userId 추가
+  userId: number // 작성자 userId 추가
   profileImage: string
   title: string
   category: string
@@ -41,8 +42,8 @@ export interface Concern {
   }
   date: string
   backgroundImage: string
-  borderImageUrl?: string  // 작성자의 장착 테두리
-  nicknameColor?: string   // 작성자의 장착 닉네임 색상
+  borderImageUrl?: string // 작성자의 장착 테두리
+  nicknameColor?: string // 작성자의 장착 닉네임 색상
 }
 
 export interface PageInfo {
@@ -59,7 +60,7 @@ export interface PageInfo {
 // Concern 상세 타입
 export interface ConcernArticle {
   id: number
-  userId?: number  // 작성자 userId 추가
+  userId?: number // 작성자 userId 추가
   title: string
   profileImg: string
   nickname: string
@@ -67,9 +68,9 @@ export interface ConcernArticle {
   createdAt: string
   answer: string
   like: boolean
-  equippedItems?: EquippedItem[]  // API에서 제공되는 장착 아이템
-  borderImageUrl?: string  // 작성자의 장착 테두리
-  nicknameColor?: string   // 작성자의 장착 닉네임 색상
+  equippedItems?: EquippedItem[] // API에서 제공되는 장착 아이템
+  borderImageUrl?: string // 작성자의 장착 테두리
+  nicknameColor?: string // 작성자의 장착 닉네임 색상
 }
 
 interface UnifiedConcernStore {
@@ -103,19 +104,22 @@ const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
     return { borderImageUrl: undefined, nicknameColor: undefined }
   }
 
-  const borderItem = equippedItems.find(item => item.type === 'BORDER')
-  const nicknameColorItem = equippedItems.find(item => item.type === 'NAME_COLOR')
-  
+  const borderItem = equippedItems.find((item) => item.type === 'BORDER')
+  const nicknameColorItem = equippedItems.find(
+    (item) => item.type === 'NAME_COLOR',
+  )
+
   // 닉네임 색상은 이미지 URL에서 색상 이름을 추출하여 색상 값으로 변환
   let nicknameColor: string | undefined
   if (nicknameColorItem?.imageUrl) {
-    const colorName = nicknameColorItem.imageUrl.match(/NameColor_(\w+)\.png/)?.[1]
+    const colorName =
+      nicknameColorItem.imageUrl.match(/NameColor_(\w+)\.png/)?.[1]
     if (colorName) {
       const colorMap: Record<string, string> = {
-        'magenta': '#EC4899',
-        'cyan': '#7DD3FC', 
-        'space_gray': '#D4D4D4',
-        'pastel_peach': '#FCA5A5'
+        magenta: '#EC4899',
+        cyan: '#7DD3FC',
+        space_gray: '#D4D4D4',
+        pastel_peach: '#FCA5A5',
       }
       nicknameColor = colorMap[colorName]
     }
@@ -123,16 +127,18 @@ const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
 
   return {
     borderImageUrl: borderItem?.imageUrl,
-    nicknameColor
+    nicknameColor,
   }
 }
 
 export const transformBoardToConcern = (board: Board): Concern => {
-  const { borderImageUrl, nicknameColor } = parseEquippedItems(board.equippedItems)
-  
+  const { borderImageUrl, nicknameColor } = parseEquippedItems(
+    board.equippedItems,
+  )
+
   return {
     id: board.boardId,
-    userId: board.userId,  // userId 포함
+    userId: board.userId, // userId 포함
     profileImage: board.profileImg || 'images/MoonRabbitSleep2.png',
     title: board.title,
     category: board.category,
@@ -151,106 +157,109 @@ export const transformBoardToConcern = (board: Board): Concern => {
       .toISOString()
       .split('T')[0],
     backgroundImage: '/images/ConcernBackground.png',
-    borderImageUrl,  // API에서 받은 테두리
-    nicknameColor,   // API에서 받은 닉네임 색상
+    borderImageUrl, // API에서 받은 테두리
+    nicknameColor, // API에서 받은 닉네임 색상
   }
 }
 
-export const useUnifiedConcernStore = create<UnifiedConcernStore>((set, get) => ({
-  // 목록/카테고리/작성/페이징
-  concerns: [],
-  selectedCategory: '전체',
-  filteredConcerns: [],
-  pageInfo: {
-    totalPages: 0,
-    totalElements: 0,
-    first: true,
-    last: true,
-    size: 9,
-    number: 0,
-    numberOfElements: 0,
-    empty: true,
-  },
-  isModalOpen: false,
-  newConcernTitle: '',
-  newConcernContent: '',
-  newConcernCategory: '학교',
+export const useUnifiedConcernStore = create<UnifiedConcernStore>(
+  (set, get) => ({
+    // 목록/카테고리/작성/페이징
+    concerns: [],
+    selectedCategory: '전체',
+    filteredConcerns: [],
+    pageInfo: {
+      totalPages: 0,
+      totalElements: 0,
+      first: true,
+      last: true,
+      size: 9,
+      number: 0,
+      numberOfElements: 0,
+      empty: true,
+    },
+    isModalOpen: false,
+    newConcernTitle: '',
+    newConcernContent: '',
+    newConcernCategory: '학교',
 
-  setSelectedCategory: (category) => {
-    const { concerns } = get()
-    const selectedCategory = category || '전체'
-    const filtered =
-      selectedCategory === '전체'
-        ? concerns
-        : concerns.filter((concern) => concern.category === selectedCategory)
-
-    set({
-      selectedCategory,
-      filteredConcerns: filtered,
-    })
-  },
-
-  setIsModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
-  setNewConcernTitle: (title) => set({ newConcernTitle: title }),
-  setNewConcernContent: (content) => set({ newConcernContent: content }),
-  setNewConcernCategory: (category) => set({ newConcernCategory: category || '전체' }),
-
-  resetForm: () =>
-    set({
-      newConcernTitle: '',
-      newConcernContent: '',
-      newConcernCategory: '전체',
-    }),
-
-  setPage: (page) => {
-    const { pageInfo } = get()
-    set({
-      pageInfo: {
-        ...pageInfo,
-        number: page,
-      },
-    })
-  },
-
-  fetchConcerns: async (page = 0) => {
-    try {
-      const { pageInfo } = get()
-      const response = await axios.get(
-        `https://moonrabbit-api.kro.kr/api/boards/list?page=${page}&size=${pageInfo.size}`,
-      )
-      const boards: Board[] = response.data.content
-      const concerns = boards.map(transformBoardToConcern)
+    setSelectedCategory: (category) => {
+      const { concerns } = get()
+      const selectedCategory = category || '전체'
+      const filtered =
+        selectedCategory === '전체'
+          ? concerns
+          : concerns.filter((concern) => concern.category === selectedCategory)
 
       set({
-        concerns,
-        filteredConcerns: concerns,
+        selectedCategory,
+        filteredConcerns: filtered,
+      })
+    },
+
+    setIsModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
+    setNewConcernTitle: (title) => set({ newConcernTitle: title }),
+    setNewConcernContent: (content) => set({ newConcernContent: content }),
+    setNewConcernCategory: (category) =>
+      set({ newConcernCategory: category || '전체' }),
+
+    resetForm: () =>
+      set({
+        newConcernTitle: '',
+        newConcernContent: '',
+        newConcernCategory: '전체',
+      }),
+
+    setPage: (page) => {
+      const { pageInfo } = get()
+      set({
         pageInfo: {
-          totalPages: response.data.totalPages,
-          totalElements: response.data.totalElements,
-          first: response.data.first,
-          last: response.data.last,
-          size: response.data.size,
-          number: response.data.number,
-          numberOfElements: response.data.numberOfElements,
-          empty: response.data.empty,
+          ...pageInfo,
+          number: page,
         },
       })
-    } catch (error) {
-      // 에러 처리
-    }
-  },
+    },
 
-  // 상세/상호작용
-  concern: undefined,
-  setConcern: (concern) => set(() => ({ concern })),
-  toggleConcernLike: () =>
-    set((state) => {
-      if (!state.concern) return {}
-      return {
-        concern: {
-          ...state.concern,
-          like: !state.concern.like,
-        },
+    fetchConcerns: async (page = 0) => {
+      try {
+        const { pageInfo } = get()
+        const response = await axios.get(
+          `https://moonrabbit-api.kro.kr/api/boards/list?page=${page}&size=${pageInfo.size}`,
+        )
+        const boards: Board[] = response.data.content
+        const concerns = boards.map(transformBoardToConcern)
+
+        set({
+          concerns,
+          filteredConcerns: concerns,
+          pageInfo: {
+            totalPages: response.data.totalPages,
+            totalElements: response.data.totalElements,
+            first: response.data.first,
+            last: response.data.last,
+            size: response.data.size,
+            number: response.data.number,
+            numberOfElements: response.data.numberOfElements,
+            empty: response.data.empty,
+          },
+        })
+      } catch {
+        // 에러 처리
       }
-    }),
-})) 
+    },
+
+    // 상세/상호작용
+    concern: undefined,
+    setConcern: (concern) => set(() => ({ concern })),
+    toggleConcernLike: () =>
+      set((state) => {
+        if (!state.concern) return {}
+        return {
+          concern: {
+            ...state.concern,
+            like: !state.concern.like,
+          },
+        }
+      }),
+  }),
+)

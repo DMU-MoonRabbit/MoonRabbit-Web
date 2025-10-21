@@ -1,5 +1,6 @@
-import { create } from 'zustand'
 import axios from 'axios'
+import { create } from 'zustand'
+
 import { EquippedItem } from '@/features/mypage/types/user'
 
 // equippedItems에서 테두리와 닉네임 색상 추출하는 헬퍼 함수
@@ -8,19 +9,22 @@ const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
     return { borderImageUrl: undefined, nicknameColor: undefined }
   }
 
-  const borderItem = equippedItems.find(item => item.type === 'BORDER')
-  const nicknameColorItem = equippedItems.find(item => item.type === 'NAME_COLOR')
-  
+  const borderItem = equippedItems.find((item) => item.type === 'BORDER')
+  const nicknameColorItem = equippedItems.find(
+    (item) => item.type === 'NAME_COLOR',
+  )
+
   // 닉네임 색상은 이미지 URL에서 색상 이름을 추출하여 색상 값으로 변환
   let nicknameColor: string | undefined
   if (nicknameColorItem?.imageUrl) {
-    const colorName = nicknameColorItem.imageUrl.match(/NameColor_(\w+)\.png/)?.[1]
+    const colorName =
+      nicknameColorItem.imageUrl.match(/NameColor_(\w+)\.png/)?.[1]
     if (colorName) {
       const colorMap: Record<string, string> = {
-        'magenta': '#EC4899',
-        'cyan': '#7DD3FC', 
-        'space_gray': '#D4D4D4',
-        'pastel_peach': '#FCA5A5'
+        magenta: '#EC4899',
+        cyan: '#7DD3FC',
+        space_gray: '#D4D4D4',
+        pastel_peach: '#FCA5A5',
       }
       nicknameColor = colorMap[colorName]
     }
@@ -28,7 +32,7 @@ const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
 
   return {
     borderImageUrl: borderItem?.imageUrl,
-    nicknameColor
+    nicknameColor,
   }
 }
 
@@ -43,11 +47,11 @@ export interface Comment {
   likeCount: number
   reportCount: number
   like: boolean // 나중에 삭제
-  likedByMe?: boolean  // API에서 제공하는 좋아요 상태
-  replies?: Comment[]  // optional로 변경
-  equippedItems?: EquippedItem[]  // API에서 제공되는 장착 아이템
-  borderImageUrl?: string  // 작성자의 장착 테두리
-  nicknameColor?: string   // 작성자의 장착 닉네임 색상
+  likedByMe?: boolean // API에서 제공하는 좋아요 상태
+  replies?: Comment[] // optional로 변경
+  equippedItems?: EquippedItem[] // API에서 제공되는 장착 아이템
+  borderImageUrl?: string // 작성자의 장착 테두리
+  nicknameColor?: string // 작성자의 장착 닉네임 색상
 }
 
 interface CommentStore {
@@ -106,12 +110,20 @@ function removeCommentRecursive(comments: Comment[], id: number): Comment[] {
     }))
 }
 
-function updateCommentRecursive(comments: Comment[], id: number, updates: Partial<Comment>): Comment[] {
+function updateCommentRecursive(
+  comments: Comment[],
+  id: number,
+  updates: Partial<Comment>,
+): Comment[] {
   return comments.map((comment) => {
     if (comment.id === id) {
       return { ...comment, ...updates }
     }
-    const updatedReplies = updateCommentRecursive(comment.replies ?? [], id, updates)
+    const updatedReplies = updateCommentRecursive(
+      comment.replies ?? [],
+      id,
+      updates,
+    )
     return { ...comment, replies: updatedReplies }
   })
 }
@@ -123,13 +135,15 @@ function buildCommentTree(flatComments: Comment[]): Comment[] {
 
   flatComments.forEach((comment) => {
     // equippedItems 파싱하여 borderImageUrl과 nicknameColor 설정
-    const { borderImageUrl, nicknameColor } = parseEquippedItems(comment.equippedItems)
-    
-    commentMap[comment.id] = { 
-      ...comment, 
+    const { borderImageUrl, nicknameColor } = parseEquippedItems(
+      comment.equippedItems,
+    )
+
+    commentMap[comment.id] = {
+      ...comment,
       replies: [],
       borderImageUrl,
-      nicknameColor
+      nicknameColor,
     }
   })
 
@@ -219,7 +233,7 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
       const updatedComments = removeCommentRecursive(get().comments, commentId)
       set({ comments: updatedComments })
       return true
-    } catch (err) {
+    } catch {
       return false
     }
   },

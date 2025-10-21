@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useState, useEffect } from 'react'
+
 import { ENDPOINTS } from '@/api/endpoints'
-import { Playlist, PlaylistStates } from '../types/playlist'
 import { getVideoId } from '@/utils/youtube'
+
+import { Playlist, PlaylistStates } from '../types/playlist'
 
 export const usePlaylist = () => {
   const [playlists, setPlaylists] = useState<Playlist[]>([])
@@ -15,14 +17,18 @@ export const usePlaylist = () => {
       try {
         const response = await axios.get(ENDPOINTS.PLAYLIST_LIST)
         setPlaylists(response.data)
-        
+
         // 플레이리스트 상태 초기화
         const initialState: PlaylistStates = {}
         response.data.forEach((_: Playlist, index: number) => {
-          initialState[index] = { isPlaying: false, isLiked: false, showVideo: false }
+          initialState[index] = {
+            isPlaying: false,
+            isLiked: false,
+            showVideo: false,
+          }
         })
         setPlaylistStates(initialState)
-      } catch (error) {
+      } catch {
         // 에러 처리
       } finally {
         setLoading(false)
@@ -44,14 +50,14 @@ export const usePlaylist = () => {
 
     if (!isShowingVideo) {
       // 첫 클릭: 비디오 표시하고 자동재생
-      setPlaylistStates(prev => {
+      setPlaylistStates((prev) => {
         const newState: PlaylistStates = {}
         Object.keys(prev).forEach((key) => {
           const i = Number(key)
           newState[i] = {
             isPlaying: i === index,
             isLiked: prev[i]?.isLiked ?? false,
-            showVideo: i === index
+            showVideo: i === index,
           }
         })
         return newState
@@ -59,25 +65,25 @@ export const usePlaylist = () => {
       setPlayingVideoId(videoId)
     } else {
       // 재클릭: 비디오 숨기기 (중지)
-      setPlaylistStates(prev => ({
+      setPlaylistStates((prev) => ({
         ...prev,
-        [index]: { 
-          ...prev[index], 
+        [index]: {
+          ...prev[index],
           isPlaying: false,
-          showVideo: false
-        }
+          showVideo: false,
+        },
       }))
       setPlayingVideoId(null)
     }
   }
 
   const toggleLike = (index: number) => {
-    setPlaylistStates(prev => ({
+    setPlaylistStates((prev) => ({
       ...prev,
       [index]: {
         ...prev[index],
-        isLiked: !prev[index].isLiked
-      }
+        isLiked: !prev[index].isLiked,
+      },
     }))
   }
 
@@ -87,6 +93,6 @@ export const usePlaylist = () => {
     playlistStates,
     playingVideoId,
     togglePlay,
-    toggleLike
+    toggleLike,
   }
 }

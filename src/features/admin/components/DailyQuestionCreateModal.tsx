@@ -1,6 +1,8 @@
-import React, { useState } from 'react'
-import { ENDPOINTS } from '@/api/endpoints'
 import axios from 'axios'
+import React, { useState } from 'react'
+
+import { ENDPOINTS } from '@/api/endpoints'
+
 import { AdminModal } from './AdminModal'
 
 interface DailyQuestionCreateModalProps {
@@ -9,11 +11,9 @@ interface DailyQuestionCreateModalProps {
   onSuccess: () => void
 }
 
-export const DailyQuestionCreateModal: React.FC<DailyQuestionCreateModalProps> = ({
-  isOpen,
-  onClose,
-  onSuccess,
-}) => {
+export const DailyQuestionCreateModal: React.FC<
+  DailyQuestionCreateModalProps
+> = ({ isOpen, onClose, onSuccess }) => {
   const [date, setDate] = useState('')
   const [content, setContent] = useState('')
   const [loading, setLoading] = useState(false)
@@ -40,17 +40,17 @@ export const DailyQuestionCreateModal: React.FC<DailyQuestionCreateModalProps> =
         },
         {
           headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
-          withCredentials: true
-        }
+          withCredentials: true,
+        },
       )
       alert('질문이 성공적으로 생성되었습니다.')
       setDate('')
       setContent('')
       onSuccess()
-    } catch (error) {
+    } catch {
       alert('질문 생성에 실패했습니다.')
     } finally {
       setLoading(false)
@@ -73,37 +73,37 @@ export const DailyQuestionCreateModal: React.FC<DailyQuestionCreateModalProps> =
       disabled={loading}
     >
       {/* 날짜 입력 */}
-        <div className="mb-6">
-          <label className="block text-sm font-mainFont text-darkWalnut mb-2">
-            날짜 *
-          </label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full border-2 border-lightBeige rounded-lg px-4 py-3 focus:outline-none focus:border-mainColor transition-colors font-gothicFont text-darkWalnut"
-            disabled={loading}
-          />
-        </div>
+      <div className="mb-6">
+        <label className="block text-sm font-mainFont text-darkWalnut mb-2">
+          날짜 *
+        </label>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full border-2 border-lightBeige rounded-lg px-4 py-3 focus:outline-none focus:border-mainColor transition-colors font-gothicFont text-darkWalnut"
+          disabled={loading}
+        />
+      </div>
 
-        {/* 질문 내용 입력 */}
-        <div className="mb-6">
-          <label className="block text-sm font-mainFont text-darkWalnut mb-2">
-            질문 내용 *
-          </label>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="w-full border-2 border-lightBeige rounded-lg px-4 py-3 focus:outline-none focus:border-mainColor transition-colors font-gothicFont text-darkWalnut resize-none"
-            placeholder="질문 내용을 입력하세요"
-            rows={4}
-            maxLength={500}
-            disabled={loading}
-          />
-          <div className="text-right text-xs text-gray-500 mt-1">
-            {content.length}/500
-          </div>
+      {/* 질문 내용 입력 */}
+      <div className="mb-6">
+        <label className="block text-sm font-mainFont text-darkWalnut mb-2">
+          질문 내용 *
+        </label>
+        <textarea
+          value={content}
+          onChange={(e) => setContent(e.target.value)}
+          className="w-full border-2 border-lightBeige rounded-lg px-4 py-3 focus:outline-none focus:border-mainColor transition-colors font-gothicFont text-darkWalnut resize-none"
+          placeholder="질문 내용을 입력하세요"
+          rows={4}
+          maxLength={500}
+          disabled={loading}
+        />
+        <div className="text-right text-xs text-gray-500 mt-1">
+          {content.length}/500
         </div>
+      </div>
 
       {/* 버튼 영역 */}
       <div className="flex justify-center gap-3">
@@ -128,4 +128,3 @@ export const DailyQuestionCreateModal: React.FC<DailyQuestionCreateModalProps> =
     </AdminModal>
   )
 }
-

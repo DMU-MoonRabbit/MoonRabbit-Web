@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { ItemEditModal } from './ItemEditModal'
-import { ShopItemsTable } from './ShopItemsTable'
+
 import { useManageItems } from '@/features/shop/hooks/useManageItems'
 import { ShopItem } from '@/features/shop/types/shop'
+
+import { ItemEditModal } from './ItemEditModal'
+import { ShopItemsTable } from './ShopItemsTable'
 
 export const ManageShopItems = () => {
   const {
@@ -13,7 +15,7 @@ export const ManageShopItems = () => {
     changePage,
     editItem,
     deleteItemWithConfirm,
-    getTypeLabel
+    getTypeLabel,
   } = useManageItems()
 
   // 모달 상태
@@ -32,7 +34,12 @@ export const ManageShopItems = () => {
   }
 
   // 수정 모달 저장
-  const handleEditSave = async (itemId: number, name: string, price: number, imageUrl: string) => {
+  const handleEditSave = async (
+    itemId: number,
+    name: string,
+    price: number,
+    imageUrl: string,
+  ) => {
     const success = await editItem(itemId, name, price, imageUrl)
     if (success) {
       fetchItems(currentPage)

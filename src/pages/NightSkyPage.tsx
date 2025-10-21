@@ -1,18 +1,26 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+
 import CategoryBar from '@/common/components/CategoryBar'
 import ConcernCard from '@/features/concern-board/components/ConcernCard'
 import CreateConcernButton from '@/features/concern-board/components/CreateConcernButton'
 import CreateConcernModal from '@/features/concern-board/components/CreateConcernModal'
-import { useUnifiedConcernStore, Concern } from '@/features/concern-board/stores/useUnifiedConcernStore'
-import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
+import {
+  useUnifiedConcernStore,
+  Concern,
+} from '@/features/concern-board/stores/useUnifiedConcernStore'
 import { usePostAuthorItems } from '@/features/mypage/hooks/usePostAuthorItems'
+import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
 
 // ConcernCard에 장착 아이템을 적용하는 래퍼 컴포넌트
-const ConcernCardWithItems: React.FC<{ concern: Concern; onClick: (id: number) => void }> = ({ concern, onClick }) => {
+const ConcernCardWithItems: React.FC<{
+  concern: Concern
+  onClick: (id: number) => void
+}> = ({ concern, onClick }) => {
   // API 데이터에서 장착 아이템 정보를 받아오거나, 본인 게시글이면 현재 장착 아이템 사용
-  const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } = usePostAuthorItems(concern.userId)
-  
+  const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } =
+    usePostAuthorItems(concern.userId)
+
   return (
     <ConcernCard
       id={concern.id}
@@ -52,7 +60,8 @@ const NightSkyPage: React.FC = () => {
 
   const navigate = useNavigate()
 
-  const { userProfile, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
+  const { userProfile, fetchUserProfile, fetchUserInventory } =
+    useUserProfileStore()
 
   useEffect(() => {
     fetchConcerns(pageInfo.number)
@@ -112,9 +121,9 @@ const NightSkyPage: React.FC = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {filteredConcerns.map((concern) => (
-            <ConcernCardWithItems 
-              key={concern.id} 
-              concern={concern} 
+            <ConcernCardWithItems
+              key={concern.id}
+              concern={concern}
               onClick={handleCardClick}
             />
           ))}

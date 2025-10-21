@@ -1,5 +1,7 @@
 import React from 'react'
+
 import { QuestionCard as QuestionCardType } from '../types/questionCard'
+
 import QuestionCard from './QuestionCard'
 
 interface DesktopQuestionLayoutProps {
@@ -11,7 +13,7 @@ interface DesktopQuestionLayoutProps {
 const DesktopQuestionLayout: React.FC<DesktopQuestionLayoutProps> = ({
   cards,
   likedCards,
-  onLikeClick
+  onLikeClick,
 }) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 justify-items-center">

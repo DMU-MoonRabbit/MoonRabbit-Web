@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
 import axios from 'axios'
-import { useCommentStore } from '../stores/useCommentStore'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
+
 import { ENDPOINTS } from '@/api/endpoints'
 import MiniModal from '@/common/components/MiniModal'
+
+import { useCommentStore } from '../stores/useCommentStore'
 
 interface CommentInputProps {
   parentId?: number | null
@@ -16,7 +18,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   const boardId = pageNumber
   const { commentContent, setCommentContent, replyContents, setReplyContent } =
     useCommentStore()
-  
+
   const [modalState, setModalState] = useState<{
     isOpen: boolean
     type: 'success' | 'error'
@@ -24,7 +26,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   }>({
     isOpen: false,
     type: 'error',
-    message: ''
+    message: '',
   })
 
   const showModal = (type: 'success' | 'error', message: string) => {
@@ -32,7 +34,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
   }
 
   const closeModal = () => {
-    setModalState(prev => ({ ...prev, isOpen: false }))
+    setModalState((prev) => ({ ...prev, isOpen: false }))
   }
 
   const value =
@@ -63,7 +65,7 @@ export const CommentInput: React.FC<CommentInputProps> = ({
         showModal('error', '로그인이 만료되었습니다. 다시 로그인해주세요.')
         return
       }
-    } catch (err) {
+    } catch {
       localStorage.removeItem('accessToken')
       showModal('error', '유효하지 않은 토큰입니다. 다시 로그인해주세요.')
       return
@@ -73,9 +75,8 @@ export const CommentInput: React.FC<CommentInputProps> = ({
     if (!content) return
 
     try {
-      const requestBody = parentId === null 
-        ? { content }
-        : { content, parentId }
+      const requestBody =
+        parentId === null ? { content } : { content, parentId }
 
       const response = await axios.post(
         ENDPOINTS.COMMENT_CREATE(Number(boardId)),
@@ -103,7 +104,10 @@ export const CommentInput: React.FC<CommentInputProps> = ({
           localStorage.removeItem('accessToken')
           showModal('error', '인증이 만료되었습니다. 다시 로그인해주세요.')
         } else if (err.response?.status === 500) {
-          showModal('error', '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+          showModal(
+            'error',
+            '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+          )
         } else if (err.response?.status === 404) {
           showModal('error', '게시글을 찾을 수 없습니다.')
         }

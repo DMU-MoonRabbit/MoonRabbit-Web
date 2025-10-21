@@ -1,7 +1,8 @@
 import React from 'react'
-import { Playlist, PlaylistStates } from '../../features/shop/types/playlist'
-import VideoPlayer from '../../features/shop/components/VideoPlayer'
+
 import PlaylistCard from '../../features/shop/components/PlaylistCard'
+import VideoPlayer from '../../features/shop/components/VideoPlayer'
+import { Playlist, PlaylistStates } from '../../features/shop/types/playlist'
 
 interface DesktopLayoutProps {
   playlists: Playlist[]
@@ -11,12 +12,12 @@ interface DesktopLayoutProps {
   onToggleLike: (index: number) => void
 }
 
-const DesktopLayout: React.FC<DesktopLayoutProps> = ({ 
-  playlists, 
-  playlistStates, 
-  getEmbedUrl, 
-  onTogglePlay, 
-  onToggleLike 
+const DesktopLayout: React.FC<DesktopLayoutProps> = ({
+  playlists,
+  playlistStates,
+  getEmbedUrl,
+  onTogglePlay,
+  onToggleLike,
 }) => {
   return (
     <div>
@@ -43,7 +44,13 @@ const DesktopLayout: React.FC<DesktopLayoutProps> = ({
           <PlaylistCard
             key={playlist.id}
             playlist={playlist}
-            playlistState={playlistStates[index] || { isPlaying: false, isLiked: false, showVideo: false }}
+            playlistState={
+              playlistStates[index] || {
+                isPlaying: false,
+                isLiked: false,
+                showVideo: false,
+              }
+            }
             onTogglePlay={() => onTogglePlay(index)}
             onToggleLike={() => onToggleLike(index)}
             isMobile={false}

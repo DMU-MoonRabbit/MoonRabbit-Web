@@ -1,15 +1,17 @@
+import axios from 'axios'
+import clsx from 'clsx'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuthStore, useAuthFormStore } from '../stores/useAuthStore'
-import useUserStore from '@/features/mypage/stores/useUserStore'
-import clsx from 'clsx'
-import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
-import LogoImg from '@/assets/images/MoonRabbitSleep2.png'
+
+import { ENDPOINTS } from '@/api/endpoints'
 import GoogleLoginImg from '@/assets/images/GoogleLogin.svg'
 import kakaoLoginImg from '@/assets/images/KakaoLogin.png'
-import axios from 'axios'
-import { ENDPOINTS } from '@/api/endpoints'
+import LogoImg from '@/assets/images/MoonRabbitSleep2.png'
 import MiniModal from '@/common/components/MiniModal'
+import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import useUserStore from '@/features/mypage/stores/useUserStore'
+
+import { useAuthStore, useAuthFormStore } from '../stores/useAuthStore'
 
 export const LogoPanel = () => {
   const res = useResponsiveStore((state) => state.res)
@@ -37,7 +39,8 @@ export const LogoPanel = () => {
 }
 
 export const LoginForm = () => {
-  const { email, password, setEmail, setPassword, setIsLoggedIn, setUser } = useAuthStore()
+  const { email, password, setEmail, setPassword, setIsLoggedIn, setUser } =
+    useAuthStore()
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
@@ -50,7 +53,7 @@ export const LoginForm = () => {
   }>({
     isOpen: false,
     type: 'error',
-    message: ''
+    message: '',
   })
 
   const showModal = (type: 'success' | 'error', message: string) => {
@@ -58,19 +61,16 @@ export const LoginForm = () => {
   }
 
   const closeModal = () => {
-    setModalState(prev => ({ ...prev, isOpen: false }))
+    setModalState((prev) => ({ ...prev, isOpen: false }))
   }
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post(
-        ENDPOINTS.LOGIN,
-        {
-          email,
-          password,
-        },
-      )
-      
+      const response = await axios.post(ENDPOINTS.LOGIN, {
+        email,
+        password,
+      })
+
       // 응답에서 accessToken 추출 및 저장
       const { accessToken, ...userData } = response.data
       if (accessToken) {
@@ -80,15 +80,18 @@ export const LoginForm = () => {
         setIsLoggedIn(true)
         navigate('/')
       }
-    } catch (error) {
-      showModal('error', '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.')
+    } catch {
+      showModal(
+        'error',
+        '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.',
+      )
     }
   }
 
   const handleSNSLogin = (platform: string) => async () => {
     try {
       window.location.href = `https://moonrabbit-api.kro.kr/api/users/${platform}`
-    } catch (error) {
+    } catch {
       showModal('error', '소셜 로그인에 실패했습니다.')
     }
   }
@@ -107,13 +110,17 @@ export const LoginForm = () => {
           type="email"
           placeholder="이메일 (e-mail)"
           value={email}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
         />
         <LoginInputField
           type="password"
           placeholder="비밀번호 (Password)"
           value={password}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
         />
         <div className="text-sm ml-[16px] mb-10">아이디 / 비밀번호 찾기</div>
         <LoginButton onClick={handleLogin} className="mb-4 rounded-[10px]">
@@ -122,7 +129,9 @@ export const LoginForm = () => {
         <div
           className={clsx(
             'flex gap-2',
-            isMobile ? 'flex-col' : 'lg:gap-4 px-0 flex-col lg:flex-row lg:px-4',
+            isMobile
+              ? 'flex-col'
+              : 'lg:gap-4 px-0 flex-col lg:flex-row lg:px-4',
           )}
         >
           <SocialLogin
@@ -171,7 +180,7 @@ export const SignupForm = () => {
   }>({
     isOpen: false,
     type: 'error',
-    message: ''
+    message: '',
   })
 
   const showModal = (type: 'success' | 'error', message: string) => {
@@ -179,7 +188,7 @@ export const SignupForm = () => {
   }
 
   const closeModal = () => {
-    setModalState(prev => ({ ...prev, isOpen: false }))
+    setModalState((prev) => ({ ...prev, isOpen: false }))
   }
 
   const handleSignup = async () => {
@@ -199,35 +208,29 @@ export const SignupForm = () => {
     }
 
     try {
-      await axios.post(
-        ENDPOINTS.SIGNUP,
-        {
-          email,
-          password,
-          passwordConfirm,
-          phoneNum,
-          verification,
-        },
-      )
+      await axios.post(ENDPOINTS.SIGNUP, {
+        email,
+        password,
+        passwordConfirm,
+        phoneNum,
+        verification,
+      })
       showModal('success', '회원가입이 완료되었습니다!')
       setTimeout(() => {
         setIsLogin(true)
       }, 1500)
-    } catch (error) {
+    } catch {
       showModal('error', '회원가입에 실패했습니다.')
     }
   }
 
   const handleVerification = async () => {
     try {
-      await axios.post(
-        ENDPOINTS.VERIFY,
-        {
-          phoneNum,
-        },
-      )
+      await axios.post(ENDPOINTS.VERIFY, {
+        phoneNum,
+      })
       showModal('success', '인증번호가 전송되었습니다.')
-    } catch (error) {
+    } catch {
       showModal('error', '인증번호 전송에 실패했습니다.')
     }
   }
@@ -246,21 +249,27 @@ export const SignupForm = () => {
           type="email"
           placeholder="이메일"
           value={email}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setEmail(e.target.value)
+          }
           className="mt-2"
         />
         <LoginInputField
           type="string"
           placeholder="전화번호"
           value={phoneNum}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPhoneNum(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPhoneNum(e.target.value)
+          }
         />
         <div className="flex gap-2">
           <LoginInputField
             type="string"
             placeholder="인증번호 확인"
             value={verification}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setVerification(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setVerification(e.target.value)
+            }
           />
           <LoginButton
             onClick={handleVerification}
@@ -273,13 +282,17 @@ export const SignupForm = () => {
           type="password"
           placeholder="비밀번호"
           value={password}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPassword(e.target.value)
+          }
         />
         <LoginInputField
           type="password"
           placeholder="비밀번호 확인"
           value={passwordConfirm}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPasswordConfirm(e.target.value)}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setPasswordConfirm(e.target.value)
+          }
           className="mb-8"
         />
 

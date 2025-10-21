@@ -1,8 +1,9 @@
-import { useEffect } from 'react'
-import { useManageBoardStore } from '@/features/admin/stores/useManageBoardStore'
-import { usePaginationStore } from '@/common/hooks/usePaginationStore'
-import ENDPOINTS from '@/api/endpoints'
 import axios from 'axios'
+import { useEffect } from 'react'
+
+import ENDPOINTS from '@/api/endpoints'
+import { usePaginationStore } from '@/common/hooks/usePaginationStore'
+import { useManageBoardStore } from '@/features/admin/stores/useManageBoardStore'
 
 export const useManageBoardAPI = () => {
   const {
@@ -15,11 +16,8 @@ export const useManageBoardAPI = () => {
     setFilteredBoards,
   } = useManageBoardStore()
 
-  const {
-    boardPostsPage,
-    reportedBoardsPage,
-    reportedCommentsPage,
-  } = usePaginationStore()
+  const { boardPostsPage, reportedBoardsPage, reportedCommentsPage } =
+    usePaginationStore()
 
   const pageSize = 9
   const reportsPageSize = 10
@@ -29,22 +27,18 @@ export const useManageBoardAPI = () => {
     setLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
-      
-      const response = await axios.get(
-        ENDPOINTS.CONCERN_LIST(page, pageSize),
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
-      
+
+      const response = await axios.get(ENDPOINTS.CONCERN_LIST(page, pageSize), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      })
+
       setBoardData(response.data)
       setLoading(false)
-      
-    } catch (error) {
+    } catch {
       setBoardData(null)
       setLoading(false)
     }
@@ -55,31 +49,29 @@ export const useManageBoardAPI = () => {
     setLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
-      
+
       // 전체 데이터 가져오기 (큰 size로)
-      const response = await axios.get(
-        ENDPOINTS.CONCERN_LIST(0, 1000),
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
-      
+      const response = await axios.get(ENDPOINTS.CONCERN_LIST(0, 1000), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      })
+
       // 제목으로 필터링
-      const filteredContent = response.data.content.filter((board: { title: string }) => 
-        board.title.toLowerCase().includes(title.toLowerCase())
+      const filteredContent = response.data.content.filter(
+        (board: { title: string }) =>
+          board.title.toLowerCase().includes(title.toLowerCase()),
       )
-      
+
       // 필터링된 전체 데이터 저장
       setFilteredBoards(filteredContent)
-      
+
       // 페이지네이션 정보 재계산
       const totalElements = filteredContent.length
       const totalPages = Math.ceil(totalElements / pageSize)
-      
+
       setBoardData({
         ...response.data,
         content: filteredContent.slice(0, pageSize),
@@ -89,11 +81,10 @@ export const useManageBoardAPI = () => {
         number: 0,
         first: true,
         last: totalPages <= 1,
-        empty: filteredContent.length === 0
+        empty: filteredContent.length === 0,
       })
       setLoading(false)
-      
-    } catch (error) {
+    } catch {
       setFilteredBoards([])
       setBoardData(null)
       setLoading(false)
@@ -106,19 +97,18 @@ export const useManageBoardAPI = () => {
     try {
       const token = localStorage.getItem('accessToken')
       const url = ENDPOINTS.REPORT_LIST_BY_TYPE('BOARD', page, reportsPageSize)
-      
+
       const response = await axios.get(url, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-        withCredentials: true
+        withCredentials: true,
       })
-      
+
       setReportedBoardsData(response.data)
       setReportsLoading(false)
-      
-    } catch (error) {
+    } catch {
       // 빈 데이터로 설정
       setReportedBoardsData({
         totalElements: 0,
@@ -136,9 +126,9 @@ export const useManageBoardAPI = () => {
           pageNumber: page,
           pageSize: reportsPageSize,
           paged: true,
-          unpaged: false
+          unpaged: false,
         },
-        empty: true
+        empty: true,
       })
       setReportsLoading(false)
     }
@@ -150,19 +140,18 @@ export const useManageBoardAPI = () => {
     try {
       const token = localStorage.getItem('accessToken')
       const url = ENDPOINTS.REPORT_LIST_BY_TYPE('ANSWER', page, reportsPageSize)
-      
+
       const response = await axios.get(url, {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
         },
-        withCredentials: true
+        withCredentials: true,
       })
-      
+
       setReportedCommentsData(response.data)
       setReportsLoading(false)
-      
-    } catch (error) {
+    } catch {
       // 빈 데이터로 설정
       setReportedCommentsData({
         totalElements: 0,
@@ -180,9 +169,9 @@ export const useManageBoardAPI = () => {
           pageNumber: page,
           pageSize: reportsPageSize,
           paged: true,
-          unpaged: false
+          unpaged: false,
         },
-        empty: true
+        empty: true,
       })
       setReportsLoading(false)
     }
@@ -190,49 +179,32 @@ export const useManageBoardAPI = () => {
 
   // 게시글 수정
   const updateBoard = async (boardId: number, updateData: unknown) => {
-    try {
-      const token = localStorage.getItem('accessToken')
-      
-      await axios.put(
-        ENDPOINTS.ADMIN_BOARD_UPDATE(boardId),
-        updateData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
-      
-      return true
-      
-    } catch (error) {
-      throw error
-    }
+    const token = localStorage.getItem('accessToken')
+
+    await axios.put(ENDPOINTS.ADMIN_BOARD_UPDATE(boardId), updateData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true,
+    })
+
+    return true
   }
 
   // 게시글 삭제
   const deleteBoard = async (boardId: number) => {
-    try {
-      const token = localStorage.getItem('accessToken')
-      
-      await axios.delete(
-        ENDPOINTS.ADMIN_BOARD_DELETE(boardId),
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
-      
-      return true
-      
-    } catch (error) {
-      throw error
-    }
+    const token = localStorage.getItem('accessToken')
+
+    await axios.delete(ENDPOINTS.ADMIN_BOARD_DELETE(boardId), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true,
+    })
+
+    return true
   }
 
   // 자동 데이터 로딩 (ManageBoard 컴포넌트에서 처리)
@@ -244,13 +216,13 @@ export const useManageBoardAPI = () => {
     if (activeTab === 'reportedBoards') {
       fetchReportedBoards(reportedBoardsPage)
     }
-  }, [activeTab, reportedBoardsPage])
+  }, [activeTab, reportedBoardsPage, fetchReportedBoards])
 
   useEffect(() => {
     if (activeTab === 'reportedComments') {
       fetchReportedComments(reportedCommentsPage)
     }
-  }, [activeTab, reportedCommentsPage])
+  }, [activeTab, reportedCommentsPage, fetchReportedComments])
 
   // 신고 생성
   const createReport = async (reportData: {
@@ -258,26 +230,17 @@ export const useManageBoardAPI = () => {
     targetId: number
     reason: string
   }) => {
-    try {
-      const token = localStorage.getItem('accessToken')
-      
-      await axios.post(
-        ENDPOINTS.REPORT_CREATE,
-        reportData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          },
-          withCredentials: true
-        }
-      )
-      
-      return true
-      
-    } catch (error) {
-      throw error
-    }
+    const token = localStorage.getItem('accessToken')
+
+    await axios.post(ENDPOINTS.REPORT_CREATE, reportData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true,
+    })
+
+    return true
   }
 
   return {
@@ -290,4 +253,3 @@ export const useManageBoardAPI = () => {
     createReport,
   }
 }
-

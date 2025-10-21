@@ -1,17 +1,15 @@
-import React from 'react'
-import { useResponsiveStore } from '../hooks/useResponsiveStore'
 import clsx from 'clsx'
+import React from 'react'
+
 import LogoImg from '../../assets/images/MoonRabbitSleep2.png'
+import { useResponsiveStore } from '../hooks/useResponsiveStore'
 
 const SettingsHeader: React.FC = () => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
   return (
-    <div className={clsx(
-      'flex items-center',
-      isMobile ? 'mb-5' : 'mb-6'
-    )}>
+    <div className={clsx('flex items-center', isMobile ? 'mb-5' : 'mb-6')}>
       {!isMobile && (
         <>
           <img
@@ -29,10 +27,12 @@ const SettingsHeader: React.FC = () => {
           </div>
         </>
       )}
-      <div className={clsx(
-        'flex items-end font-bold text-[14px]',
-        isMobile ? 'w-full justify-center' : 'ml-auto'
-      )}>
+      <div
+        className={clsx(
+          'flex items-end font-bold text-[14px]',
+          isMobile ? 'w-full justify-center' : 'ml-auto',
+        )}
+      >
         <span className="text-darkWalnut">설정</span>
       </div>
     </div>
@@ -40,4 +40,3 @@ const SettingsHeader: React.FC = () => {
 }
 
 export default SettingsHeader
-

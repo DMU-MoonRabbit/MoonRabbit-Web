@@ -1,5 +1,5 @@
-import { create } from 'zustand'
 import axios from 'axios'
+import { create } from 'zustand'
 
 interface Answer {
   userId: number
@@ -51,7 +51,7 @@ export const useBoardDetailStore = create<BoardDetailStore>((set) => ({
           ? { ...state.boardDetail, aiAnswer: aiResponse.data.reply }
           : null,
       }))
-    } catch (error) {
+    } catch {
       set({
         error: '게시글을 불러오는데 실패했습니다.',
         isLoading: false,
@@ -67,24 +67,27 @@ export const useBoardDetailStore = create<BoardDetailStore>((set) => ({
       set((state) => ({
         boardDetail: state.boardDetail
           ? { ...state.boardDetail, aiAnswer: response.data.reply }
-          : { 
-              userId: 0, 
-              title: '', 
-              content: '', 
-              category: '', 
-              answers: [], 
-              aiAnswer: response.data.reply, 
-              createdAt: '' 
+          : {
+              userId: 0,
+              title: '',
+              content: '',
+              category: '',
+              answers: [],
+              aiAnswer: response.data.reply,
+              createdAt: '',
             },
       }))
-    } catch (error) {
+    } catch {
       set({
         error: 'AI 답변을 불러오는데 실패했습니다.',
       })
     }
   },
 
-  setAiAnswer: (aiAnswer) => set((state) => ({
-    boardDetail: state.boardDetail ? { ...state.boardDetail, aiAnswer } : null
-  })),
+  setAiAnswer: (aiAnswer) =>
+    set((state) => ({
+      boardDetail: state.boardDetail
+        ? { ...state.boardDetail, aiAnswer }
+        : null,
+    })),
 }))

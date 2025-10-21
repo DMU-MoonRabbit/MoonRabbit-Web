@@ -1,6 +1,8 @@
 import { useState } from 'react'
-import { useShopStore } from '../stores/useShopStore'
+
 import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
+
+import { useShopStore } from '../stores/useShopStore'
 
 interface MiniModalState {
   isOpen: boolean
@@ -23,7 +25,8 @@ export const useShopPurchase = () => {
   })
 
   const { purchaseItem, purchaseLoading } = useShopStore()
-  const { userProfile, fetchUserProfile, fetchUserInventory } = useUserProfileStore()
+  const { userProfile, fetchUserProfile, fetchUserInventory } =
+    useUserProfileStore()
 
   const handlePurchaseClick = (itemId: number, itemPrice: number) => {
     if (purchaseLoading) return
@@ -65,7 +68,7 @@ export const useShopPurchase = () => {
 
     try {
       const result = await purchaseItem(userProfile.id, itemId)
-      
+
       // 프로필 및 인벤토리 갱신 (강제 재로드)
       await fetchUserProfile(true)
       await fetchUserInventory(userProfile.id)
@@ -104,4 +107,3 @@ export const useShopPurchase = () => {
     closeMiniModal,
   }
 }
-

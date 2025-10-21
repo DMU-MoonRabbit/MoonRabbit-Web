@@ -1,7 +1,9 @@
-import React, { useState } from 'react'
-import { ReportCreateRequest } from '../../features/admin/types/report'
-import MiniModal from './MiniModal'
 import axios from 'axios'
+import React, { useState } from 'react'
+
+import { ReportCreateRequest } from '../../features/admin/types/report'
+
+import MiniModal from './MiniModal'
 
 interface ReportModalProps {
   isOpen: boolean
@@ -16,7 +18,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
   onClose,
   onSubmit,
   targetType,
-  targetId
+  targetId,
 }) => {
   const [reason, setReason] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -27,7 +29,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
   }>({
     isOpen: false,
     type: 'success',
-    message: ''
+    message: '',
   })
 
   const showModal = (type: 'success' | 'error', message: string) => {
@@ -35,7 +37,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
   }
 
   const closeModal = () => {
-    setModalState(prev => ({ ...prev, isOpen: false }))
+    setModalState((prev) => ({ ...prev, isOpen: false }))
   }
 
   const handleSubmit = async () => {
@@ -49,9 +51,9 @@ export const ReportModal: React.FC<ReportModalProps> = ({
       const reportData: ReportCreateRequest = {
         targetType,
         targetId,
-        reason: reason.trim()
+        reason: reason.trim(),
       }
-      
+
       await onSubmit(reportData)
       showModal('success', '신고가 접수되었습니다.')
       setReason('')
@@ -64,10 +66,14 @@ export const ReportModal: React.FC<ReportModalProps> = ({
         showModal('error', '로그인 후 신고할 수 있습니다.')
       } else if (axios.isAxiosError(error)) {
         const status = error.response?.status
-        const message = error.response?.data?.message || error.response?.data?.error
-        
+        const message =
+          error.response?.data?.message || error.response?.data?.error
+
         if (status === 400) {
-          showModal('error', message || '잘못된 신고 요청입니다. 신고 사유를 확인해주세요.')
+          showModal(
+            'error',
+            message || '잘못된 신고 요청입니다. 신고 사유를 확인해주세요.',
+          )
         } else if (status === 401 || status === 403) {
           showModal('error', '로그인이 필요하거나 권한이 없습니다.')
         } else if (status === 404) {
@@ -75,14 +81,26 @@ export const ReportModal: React.FC<ReportModalProps> = ({
         } else if (status === 409) {
           showModal('error', '이미 신고한 내용입니다.')
         } else if (status === 429) {
-          showModal('error', '신고 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.')
+          showModal(
+            'error',
+            '신고 요청이 너무 많습니다. 잠시 후 다시 시도해주세요.',
+          )
         } else if (status && status >= 500) {
-          showModal('error', '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+          showModal(
+            'error',
+            '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+          )
         } else {
-          showModal('error', message || '신고 접수에 실패했습니다. 다시 시도해주세요.')
+          showModal(
+            'error',
+            message || '신고 접수에 실패했습니다. 다시 시도해주세요.',
+          )
         }
       } else {
-        showModal('error', '네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.')
+        showModal(
+          'error',
+          '네트워크 오류가 발생했습니다. 인터넷 연결을 확인해주세요.',
+        )
       }
     } finally {
       setSubmitting(false)
@@ -99,7 +117,10 @@ export const ReportModal: React.FC<ReportModalProps> = ({
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center">
-        <div className="absolute inset-0 bg-black/50" onClick={handleClose}></div>
+        <div
+          className="absolute inset-0 bg-black/50"
+          onClick={handleClose}
+        ></div>
         <div className="relative z-10 bg-white rounded-2xl shadow-2xl p-6 max-w-md mx-4 w-full">
           {/* 닫기 버튼 */}
           <button

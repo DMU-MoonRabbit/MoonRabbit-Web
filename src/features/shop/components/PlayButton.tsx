@@ -1,4 +1,5 @@
 import React from 'react'
+
 import PlaySvg from '@/assets/images/play.svg'
 import StopSvg from '@/assets/images/stop.svg'
 
@@ -8,15 +9,15 @@ interface PlayButtonProps {
   size?: 'sm' | 'md' | 'lg'
 }
 
-export const PlayButton: React.FC<PlayButtonProps> = ({ 
-  isPlaying, 
-  onToggle, 
-  size = 'md' 
+export const PlayButton: React.FC<PlayButtonProps> = ({
+  isPlaying,
+  onToggle,
+  size = 'md',
 }) => {
   const sizeClasses = {
     sm: 'w-8 h-8',
     md: 'w-11 h-11',
-    lg: 'w-14 h-14'
+    lg: 'w-14 h-14',
   }
 
   return (

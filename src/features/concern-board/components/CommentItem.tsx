@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from 'react'
-import { Comment } from '../stores/useCommentStore'
-import { useCommentStore } from '../stores/useCommentStore'
-import { CommentInput } from './CommentInput'
-import { useAuthStore } from '@/features/auth/stores/useAuthStore'
-import { usePostAuthorItems } from '@/features/mypage/hooks/usePostAuthorItems'
-import Like from '@/assets/images/likeThick.svg'
-import Liked from '@/assets/images/likedThick.svg'
-import useUserStore from '@/features/mypage/stores/useUserStore'
 import axios from 'axios'
+import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
 import { ENDPOINTS } from '@/api/endpoints'
+import Liked from '@/assets/images/likedThick.svg'
+import Like from '@/assets/images/likeThick.svg'
 import MiniModal from '@/common/components/MiniModal'
 import ReportModal from '@/common/components/ReportModal'
 import { ReportCreateRequest } from '@/features/admin/types/report'
+import { useAuthStore } from '@/features/auth/stores/useAuthStore'
+import { usePostAuthorItems } from '@/features/mypage/hooks/usePostAuthorItems'
 import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
-import { useNavigate } from 'react-router-dom'
+import useUserStore from '@/features/mypage/stores/useUserStore'
+
+import { Comment, useCommentStore } from '../stores/useCommentStore'
+
+import { CommentInput } from './CommentInput'
 
 interface CommentItemProps {
   comment: Comment
@@ -24,11 +26,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   comment,
   depth = 0,
 }) => {
-  const {
-    replyTargetId,
-    setReplyTargetId,
-    deleteComment,
-  } = useCommentStore()
+  const { replyTargetId, setReplyTargetId, deleteComment } = useCommentStore()
   const { userId, setUserId } = useUserStore()
   const { isLoggedIn } = useAuthStore()
   const showReplyInput = replyTargetId === comment.id
@@ -38,19 +36,20 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   // 댓글 좋아요 상태 로컬 관리
   const [commentLikeState, setCommentLikeState] = useState({
     likedByMe: comment.likedByMe ?? comment.like ?? false,
-    likeCount: comment.likeCount
+    likeCount: comment.likeCount,
   })
 
   // comment가 변경되면 좋아요 상태도 업데이트
   useEffect(() => {
     setCommentLikeState({
       likedByMe: comment.likedByMe ?? comment.like ?? false,
-      likeCount: comment.likeCount
+      likeCount: comment.likeCount,
     })
   }, [comment.id, comment.likedByMe, comment.like, comment.likeCount])
 
   // API 데이터에서 장착 아이템 정보를 받아오거나, 본인 댓글이면 현재 장착 아이템 사용
-  const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } = usePostAuthorItems(comment.userId)
+  const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } =
+    usePostAuthorItems(comment.userId)
   const borderImageUrl = comment.borderImageUrl || ownBorderUrl
   const nicknameColor = comment.nicknameColor || ownNicknameColor
 
@@ -61,7 +60,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   }>({
     isOpen: false,
     type: 'success',
-    message: ''
+    message: '',
   })
 
   const [reportModalOpen, setReportModalOpen] = useState(false)
@@ -71,7 +70,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   }
 
   const closeModal = () => {
-    setModalState(prev => ({ ...prev, isOpen: false }))
+    setModalState((prev) => ({ ...prev, isOpen: false }))
   }
 
   const handleDelete = async () => {
@@ -90,17 +89,13 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       throw new Error('로그인 후 신고할 수 있습니다.')
     }
 
-    const response = await axios.post(
-      ENDPOINTS.REPORT_CREATE,
-      reportData,
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true
-      }
-    )
+    const response = await axios.post(ENDPOINTS.REPORT_CREATE, reportData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json',
+      },
+      withCredentials: true,
+    })
 
     return response.data
   }
@@ -116,7 +111,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     try {
       // userProfile에서 userId 가져오기
       let currentUserId = userProfile?.id
-      
+
       // 프로필이 로드되지 않았으면 먼저 로드
       if (!currentUserId) {
         await fetchUserProfile()
@@ -138,10 +133,10 @@ export const CommentItem: React.FC<CommentItemProps> = ({
           ENDPOINTS.ANSWER_LIKE(comment.id, currentUserId),
           {
             headers: {
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
             },
-            withCredentials: true
-          }
+            withCredentials: true,
+          },
         )
       } else {
         // 좋아요 추가
@@ -150,10 +145,10 @@ export const CommentItem: React.FC<CommentItemProps> = ({
           {},
           {
             headers: {
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
             },
-            withCredentials: true
-          }
+            withCredentials: true,
+          },
         )
       }
 
@@ -161,30 +156,31 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       if (response.data) {
         const updatedComment = response.data
         const newLikeStatus = updatedComment.likedByMe ?? !isCurrentlyLiked
-        const newLikeCount = updatedComment.likeCount ?? commentLikeState.likeCount
+        const newLikeCount =
+          updatedComment.likeCount ?? commentLikeState.likeCount
 
         // 로컬 상태 업데이트
         setCommentLikeState({
           likedByMe: newLikeStatus,
-          likeCount: newLikeCount
+          likeCount: newLikeCount,
         })
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
         const status = error.response?.status
         const errorData = error.response?.data
-        
+
         if (status === 400) {
           const serverMessage = errorData?.message || errorData?.error
-          
+
           // "이미 좋아요를 눌렀습니다" 에러 처리
           if (serverMessage?.includes('이미 좋아요')) {
             // 클라이언트 상태를 서버와 동기화
             setCommentLikeState({
               likedByMe: true,
-              likeCount: commentLikeState.likeCount + 1
+              likeCount: commentLikeState.likeCount + 1,
             })
-            
+
             showModal('error', '이미 좋아요를 눌렀습니다.')
           } else {
             showModal('error', serverMessage || '잘못된 요청입니다.')
@@ -193,7 +189,11 @@ export const CommentItem: React.FC<CommentItemProps> = ({
           showModal('error', '로그인이 필요합니다.')
         } else if (status === 500) {
           const serverMessage = errorData?.message || errorData?.error
-          showModal('error', serverMessage || '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+          showModal(
+            'error',
+            serverMessage ||
+              '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+          )
         } else {
           showModal('error', '좋아요 처리에 실패했습니다.')
         }
@@ -202,24 +202,21 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   }
 
   useEffect(() => {
-    if( isLoggedIn ) {
+    if (isLoggedIn) {
       const token = localStorage.getItem('accessToken')
       const getUserId = async () => {
-      try {
-        const response = await axios.get(
-          ENDPOINTS.COMMENT_LIST(comment.id),
-          {
+        try {
+          const response = await axios.get(ENDPOINTS.COMMENT_LIST(comment.id), {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
-        )
-        setUserId(response.data.id)
-      } catch (error) {
-        // 에러 처리
+          })
+          setUserId(response.data.id)
+        } catch {
+          // 에러 처리
+        }
       }
-    }
-    getUserId()
+      getUserId()
     }
   }, [comment.id, isLoggedIn, setUserId])
 
@@ -228,7 +225,10 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       <div className="mt-12">
         <div className="flex items-center">
           {/* 프로필 이미지 + 테두리 */}
-          <div className="relative w-[30px] h-[30px] md:w-[50px] md:h-[50px] mr-[8px]" style={{ aspectRatio: '1 / 1' }}>
+          <div
+            className="relative w-[30px] h-[30px] md:w-[50px] md:h-[50px] mr-[8px]"
+            style={{ aspectRatio: '1 / 1' }}
+          >
             <img
               src={comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
               className="absolute inset-0 w-full h-full rounded-full object-cover"
@@ -248,7 +248,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               />
             )}
           </div>
-          <p 
+          <p
             className="text:[16px] md:text-[18px]"
             style={nicknameColor ? { color: nicknameColor } : {}}
           >
@@ -266,7 +266,9 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             <div
               className="mr-4 cursor-pointer text-[14px] md:text-[16px]"
               onClick={() =>
-                setReplyTargetId(replyTargetId === comment.id ? null : comment.id)
+                setReplyTargetId(
+                  replyTargetId === comment.id ? null : comment.id,
+                )
               }
             >
               {replyTargetId === comment.id ? '닫기' : '답글쓰기'}
