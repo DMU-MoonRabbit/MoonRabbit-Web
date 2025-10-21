@@ -30,7 +30,6 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
   backgroundImage,
   onClick,
   borderImageUrl,
-  nicknameColor,
 }) => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'

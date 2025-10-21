@@ -25,7 +25,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   depth = 0,
 }) => {
   const {
-    toggleCommentLike,
     replyTargetId,
     setReplyTargetId,
     deleteComment,

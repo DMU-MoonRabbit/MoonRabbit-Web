@@ -87,7 +87,7 @@ const MypageProfile: React.FC<MypageProfileProps> = memo(({ userId, isOwnPage })
     isMobile ? "top-[2vw] left-3" : "-bottom-1/3 left-1/30"
   ), [isMobile])
 
-  const profileImageClass = useMemo(() => clsx("object-cover rounded-full",
+  useMemo(() => clsx("object-cover rounded-full",
     isMobile ? "w-[60px]" : "w-1/8 h-full"
   ), [isMobile])
 
@@ -152,9 +152,9 @@ const MypageProfile: React.FC<MypageProfileProps> = memo(({ userId, isOwnPage })
                        alt="포인트" 
                        className={isMobile ? "w-11 h-6" : "w-16 h-8"}
                        loading="lazy"
-                       onError={(e) => {
-                         console.error('포인트 이미지 로드 실패')
-                       }}
+                       onError={() => {
+                        console.error('포인트 이미지 로드 실패')
+                      }}
                      />
                      <span className={clsx(
                        "absolute ml-5 inset-0 flex items-center justify-center font-mainFont text-darkWalnut font-bold",

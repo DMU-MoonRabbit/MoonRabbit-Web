@@ -5,10 +5,10 @@ interface ManageUsersState {
   // 데이터 상태
   pageData: AdminUserResponse | null
   loading: boolean
-  filteredUsers: any[] // 필터링된 전체 사용자 목록 (클라이언트 사이드 페이지네이션용)
+  filteredUsers: unknown[] // 필터링된 전체 사용자 목록 (클라이언트 사이드 페이지네이션용)
   setPageData: (data: AdminUserResponse | null) => void
   setLoading: (loading: boolean) => void
-  setFilteredUsers: (users: any[]) => void
+  setFilteredUsers: (users: unknown[]) => void
 
   // 포인트/신뢰도 수정 모달
   editModalState: {

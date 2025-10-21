@@ -7,6 +7,7 @@ import { useManageBoardAPI } from '@/features/concern-board/hooks/useManageBoard
 import { ReportedBoard } from './ReportedBoard'
 import { BoardPostsTable } from './BoardPostsTable'
 import { BoardEditModal } from './BoardEditModal'
+import { BoardPost } from '@/features/concern-board/types/board'
 import clsx from 'clsx'
 import { BoardUpdateRequest } from '../types/admin'
 
@@ -78,7 +79,7 @@ export const ManageBoard = () => {
         
         setBoardData({
           ...boardData!,
-          content: filteredBoards.slice(start, end),
+          content: filteredBoards.slice(start, end) as BoardPost[],
           number: newPage,
           numberOfElements: Math.min(pageSize, totalElements - start),
           first: newPage === 0,
@@ -103,11 +104,12 @@ export const ManageBoard = () => {
   }
 
   // 게시글 수정 모달 열기
-  const handleOpenEditModal = (boardId: number, boardData: any) => {
+  const handleOpenEditModal = (boardId: number, boardData: unknown) => {
+    const data = boardData as { title: string; content: string; category: string }
     openEditModal(boardId, {
-      title: boardData.title,
-      content: boardData.content,
-      category: boardData.category,
+      title: data.title,
+      content: data.content,
+      category: data.category,
       anonymous: false, // 기본값
     })
   }
@@ -128,7 +130,7 @@ export const ManageBoard = () => {
       }
       closeEditModal()
       
-    } catch (error) {
+    } catch {
       alert('게시글 수정에 실패했습니다.')
     }
   }
@@ -150,7 +152,7 @@ export const ManageBoard = () => {
         fetchBoardPosts(boardPostsPage)
       }
       
-    } catch (error) {
+    } catch {
       alert('게시글 삭제에 실패했습니다.')
     }
   }

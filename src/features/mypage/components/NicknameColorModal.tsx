@@ -12,13 +12,6 @@ interface NicknameColorModalProps {
   onClose: () => void
 }
 
-interface ColorItem {
-  name: string
-  colorValue: string  // 실제 적용될 색상값
-  gradientClass: string  // 미리보기용 그라데이션 클래스
-  textColorClass: string  // 텍스트 색상 클래스
-}
-
 const NicknameColorModal: React.FC<NicknameColorModalProps> = ({ isOpen, onClose }) => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'

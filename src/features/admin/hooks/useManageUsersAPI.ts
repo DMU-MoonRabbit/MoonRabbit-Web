@@ -1,12 +1,9 @@
-import { useEffect } from 'react'
 import { useManageUsersStore } from '../stores/useManageUsersStore'
-import { usePaginationStore } from '@/common/hooks/usePaginationStore'
 import { updateUserPoint, updateUserTrust } from '../stores/useAdminStore'
 import ENDPOINTS from '@/api/endpoints'
 import axios from 'axios'
 
 export const useManageUsersAPI = () => {
-  const { usersPage } = usePaginationStore()
   const { setPageData, setLoading, setFilteredUsers } = useManageUsersStore()
 
   // 회원 목록 조회
@@ -68,7 +65,7 @@ export const useManageUsersAPI = () => {
       })
       
       // 닉네임으로 필터링
-      const filteredContent = response.data.content.filter((user: any) => 
+      const filteredContent = response.data.content.filter((user: { nickname: string }) => 
         user.nickname.toLowerCase().includes(nickname.toLowerCase())
       )
       setFilteredUsers(filteredContent)

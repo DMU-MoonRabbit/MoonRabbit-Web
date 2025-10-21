@@ -11,11 +11,11 @@ interface ManageBoardState {
   boardData: BoardPageData | null
   reportedBoardsData: AdminReportsResponse | null
   reportedCommentsData: AdminReportsResponse | null
-  filteredBoards: any[] // 필터링된 전체 게시글 목록 (클라이언트 사이드 페이지네이션용)
+  filteredBoards: unknown[] // 필터링된 전체 게시글 목록 (클라이언트 사이드 페이지네이션용)
   setBoardData: (data: BoardPageData | null) => void
   setReportedBoardsData: (data: AdminReportsResponse | null) => void
   setReportedCommentsData: (data: AdminReportsResponse | null) => void
-  setFilteredBoards: (boards: any[]) => void
+  setFilteredBoards: (boards: unknown[]) => void
 
   // 로딩 상태
   loading: boolean
@@ -56,7 +56,7 @@ interface ManageBoardState {
   reset: () => void
 }
 
-export const useManageBoardStore = create<ManageBoardState>((set, get) => ({
+export const useManageBoardStore = create<ManageBoardState>((set) => ({
   // 탭 관리
   activeTab: 'posts',
   setActiveTab: (tab) => set({ activeTab: tab }),

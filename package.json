@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc --project ./config/tsconfig.json && vite build",
     "lint": "eslint --config ./config/eslint.config.js src",
+    "lint:fix": "eslint --config ./config/eslint.config.js src --fix",
     "prettier": "prettier --write --config ./config/.prettierrc.json 'src/**/*.{js,jsx,ts,tsx,css,md,json}'",
     "preview": "vite preview"
   },

@@ -89,10 +89,11 @@ export const useShopStore = create<ShopStore>((set, get) => ({
 
       set({ purchaseLoading: false })
       return response.data
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('아이템 구매 실패:', error)
-      console.error('에러 응답:', error.response?.data)
-      const errorMessage = error.response?.data?.message || error.message || '아이템 구매에 실패했습니다.'
+      const err = error as { response?: { data?: { message?: string } }; message?: string }
+      console.error('에러 응답:', err.response?.data)
+      const errorMessage = err.response?.data?.message || err.message || '아이템 구매에 실패했습니다.'
       set({ 
         purchaseError: errorMessage,
         purchaseLoading: false 

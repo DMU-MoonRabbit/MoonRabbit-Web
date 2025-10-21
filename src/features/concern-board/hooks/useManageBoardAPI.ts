@@ -71,7 +71,7 @@ export const useManageBoardAPI = () => {
       )
       
       // 제목으로 필터링
-      const filteredContent = response.data.content.filter((board: any) => 
+      const filteredContent = response.data.content.filter((board: { title: string }) => 
         board.title.toLowerCase().includes(title.toLowerCase())
       )
       
@@ -209,7 +209,7 @@ export const useManageBoardAPI = () => {
   }
 
   // 게시글 수정
-  const updateBoard = async (boardId: number, updateData: any) => {
+  const updateBoard = async (boardId: number, updateData: unknown) => {
     try {
       const token = localStorage.getItem('accessToken')
       

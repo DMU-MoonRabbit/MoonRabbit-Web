@@ -10,7 +10,7 @@ interface BoardPostsTableProps {
   loading: boolean
   currentPage: number
   onPageChange: (page: number) => void
-  onEdit: (boardId: number, boardData: any) => void
+  onEdit: (boardId: number, boardData: unknown) => void
   onDelete: (boardId: number) => void
 }
 

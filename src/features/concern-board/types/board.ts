@@ -1,4 +1,4 @@
-interface BoardPost {
+export interface BoardPost {
   boardId: number
   userId: number
   title: string
@@ -40,8 +40,8 @@ export interface BoardPageData {
   size: number
   content: BoardPost[]
   number: number
-  sort: any[]
+  sort: unknown[]
   numberOfElements: number
-  pageable: any
+  pageable: unknown
   empty: boolean
 }

@@ -76,12 +76,13 @@ export const useShopPurchase = () => {
         title: '구매 완료',
         message: result.message || '아이템을 구매했습니다!',
       })
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const err = error as { message?: string }
       setMiniModal({
         isOpen: true,
         type: 'error',
         title: '구매 실패',
-        message: error.message || '구매에 실패했습니다.',
+        message: err.message || '구매에 실패했습니다.',
       })
     } finally {
       setPurchasingItemId(null)

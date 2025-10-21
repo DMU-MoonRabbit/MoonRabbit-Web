@@ -16,7 +16,7 @@ export const ManageDailyQuestion = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
 
   // 오늘의질문 조회
-  const fetchDailyQuestion = async (page = 0) => {
+  const fetchDailyQuestion = async () => {
     setLoading(true)
     try {
       const response = await axios.get(ENDPOINTS.DAILY_QUESTION)
@@ -32,13 +32,13 @@ export const ManageDailyQuestion = () => {
   // 오늘의질문 생성 성공 후 콜백
   const handleCreateSuccess = () => {
     setIsCreateModalOpen(false)
-    fetchDailyQuestion(0)
+    fetchDailyQuestion()
     setCurrentPage(0)
   }
 
   // 초기 데이터 로딩
   useEffect(() => {
-    fetchDailyQuestion(currentPage)
+    fetchDailyQuestion()
   }, [])
 
   return (

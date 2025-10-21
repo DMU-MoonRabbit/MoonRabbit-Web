@@ -5,6 +5,7 @@ import { useAdminStore } from "../stores/useAdminStore"
 import { useManageUsersAPI } from "../hooks/useManageUsersAPI"
 import { ManagePointModal } from "./ManagePointModal"
 import { UsersTable } from "./UsersTable"
+import { User } from "../types/admin"
 
 export const ManageUsers = () => {
   const {
@@ -19,7 +20,7 @@ export const ManageUsers = () => {
   } = useManageUsersStore()
   
   const { usersPage, setUsersPage } = usePaginationStore()
-  const { searchTerm, isSearching, clearSearch } = useAdminStore()
+  const { searchTerm, isSearching } = useAdminStore()
   const { fetchUsers, searchUsers, updatePoint, updateTrust } = useManageUsersAPI()
 
   // 초기 데이터 로딩
@@ -94,7 +95,7 @@ export const ManageUsers = () => {
         
         setPageData({
           ...pageData!,
-          content: filteredUsers.slice(start, end),
+          content: filteredUsers.slice(start, end) as User[],
           number: newPage,
           numberOfElements: Math.min(pageSize, totalElements - start),
           first: newPage === 0,
