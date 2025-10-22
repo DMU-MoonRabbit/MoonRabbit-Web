@@ -73,7 +73,7 @@ export const ENDPOINTS = {
   ASSISTANT_ANSWER: (boardId: number, category: string) =>
     `${BASE_URL}/board/${boardId}/assistant/${category}`,
 
-  REPORT_CREATE: `https://moonrabbit-api.kro.kr/reports/create`,
+  REPORT_CREATE: `https://moonrabbit-api.kro.kr/reports/api/create`,
   REPORT_LIST_BY_TARGET: (
     targetId: number,
     type: 'BOARD' | 'ANSWER',
