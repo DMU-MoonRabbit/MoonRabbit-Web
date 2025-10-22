@@ -58,10 +58,10 @@ const MypageProfile: React.FC<MypageProfileProps> = memo(
       }
     }, [isOwnPage, userId, userProfile, fetchUserInventory])
 
-    // 장착된 아이템 가져오기
-    const equippedBorder = getEquippedBorder()
-    const equippedBanner = getEquippedBanner()
-    const equippedNicknameColor = getEquippedNicknameColor()
+    // 장착된 아이템 가져오기 - 타유저 페이지면 타유저의 인벤토리에서 가져오기
+    const equippedBorder = getEquippedBorder(!isOwnPage)
+    const equippedBanner = getEquippedBanner(!isOwnPage)
+    const equippedNicknameColor = getEquippedNicknameColor(!isOwnPage)
 
     const handleLogout = useCallback(() => {
       localStorage.removeItem('accessToken')

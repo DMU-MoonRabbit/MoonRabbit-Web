@@ -11,6 +11,7 @@ interface UserProfileStore {
   userProfile: UserProfile | null
   otherUserProfile: UserProfile | null
   userInventory: UserInventory | null
+  otherUserInventory: UserInventory | null // 타유저 인벤토리
   likedBoards: LikedBoard[]
   loading: boolean
   error: string | null
@@ -28,9 +29,9 @@ interface UserProfileStore {
   clearOtherUserProfile: () => void
 
   // Selectors
-  getEquippedBorder: () => UserItem | null
-  getEquippedBanner: () => UserItem | null
-  getEquippedNicknameColor: () => string | null
+  getEquippedBorder: (isOtherUser?: boolean) => UserItem | null
+  getEquippedBanner: (isOtherUser?: boolean) => UserItem | null
+  getEquippedNicknameColor: (isOtherUser?: boolean) => string | null
 }
 
 export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
@@ -38,6 +39,7 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
   userProfile: null,
   otherUserProfile: null,
   userInventory: null,
+  otherUserInventory: null, // 타유저 인벤토리 초기화
   likedBoards: [],
   loading: false,
   error: null,
@@ -136,10 +138,20 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
         totalItems: response.data.totalElements || 0,
       }
 
-      set({
-        userInventory: inventoryData,
-        loading: false,
-      })
+      const { userProfile } = get()
+      
+      // 본인 인벤토리인지 타유저 인벤토리인지 구분
+      if (userProfile && userProfile.id === userId) {
+        set({
+          userInventory: inventoryData,
+          loading: false,
+        })
+      } else {
+        set({
+          otherUserInventory: inventoryData,
+          loading: false,
+        })
+      }
     } catch (error) {
       set({
         error:
@@ -267,34 +279,38 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
   resetProfileLoadState: () => set({ isProfileLoaded: false }),
 
   // 다른 사용자 프로필 클리어
-  clearOtherUserProfile: () => set({ otherUserProfile: null }),
+  clearOtherUserProfile: () =>
+    set({ otherUserProfile: null, otherUserInventory: null }),
 
   // Selectors - 장착된 아이템 조회
-  getEquippedBorder: () => {
-    const { userInventory } = get()
-    if (!userInventory?.items) return null
+  getEquippedBorder: (isOtherUser = false) => {
+    const { userInventory, otherUserInventory } = get()
+    const inventory = isOtherUser ? otherUserInventory : userInventory
+    if (!inventory?.items) return null
     return (
-      userInventory.items.find(
+      inventory.items.find(
         (item) => item.type === 'BORDER' && item.equipped,
       ) || null
     )
   },
 
-  getEquippedBanner: () => {
-    const { userInventory } = get()
-    if (!userInventory?.items) return null
+  getEquippedBanner: (isOtherUser = false) => {
+    const { userInventory, otherUserInventory } = get()
+    const inventory = isOtherUser ? otherUserInventory : userInventory
+    if (!inventory?.items) return null
     return (
-      userInventory.items.find(
+      inventory.items.find(
         (item) => item.type === 'BANNER' && item.equipped,
       ) || null
     )
   },
 
-  getEquippedNicknameColor: () => {
-    const { userInventory } = get()
-    if (!userInventory?.items) return null
+  getEquippedNicknameColor: (isOtherUser = false) => {
+    const { userInventory, otherUserInventory } = get()
+    const inventory = isOtherUser ? otherUserInventory : userInventory
+    if (!inventory?.items) return null
 
-    const item = userInventory.items.find(
+    const item = inventory.items.find(
       (item) =>
         (item.type === 'NICKNAME_COLOR' || item.type === 'NAME_COLOR') &&
         item.equipped,

@@ -1,14 +1,11 @@
 import clsx from 'clsx'
-import React, { memo, useMemo, useEffect, useState } from 'react'
+import React, { memo, useMemo, useEffect } from 'react'
 
 import NightSkyBg from '@/assets/images/NightSkyBackground.png'
-import CenteredPopup from '@/common/components/CenteredPopup'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 
 import { useMypageStore } from '../stores/useMypageStore'
 import { useUserProfileStore } from '../stores/useUserProfileStore'
-
-import MyBoardContents from './MyBoardContents'
 
 interface MypageCountSectionProps {
   isOwnPage: boolean
@@ -25,7 +22,6 @@ const MypageCountSection: React.FC<MypageCountSectionProps> = memo(
     } = useMypageStore()
 
     const { otherUserProfile, fetchUserProfileById } = useUserProfileStore()
-    const [showBoardContents, setShowBoardContents] = useState(false)
 
     useEffect(() => {
       if (isOwnPage) {
@@ -53,17 +49,6 @@ const MypageCountSection: React.FC<MypageCountSectionProps> = memo(
       }),
       [],
     )
-
-    const handleBoardCountClick = () => {
-      if (!isOwnPage && userId) {
-        fetchOtherUserConcerns(userId, 0)
-        setShowBoardContents(true)
-      }
-    }
-
-    const handleCloseModal = () => {
-      setShowBoardContents(false)
-    }
 
     return (
       <>
@@ -97,30 +82,13 @@ const MypageCountSection: React.FC<MypageCountSectionProps> = memo(
                   : `${otherUserProfile?.nickname || ''}의 밤하늘`}
               </p>
               <p
-                className={clsx(
-                  isMobile ? 'text-[28px]' : 'text-[4vw]',
-                  !isOwnPage &&
-                    'cursor-pointer hover:opacity-80 transition-opacity',
-                )}
-                onClick={handleBoardCountClick}
+                className={clsx(isMobile ? 'text-[28px]' : 'text-[4vw]')}
               >
                 {boardCount}
               </p>
             </div>
           </div>
         </div>
-
-        {/* 타유저 게시글 목록 모달 */}
-        {!isOwnPage && userId && (
-          <CenteredPopup
-            title="작성한 게시글"
-            isOpen={showBoardContents}
-            onClose={handleCloseModal}
-            widthClassName="w-[90vw] max-w-[1400px]"
-          >
-            <MyBoardContents userId={userId} isOwnPage={false} />
-          </CenteredPopup>
-        )}
       </>
     )
   },

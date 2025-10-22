@@ -27,6 +27,7 @@ export interface Board {
   nickname: string
   profileImg: string
   equippedItems?: EquippedItem[] // API에서 제공되는 장착 아이템
+  anonymous?: boolean // 익명 게시글 여부
 }
 
 export interface Concern {
@@ -44,6 +45,7 @@ export interface Concern {
   backgroundImage: string
   borderImageUrl?: string // 작성자의 장착 테두리
   nicknameColor?: string // 작성자의 장착 닉네임 색상
+  isAnonymous?: boolean // 익명 게시글 여부
 }
 
 export interface PageInfo {
@@ -71,6 +73,7 @@ export interface ConcernArticle {
   equippedItems?: EquippedItem[] // API에서 제공되는 장착 아이템
   borderImageUrl?: string // 작성자의 장착 테두리
   nicknameColor?: string // 작성자의 장착 닉네임 색상
+  isAnonymous?: boolean // 익명 게시글 여부
 }
 
 interface UnifiedConcernStore {
@@ -132,14 +135,18 @@ const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
 }
 
 export const transformBoardToConcern = (board: Board): Concern => {
-  const { borderImageUrl, nicknameColor } = parseEquippedItems(
-    board.equippedItems,
-  )
+  // 익명 게시글일 경우 장착 아이템을 표시하지 않음
+  const { borderImageUrl, nicknameColor } = board.anonymous
+    ? { borderImageUrl: undefined, nicknameColor: undefined }
+    : parseEquippedItems(board.equippedItems)
 
   return {
     id: board.boardId,
     userId: board.userId, // userId 포함
-    profileImage: board.profileImg || 'images/MoonRabbitSleep2.png',
+    profileImage:
+      board.anonymous || !board.profileImg
+        ? '/images/MoonRabbitSleep2.png'
+        : board.profileImg,
     title: board.title,
     category: board.category,
     content: board.content,
@@ -157,8 +164,9 @@ export const transformBoardToConcern = (board: Board): Concern => {
       .toISOString()
       .split('T')[0],
     backgroundImage: '/images/ConcernBackground.png',
-    borderImageUrl, // API에서 받은 테두리
-    nicknameColor, // API에서 받은 닉네임 색상
+    borderImageUrl, // 익명이면 undefined
+    nicknameColor, // 익명이면 undefined
+    isAnonymous: board.anonymous, // 익명 여부 추가
   }
 }
 

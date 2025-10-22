@@ -10,6 +10,7 @@ export interface BoardPost {
   selectedAnswerId: number
   likeCount: number
   equippedItems: EquippedItem[]
+  anonymous?: boolean
 }
 
 interface Answer {

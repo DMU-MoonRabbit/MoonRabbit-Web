@@ -18,6 +18,7 @@ interface ConcernCardProps {
   onClick?: (id: number) => void
   borderImageUrl?: string // 작성자의 장착 테두리 (API 또는 본인)
   nicknameColor?: string // 작성자의 장착 닉네임 색상 (API 또는 본인)
+  isAnonymous?: boolean // 익명 게시글 여부
 }
 
 const ConcernCard: React.FC<ConcernCardProps> = ({
@@ -31,6 +32,7 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
   backgroundImage,
   onClick,
   borderImageUrl,
+  isAnonymous,
 }) => {
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
@@ -69,7 +71,11 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
             style={{ aspectRatio: '1 / 1' }}
           >
             <img
-              src={profileImage?.trim() || '/images/MoonRabbitSleep2.png'}
+              src={
+                isAnonymous
+                  ? '/images/MoonRabbitSleep2.png'
+                  : profileImage?.trim() || '/images/MoonRabbitSleep2.png'
+              }
               alt="Profile"
               className="absolute inset-0 w-full h-full object-cover rounded-full"
               style={{ aspectRatio: '1 / 1' }}
@@ -78,8 +84,8 @@ const ConcernCard: React.FC<ConcernCardProps> = ({
                 e.currentTarget.src = '/images/MoonRabbitSleep2.png'
               }}
             />
-            {/* 장착된 테두리 이미지 */}
-            {borderImageUrl && (
+            {/* 장착된 테두리 이미지 - 익명이 아닐 때만 표시 */}
+            {!isAnonymous && borderImageUrl && (
               <img
                 src={borderImageUrl}
                 alt="테두리"
