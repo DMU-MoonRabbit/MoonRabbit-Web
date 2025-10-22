@@ -239,7 +239,7 @@ export const SignupForm = () => {
     <>
       <div
         className={clsx(
-          'flex flex-col justify-center p-15 bg-white',
+          'flex flex-col justify-center p-6 bg-white',
           isMobile ? 'w-full' : 'w-4/7',
         )}
       >
