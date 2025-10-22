@@ -16,6 +16,7 @@ interface AuthState {
   setPassword: (password: string) => void
   setIsLoggedIn: (isLoggedIn: boolean) => void
   setUser: (user: User | null) => void
+  logout: () => void
 }
 export const useAuthStore = create<AuthState>((set) => ({
   email: '',
@@ -26,6 +27,18 @@ export const useAuthStore = create<AuthState>((set) => ({
   setPassword: (password) => set({ password }),
   setIsLoggedIn: (isLoggedIn) => set({ isLoggedIn }),
   setUser: (user) => set({ user }),
+  logout: () => {
+    // 로컬 스토리지 정리
+    localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
+    // 상태 초기화
+    set({
+      email: '',
+      password: '',
+      isLoggedIn: false,
+      user: null,
+    })
+  },
 }))
 
 interface AuthFormState {

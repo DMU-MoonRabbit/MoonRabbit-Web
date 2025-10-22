@@ -70,6 +70,12 @@ const MypageProfile: React.FC<MypageProfileProps> = memo(
       navigate('/')
     }, [navigate, setIsLoggedIn])
 
+    const handleNavigateToSettings = useCallback(() => {
+      if (isOwnPage) {
+        navigate('/settings')
+      }
+    }, [isOwnPage, navigate])
+
     const res = useResponsiveStore((state) => state.res)
     const isMobile = res === 'mo'
 
@@ -141,8 +147,11 @@ const MypageProfile: React.FC<MypageProfileProps> = memo(
                 className={clsx(
                   'relative flex-shrink-0',
                   isMobile ? 'w-[60px] h-[60px]' : 'w-[120px] h-[120px]',
+                  isOwnPage && 'cursor-pointer hover:opacity-80 transition-opacity',
                 )}
                 style={{ aspectRatio: '1 / 1' }}
+                onClick={handleNavigateToSettings}
+                title={isOwnPage ? '설정 페이지로 이동' : undefined}
               >
                 <img
                   src={
@@ -171,7 +180,15 @@ const MypageProfile: React.FC<MypageProfileProps> = memo(
               <div className="flex flex-col justify-center items-start ml-5">
                 {/* 닉네임 + 포인트 */}
                 <div className="flex items-center gap-2 mb-1">
-                  <p className={nameTextClass} style={nicknameStyle}>
+                  <p
+                    className={clsx(
+                      nameTextClass,
+                      isOwnPage && 'cursor-pointer hover:opacity-70 transition-opacity',
+                    )}
+                    style={nicknameStyle}
+                    onClick={handleNavigateToSettings}
+                    title={isOwnPage ? '설정 페이지로 이동' : undefined}
+                  >
                     {loading
                       ? '로딩 중...'
                       : displayProfile?.nickname || '사용자'}
