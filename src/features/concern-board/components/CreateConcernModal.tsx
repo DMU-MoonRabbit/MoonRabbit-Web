@@ -66,6 +66,10 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
       setError('제목, 내용, 카테고리를 모두 입력해주세요.')
       return
     }
+    if (selectedCategory === '전체') {
+      setError('게시글 작성 시 구체적인 카테고리를 선택해주세요.')
+      return
+    }
     if (content.trim().length < 20) {
       setError('고민 내용은 최소 20자 이상이어야 합니다.')
       return
