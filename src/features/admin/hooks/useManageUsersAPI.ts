@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { useCallback } from 'react'
 
 import ENDPOINTS from '@/api/endpoints'
 
@@ -9,7 +10,7 @@ export const useManageUsersAPI = () => {
   const { setPageData, setLoading, setFilteredUsers } = useManageUsersStore()
 
   // 회원 목록 조회
-  const fetchUsers = async (page: number) => {
+  const fetchUsers = useCallback(async (page: number) => {
     setLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
@@ -47,10 +48,10 @@ export const useManageUsersAPI = () => {
       })
       setLoading(false)
     }
-  }
+  }, [setLoading, setPageData])
 
   // 회원 검색
-  const searchUsers = async (nickname: string) => {
+  const searchUsers = useCallback(async (nickname: string) => {
     setLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
@@ -112,19 +113,19 @@ export const useManageUsersAPI = () => {
       })
       setLoading(false)
     }
-  }
+  }, [setLoading, setPageData, setFilteredUsers])
 
   // 포인트 수정
-  const updatePoint = async (userId: number, newPoint: number) => {
+  const updatePoint = useCallback(async (userId: number, newPoint: number) => {
     await updateUserPoint(userId, newPoint)
     return true
-  }
+  }, [])
 
   // 신뢰도 수정
-  const updateTrust = async (userId: number, newTrust: number) => {
+  const updateTrust = useCallback(async (userId: number, newTrust: number) => {
     await updateUserTrust(userId, newTrust)
     return true
-  }
+  }, [])
 
   return {
     fetchUsers,

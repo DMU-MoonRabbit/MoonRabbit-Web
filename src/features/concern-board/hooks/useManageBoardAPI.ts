@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
 
 import ENDPOINTS from '@/api/endpoints'
 import { usePaginationStore } from '@/common/hooks/usePaginationStore'
@@ -23,7 +23,7 @@ export const useManageBoardAPI = () => {
   const reportsPageSize = 10
 
   // 게시글 목록 조회
-  const fetchBoardPosts = async (page: number) => {
+  const fetchBoardPosts = useCallback(async (page: number) => {
     setLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
@@ -42,10 +42,10 @@ export const useManageBoardAPI = () => {
       setBoardData(null)
       setLoading(false)
     }
-  }
+  }, [setLoading, setBoardData, pageSize])
 
   // 게시글 검색 (클라이언트 사이드 필터링)
-  const searchBoardPosts = async (title: string) => {
+  const searchBoardPosts = useCallback(async (title: string) => {
     setLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
@@ -89,10 +89,10 @@ export const useManageBoardAPI = () => {
       setBoardData(null)
       setLoading(false)
     }
-  }
+  }, [setLoading, setBoardData, setFilteredBoards, pageSize])
 
   // 신고된 게시글 목록 조회
-  const fetchReportedBoards = async (page: number) => {
+  const fetchReportedBoards = useCallback(async (page: number) => {
     setReportsLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
@@ -132,10 +132,10 @@ export const useManageBoardAPI = () => {
       })
       setReportsLoading(false)
     }
-  }
+  }, [setReportsLoading, setReportedBoardsData, reportsPageSize])
 
   // 신고된 댓글 목록 조회
-  const fetchReportedComments = async (page: number) => {
+  const fetchReportedComments = useCallback(async (page: number) => {
     setReportsLoading(true)
     try {
       const token = localStorage.getItem('accessToken')
@@ -175,10 +175,10 @@ export const useManageBoardAPI = () => {
       })
       setReportsLoading(false)
     }
-  }
+  }, [setReportsLoading, setReportedCommentsData, reportsPageSize])
 
   // 게시글 수정
-  const updateBoard = async (boardId: number, updateData: unknown) => {
+  const updateBoard = useCallback(async (boardId: number, updateData: unknown) => {
     const token = localStorage.getItem('accessToken')
 
     await axios.put(ENDPOINTS.ADMIN_BOARD_UPDATE(boardId), updateData, {
@@ -190,10 +190,10 @@ export const useManageBoardAPI = () => {
     })
 
     return true
-  }
+  }, [])
 
   // 게시글 삭제
-  const deleteBoard = async (boardId: number) => {
+  const deleteBoard = useCallback(async (boardId: number) => {
     const token = localStorage.getItem('accessToken')
 
     await axios.delete(ENDPOINTS.ADMIN_BOARD_DELETE(boardId), {
@@ -205,27 +205,10 @@ export const useManageBoardAPI = () => {
     })
 
     return true
-  }
-
-  // 자동 데이터 로딩 (ManageBoard 컴포넌트에서 처리)
-  useEffect(() => {
-    // ManageBoard 컴포넌트에서 검색 로직을 처리하므로 여기서는 제거
-  }, [boardPostsPage])
-
-  useEffect(() => {
-    if (activeTab === 'reportedBoards') {
-      fetchReportedBoards(reportedBoardsPage)
-    }
-  }, [activeTab, reportedBoardsPage, fetchReportedBoards])
-
-  useEffect(() => {
-    if (activeTab === 'reportedComments') {
-      fetchReportedComments(reportedCommentsPage)
-    }
-  }, [activeTab, reportedCommentsPage, fetchReportedComments])
+  }, [])
 
   // 신고 생성
-  const createReport = async (reportData: {
+  const createReport = useCallback(async (reportData: {
     reportTargetType: 'BOARD' | 'ANSWER'
     targetId: number
     reason: string
@@ -241,7 +224,21 @@ export const useManageBoardAPI = () => {
     })
 
     return true
-  }
+  }, [])
+
+  // 신고된 게시글 자동 로딩
+  useEffect(() => {
+    if (activeTab === 'reportedBoards') {
+      fetchReportedBoards(reportedBoardsPage)
+    }
+  }, [activeTab, reportedBoardsPage, fetchReportedBoards])
+
+  // 신고된 댓글 자동 로딩
+  useEffect(() => {
+    if (activeTab === 'reportedComments') {
+      fetchReportedComments(reportedCommentsPage)
+    }
+  }, [activeTab, reportedCommentsPage, fetchReportedComments])
 
   return {
     fetchBoardPosts,
