@@ -8,6 +8,8 @@ import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import { useShopPurchase } from '@/features/shop/hooks/useShopPurchase'
 import { useShopStore } from '@/features/shop/stores/useShopStore'
 
+import { useUserProfileStore } from '../stores/useUserProfileStore'
+
 interface NicknameColorModalProps {
   isOpen: boolean
   onClose: () => void
@@ -23,10 +25,17 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({
 
   const { getItemsByType, loading } = useShopStore()
   const apiNicknameColorItems = getItemsByType('NAME_COLOR')
+  const { userInventory } = useUserProfileStore()
 
   // 공통 구매 로직 훅 사용
   const { purchasingItemId, miniModal, handlePurchaseClick, closeMiniModal } =
     useShopPurchase()
+
+  // 아이템이 이미 구매되었는지 확인하는 함수
+  const isItemPurchased = (itemId: number) => {
+    if (!userInventory?.items) return false
+    return userInventory.items.some((userItem) => userItem.itemId === itemId)
+  }
 
   // API 아이템과 프론트 색상 정의를 매칭
   const mergedColorItems = useMemo(() => {
@@ -175,15 +184,21 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({
                 {/* 구매 버튼 */}
                 <button
                   onClick={() => handlePurchaseClick(item.id, item.price)}
-                  disabled={purchasingItemId === item.id}
+                  disabled={
+                    purchasingItemId === item.id || isItemPurchased(item.id)
+                  }
                   className={clsx(
                     'px-6 py-2 rounded-full font-mainFont text-white transition-colors',
-                    purchasingItemId === item.id
+                    purchasingItemId === item.id || isItemPurchased(item.id)
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-mainColor hover:bg-opacity-80 cursor-pointer',
                   )}
                 >
-                  {purchasingItemId === item.id ? '구매 중...' : '구매하기'}
+                  {purchasingItemId === item.id
+                    ? '구매 중...'
+                    : isItemPurchased(item.id)
+                      ? '구매 완료'
+                      : '구매하기'}
                 </button>
               </div>
             ))
