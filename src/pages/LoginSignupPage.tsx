@@ -18,14 +18,14 @@ const LoginSignupPage: React.FC = () => {
   return (
     <div
       style={{ backgroundImage: `url('${MoonRabbitStarsDark}')` }}
-      className="w-full h-screen bg-mainBlack bg-repeat flex items-center justify-center"
+      className="w-full bg-mainBlack bg-repeat flex items-center justify-center"
     >
       <div
         className={clsx(
-          'flex w-full m-10',
+          'flex w-full',
           isMobile
-            ? ' items-center justify-center flex-col'
-            : 'max-w-[1200px] h-full max-h-[600px]',
+            ? 'items-center justify-center flex-col mx-4 py-7'
+            : 'max-w-[1200px] h-screen max-h-[600px] m-10',
         )}
       >
         <LogoPanel />
