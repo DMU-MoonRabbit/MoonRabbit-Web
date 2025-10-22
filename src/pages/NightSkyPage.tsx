@@ -34,6 +34,7 @@ const ConcernCardWithItems: React.FC<{
       onClick={onClick}
       borderImageUrl={concern.borderImageUrl || ownBorderUrl}
       nicknameColor={concern.nicknameColor || ownNicknameColor}
+      isAnonymous={concern.isAnonymous}
     />
   )
 }

@@ -263,10 +263,10 @@ export const ConcernContent: React.FC = () => {
 
           const data = response.data
 
-          // equippedItems 파싱
-          const { borderImageUrl, nicknameColor } = parseEquippedItems(
-            data.equippedItems,
-          )
+          // 익명 게시글일 경우 장착 아이템을 표시하지 않음
+          const { borderImageUrl, nicknameColor } = data.anonymous
+            ? { borderImageUrl: undefined, nicknameColor: undefined }
+            : parseEquippedItems(data.equippedItems)
 
           // 좋아요 상태 확인
           const isLiked = data.likedByMe ?? data.liked ?? false
@@ -275,7 +275,10 @@ export const ConcernContent: React.FC = () => {
             id: data.boardId, // API는 boardId를 사용
             userId: data.userId,
             title: data.title,
-            profileImg: data.profileImg || '/images/MoonRabbitSleep2.png',
+            profileImg:
+              data.anonymous || !data.profileImg
+                ? '/images/MoonRabbitSleep2.png'
+                : data.profileImg,
             nickname: data.nickname,
             content: data.content,
             createdAt: data.createdAt || new Date().toISOString(), // createdAt이 없으면 현재 시간
@@ -284,6 +287,7 @@ export const ConcernContent: React.FC = () => {
             equippedItems: data.equippedItems || [],
             borderImageUrl,
             nicknameColor,
+            isAnonymous: data.anonymous, // 익명 여부 추가
           }
           setConcern(concern)
         } catch {
@@ -308,11 +312,14 @@ export const ConcernContent: React.FC = () => {
     userId,
     borderImageUrl: apiBorderUrl,
     nicknameColor: apiNicknameColor,
+    isAnonymous,
   } = concern
 
-  // API 데이터 우선, 없으면 본인 장착 아이템 사용
-  const borderImageUrl = apiBorderUrl || ownBorderUrl
-  const nicknameColor = apiNicknameColor || ownNicknameColor
+  // 익명이 아닐 때만 API 데이터 우선, 없으면 본인 장착 아이템 사용
+  const borderImageUrl = isAnonymous ? undefined : apiBorderUrl || ownBorderUrl
+  const nicknameColor = isAnonymous
+    ? undefined
+    : apiNicknameColor || ownNicknameColor
 
   return (
     <>
@@ -344,18 +351,22 @@ export const ConcernContent: React.FC = () => {
               style={{ aspectRatio: '1 / 1' }}
             >
               <img
-                src={profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
+                src={
+                  isAnonymous
+                    ? '/images/MoonRabbitSleep2.png'
+                    : profileImg?.trim() || '/images/MoonRabbitSleep2.png'
+                }
                 alt="프로필이미지"
-                className="absolute inset-0 w-full h-full rounded-full object-cover"
+                className={`absolute inset-0 w-full h-full rounded-full object-cover ${!isAnonymous ? 'cursor-pointer' : ''}`}
                 style={{ aspectRatio: '1 / 1' }}
                 loading="lazy"
                 onError={(e) => {
                   e.currentTarget.src = '/images/MoonRabbitSleep2.png'
                 }}
-                onClick={() => navigate(`/mypage/${userId}`)}
+                onClick={() => !isAnonymous && navigate(`/mypage/${userId}`)}
               />
-              {/* 장착된 테두리 - 본인 게시글일 때만 표시 */}
-              {borderImageUrl && (
+              {/* 장착된 테두리 - 익명이 아닐 때만 표시 */}
+              {!isAnonymous && borderImageUrl && (
                 <img
                   src={borderImageUrl}
                   alt="프로필 테두리"
