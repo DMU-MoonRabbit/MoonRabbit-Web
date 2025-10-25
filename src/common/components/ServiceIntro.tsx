@@ -3,13 +3,13 @@ import React from 'react'
 const ServiceIntro: React.FC = () => {
   return (
     <section className="w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12">
-      <h2 className="text-xl sm:text-2xl md:text-3xl text-center text-mainColor font-mainFont mt-20 mb-6">
+      <h2 className="text-2xl md:text-4xl text-center text-mainColor font-mainFont mt-12 md:mt-30 mb-6">
         달토끼 서비스 소개
       </h2>
 
       <div
         className="
-          relative w-full mt-20
+          relative w-full mt-8 md:mt-16
           max-h-[720px]
           rounded-[20px] border-[3px] sm:border-[4px] md:border-[5px]
           border-solid border-mainColor
@@ -25,7 +25,7 @@ const ServiceIntro: React.FC = () => {
         "
       >
         {/* 텍스트 */}
-        <p className="font-gothicFont ml-10 leading-relaxed tracking-tight text-mainBlack text-sm sm:text-base md:text-lg lg:text-xl xl:text-3xl lg:text-left max-w-[720px] lg:max-w-[50%] lg:order-1">
+        <p className="font-gothicFont ml-0 xl:ml-10 leading-relaxed tracking-tight text-mainBlack text-sm sm:text-base md:text-lg lg:text-xl xl:text-3xl lg:text-left max-w-[720px] lg:max-w-[50%] lg:order-1">
           <span className="block text-mainColor">
             달토끼는 서로의 마음을 조용히 안아주는 고민 상담 커뮤니티예요.
           </span>
