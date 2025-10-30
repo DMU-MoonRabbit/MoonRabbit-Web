@@ -142,11 +142,14 @@ function buildCommentTree(flatComments: Comment[]): Comment[] {
       comment.equippedItems,
     )
 
+    const isSelected = (comment as any).selected ?? comment.isSelected ?? false
+
     commentMap[comment.id] = {
       ...comment,
       replies: [],
       borderImageUrl,
       nicknameColor,
+      isSelected,
     }
   })
 

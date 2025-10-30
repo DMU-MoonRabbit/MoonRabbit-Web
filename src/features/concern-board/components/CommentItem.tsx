@@ -50,7 +50,8 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       likedByMe: comment.likedByMe ?? comment.like ?? false,
       likeCount: comment.likeCount,
     })
-  }, [comment.id, comment.likedByMe, comment.like, comment.likeCount])
+    setIsSelected(comment.isSelected || false)
+  }, [comment.id, comment.likedByMe, comment.like, comment.likeCount, comment.isSelected])
 
   // API 데이터에서 장착 아이템 정보를 받아오거나, 본인 댓글이면 현재 장착 아이템 사용
   const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } =
@@ -70,6 +71,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   const [reportModalOpen, setReportModalOpen] = useState(false)
   const [isSelecting, setIsSelecting] = useState(false)
+  const [isSelected, setIsSelected] = useState(comment.isSelected || false)
 
   const showModal = (type: 'success' | 'error', message: string) => {
     setModalState({ isOpen: true, type, message })
@@ -96,6 +98,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     try {
       const success = await selectAnswer(boardId, comment.id)
       if (success) {
+        setIsSelected(true) // 채택 성공 시 로컬 상태 업데이트
         showModal('success', '댓글이 채택되었습니다!')
       } else {
         showModal('error', '채택에 실패했습니다. 다시 시도해주세요.')
@@ -256,19 +259,21 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   // 게시글 작성자인지 확인 (댓글 작성자가 아닌 게시글 작성자)
   const isBoardAuthor = boardAuthorId === userProfile?.id && userId !== comment.userId
-  const canSelect = isBoardAuthor && depth === 0 && !comment.isSelected
+  const canSelect = isBoardAuthor && depth === 0 && !isSelected
 
   return (
     <>
       <div
-        className={`mt-12 border-l-4 ${
-          comment.isSelected ? 'border-mainColor' : 'border-transparent'
-        } pl-4`}
+        className={`mt-12 ${
+          isSelected
+            ? 'border-l-4 border-mainColor bg-gradient-to-r from-mainColor/5 to-transparent p-4 rounded-lg shadow-md'
+            : 'border-l-4 border-transparent pl-4'
+        }`}
       >
-        {comment.isSelected && (
-          <div className="flex items-center gap-2 mb-2">
-            <span className="px-3 py-1 bg-mainColor text-white rounded-full text-sm font-mainFont">
-              채택된 답변
+        {isSelected && (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="px-3 py-1 bg-mainColor text-white rounded-full text-sm font-mainFont font-bold shadow-sm">
+              ⭐ 채택된 답변
             </span>
           </div>
         )}
