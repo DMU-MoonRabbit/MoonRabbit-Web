@@ -20,13 +20,18 @@ import { CommentInput } from './CommentInput'
 interface CommentItemProps {
   comment: Comment
   depth?: number
+  boardId?: number
+  boardAuthorId?: number
 }
 
 export const CommentItem: React.FC<CommentItemProps> = ({
   comment,
   depth = 0,
+  boardId,
+  boardAuthorId,
 }) => {
-  const { replyTargetId, setReplyTargetId, deleteComment } = useCommentStore()
+  const { replyTargetId, setReplyTargetId, deleteComment, selectAnswer } =
+    useCommentStore()
   const { userId, setUserId } = useUserStore()
   const { isLoggedIn } = useAuthStore()
   const showReplyInput = replyTargetId === comment.id
@@ -64,6 +69,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   })
 
   const [reportModalOpen, setReportModalOpen] = useState(false)
+  const [isSelecting, setIsSelecting] = useState(false)
 
   const showModal = (type: 'success' | 'error', message: string) => {
     setModalState({ isOpen: true, type, message })
@@ -71,6 +77,34 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   const closeModal = () => {
     setModalState((prev) => ({ ...prev, isOpen: false }))
+  }
+
+  // 채택 버튼 클릭 핸들러
+  const handleSelectAnswer = async () => {
+    if (!boardId || !boardAuthorId) {
+      showModal('error', '게시글 정보를 불러올 수 없습니다.')
+      return
+    }
+
+    const token = localStorage.getItem('accessToken')
+    if (!token) {
+      showModal('error', '로그인 후 채택할 수 있습니다.')
+      return
+    }
+
+    setIsSelecting(true)
+    try {
+      const success = await selectAnswer(boardId, comment.id)
+      if (success) {
+        showModal('success', '댓글이 채택되었습니다!')
+      } else {
+        showModal('error', '채택에 실패했습니다. 다시 시도해주세요.')
+      }
+    } catch (error) {
+      showModal('error', '채택 중 오류가 발생했습니다.')
+    } finally {
+      setIsSelecting(false)
+    }
   }
 
   const handleDelete = async () => {
@@ -220,9 +254,24 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     }
   }, [comment.id, isLoggedIn, setUserId])
 
+  // 게시글 작성자인지 확인 (댓글 작성자가 아닌 게시글 작성자)
+  const isBoardAuthor = boardAuthorId === userProfile?.id && userId !== comment.userId
+  const canSelect = isBoardAuthor && depth === 0 && !comment.isSelected
+
   return (
     <>
-      <div className="mt-12">
+      <div
+        className={`mt-12 border-l-4 ${
+          comment.isSelected ? 'border-mainColor' : 'border-transparent'
+        } pl-4`}
+      >
+        {comment.isSelected && (
+          <div className="flex items-center gap-2 mb-2">
+            <span className="px-3 py-1 bg-mainColor text-white rounded-full text-sm font-mainFont">
+              채택된 답변
+            </span>
+          </div>
+        )}
         <div className="flex items-center">
           {/* 프로필 이미지 + 테두리 */}
           <div
@@ -258,7 +307,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         <p className="whitespace-pre-line break-words font-gothicFont text-[16px] md:text-[18px] md:leading-tight my-4">
           {comment.content}
         </p>
-        <div className="flex text-[14px] md:text-[16px] items-center">
+        <div className="flex text-[14px] md:text-[16px] items-center flex-wrap gap-2">
           <p className="mr-4">
             {comment.createdAt.split('T')[0].replace(/-/g, '.')}
           </p>
@@ -290,6 +339,16 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               신고하기
             </div>
           )}
+          {/* 채택 버튼 - 게시글 작성자만, 본인 댓글이 아닌 댓글, 채택되지 않은 댓글, 답글이 아닌 댓글만 */}
+          {canSelect && (
+            <button
+              onClick={handleSelectAnswer}
+              disabled={isSelecting}
+              className="px-3 py-1 bg-mainColor text-white rounded-full text-sm font-mainFont hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSelecting ? '채택 중...' : '채택하기'}
+            </button>
+          )}
           <div onClick={handleCommentLikeToggle} className="mr-2">
             <img
               src={commentLikeState.likedByMe ? Liked : Like}
@@ -309,7 +368,13 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         {comment.replies && comment.replies.length > 0 && (
           <div className="ml-6 mt-2">
             {comment.replies.map((reply) => (
-              <CommentItem key={reply.id} comment={reply} depth={depth + 1} />
+              <CommentItem
+                key={reply.id}
+                comment={reply}
+                depth={depth + 1}
+                boardId={boardId}
+                boardAuthorId={boardAuthorId}
+              />
             ))}
           </div>
         )}

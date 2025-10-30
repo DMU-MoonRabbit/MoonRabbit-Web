@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { create } from 'zustand'
 
+import { ENDPOINTS } from '@/api/endpoints'
 import { EquippedItem } from '@/features/mypage/types/user'
 
 // equippedItems에서 테두리와 닉네임 색상 추출하는 헬퍼 함수
@@ -52,6 +53,7 @@ export interface Comment {
   equippedItems?: EquippedItem[] // API에서 제공되는 장착 아이템
   borderImageUrl?: string // 작성자의 장착 테두리
   nicknameColor?: string // 작성자의 장착 닉네임 색상
+  isSelected?: boolean // 채택된 댓글 여부
 }
 
 interface CommentStore {
@@ -69,6 +71,7 @@ interface CommentStore {
   toggleCommentLike: (id: number) => void
   updateComment: (id: number, updates: Partial<Comment>) => void
   deleteComment: (commentId: number) => Promise<boolean>
+  selectAnswer: (boardId: number, answerId: number) => Promise<boolean>
 }
 
 function toggleLikeRecursive(comments: Comment[], id: number): Comment[] {
@@ -231,6 +234,36 @@ export const useCommentStore = create<CommentStore>((set, get) => ({
         },
       )
       const updatedComments = removeCommentRecursive(get().comments, commentId)
+      set({ comments: updatedComments })
+      return true
+    } catch {
+      return false
+    }
+  },
+
+  selectAnswer: async (boardId: number, answerId: number) => {
+    const token = localStorage.getItem('accessToken')
+    if (!token) return false
+
+    try {
+      await axios.post(
+        ENDPOINTS.COMMENT_SELECT_ANSWER(boardId, answerId),
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          withCredentials: true,
+        },
+      )
+      // 댓글 목록 재조회
+      const response = await axios.get(ENDPOINTS.COMMENT_LIST(boardId), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      const updatedComments = buildCommentTree(response.data)
       set({ comments: updatedComments })
       return true
     } catch {

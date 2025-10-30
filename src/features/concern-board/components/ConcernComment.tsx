@@ -8,6 +8,7 @@ import CommentIcon from '@/assets/images/Comment.svg'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 
 import { useCommentStore, Comment } from '../stores/useCommentStore'
+import { useUnifiedConcernStore } from '../stores/useUnifiedConcernStore'
 
 import { CommentInput } from './CommentInput'
 import { CommentItem } from './CommentItem'
@@ -16,6 +17,8 @@ export const ConcernComment: React.FC = () => {
   const { pageNumber } = useParams<{ pageNumber: string }>()
   const boardId = pageNumber ? parseInt(pageNumber, 10) : undefined
   const { comments, setComments } = useCommentStore()
+  const { concern } = useUnifiedConcernStore()
+  const boardAuthorId = concern?.userId
 
   useEffect(() => {
     const getComments = async () => {
@@ -94,7 +97,12 @@ export const ConcernComment: React.FC = () => {
       <CommentInput />
       <>
         {comments.map((comment) => (
-          <CommentItem key={comment.id} comment={comment} />
+          <CommentItem
+            key={comment.id}
+            comment={comment}
+            boardId={boardId}
+            boardAuthorId={boardAuthorId}
+          />
         ))}
       </>
     </div>
