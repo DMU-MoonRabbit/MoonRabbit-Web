@@ -13,6 +13,8 @@ export const ENDPOINTS = {
   COMMENT_LIST: (boardId: number) => `${BASE_URL}/answer/board/${boardId}`,
   COMMENT_CREATE: (boardId: number) =>
     `${BASE_URL}/answer/save?boardId=${boardId}`,
+  COMMENT_SELECT_ANSWER: (boardId: number, answerId: number) =>
+    `${BASE_URL}/boards/boards/${boardId}/select-answer/${answerId}`,
 
   // 유저(User)
   USER_INFO: `${BASE_URL}/user/info`,

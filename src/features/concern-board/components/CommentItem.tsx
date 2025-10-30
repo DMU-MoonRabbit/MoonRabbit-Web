@@ -20,13 +20,20 @@ import { CommentInput } from './CommentInput'
 interface CommentItemProps {
   comment: Comment
   depth?: number
+  boardId?: number
+  boardAuthorId?: number
+  isBoardAnonymous?: boolean
 }
 
 export const CommentItem: React.FC<CommentItemProps> = ({
   comment,
   depth = 0,
+  boardId,
+  boardAuthorId,
+  isBoardAnonymous = false,
 }) => {
-  const { replyTargetId, setReplyTargetId, deleteComment } = useCommentStore()
+  const { replyTargetId, setReplyTargetId, deleteComment, selectAnswer } =
+    useCommentStore()
   const { userId, setUserId } = useUserStore()
   const { isLoggedIn } = useAuthStore()
   const showReplyInput = replyTargetId === comment.id
@@ -45,13 +52,22 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       likedByMe: comment.likedByMe ?? comment.like ?? false,
       likeCount: comment.likeCount,
     })
-  }, [comment.id, comment.likedByMe, comment.like, comment.likeCount])
+    setIsSelected(comment.isSelected || false)
+  }, [comment.id, comment.likedByMe, comment.like, comment.likeCount, comment.isSelected])
 
   // API 데이터에서 장착 아이템 정보를 받아오거나, 본인 댓글이면 현재 장착 아이템 사용
   const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } =
     usePostAuthorItems(comment.userId)
+  
+  // 익명 게시글인 경우, 본인 댓글이면 실제 닉네임을 표시
+  const isMyComment = userProfile?.id === comment.userId
+  const displayNickname = (isBoardAnonymous && isMyComment && userProfile?.nickname)
+    ? userProfile.nickname
+    : comment.nickname
+  
   const borderImageUrl = comment.borderImageUrl || ownBorderUrl
   const nicknameColor = comment.nicknameColor || ownNicknameColor
+  const displayProfileImg = comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'
 
   const [modalState, setModalState] = useState<{
     isOpen: boolean
@@ -64,6 +80,8 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   })
 
   const [reportModalOpen, setReportModalOpen] = useState(false)
+  const [isSelecting, setIsSelecting] = useState(false)
+  const [isSelected, setIsSelected] = useState(comment.isSelected || false)
 
   const showModal = (type: 'success' | 'error', message: string) => {
     setModalState({ isOpen: true, type, message })
@@ -71,6 +89,35 @@ export const CommentItem: React.FC<CommentItemProps> = ({
 
   const closeModal = () => {
     setModalState((prev) => ({ ...prev, isOpen: false }))
+  }
+
+  // 채택 버튼 클릭 핸들러
+  const handleSelectAnswer = async () => {
+    if (!boardId || !boardAuthorId) {
+      showModal('error', '게시글 정보를 불러올 수 없습니다.')
+      return
+    }
+
+    const token = localStorage.getItem('accessToken')
+    if (!token) {
+      showModal('error', '로그인 후 채택할 수 있습니다.')
+      return
+    }
+
+    setIsSelecting(true)
+    try {
+      const success = await selectAnswer(boardId, comment.id)
+      if (success) {
+        setIsSelected(true) // 채택 성공 시 로컬 상태 업데이트
+        showModal('success', '댓글이 채택되었습니다!')
+      } else {
+        showModal('error', '채택에 실패했습니다. 다시 시도해주세요.')
+      }
+    } catch (error) {
+      showModal('error', '채택 중 오류가 발생했습니다.')
+    } finally {
+      setIsSelecting(false)
+    }
   }
 
   const handleDelete = async () => {
@@ -220,9 +267,26 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     }
   }, [comment.id, isLoggedIn, setUserId])
 
+  // 게시글 작성자인지 확인 (댓글 작성자가 아닌 게시글 작성자)
+  const isBoardAuthor = boardAuthorId === userProfile?.id && userId !== comment.userId
+  const canSelect = isBoardAuthor && depth === 0 && !isSelected
+
   return (
     <>
-      <div className="mt-12">
+      <div
+        className={`mt-12 ${
+          isSelected
+            ? 'border-l-4 border-mainColor bg-gradient-to-r from-mainColor/5 to-transparent p-4 rounded-lg shadow-md'
+            : 'border-l-4 border-transparent pl-4'
+        }`}
+      >
+        {isSelected && (
+          <div className="flex items-center gap-2 mb-3">
+            <span className="px-3 py-1 bg-mainColor text-white rounded-full text-sm font-mainFont font-bold shadow-sm">
+              ⭐ 채택된 답변
+            </span>
+          </div>
+        )}
         <div className="flex items-center">
           {/* 프로필 이미지 + 테두리 */}
           <div
@@ -230,15 +294,15 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             style={{ aspectRatio: '1 / 1' }}
           >
             <img
-              src={comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
-              className="absolute inset-0 w-full h-full rounded-full object-cover"
+              src={displayProfileImg}
+              className="absolute inset-0 w-full h-full rounded-full object-cover cursor-pointer"
               style={{ aspectRatio: '1 / 1' }}
               onError={(e) => {
                 e.currentTarget.src = '/images/MoonRabbitSleep2.png'
               }}
               onClick={() => navigate(`/mypage/${comment.userId}`)}
             />
-            {/* 장착된 테두리 - 본인 댓글일 때만 표시 */}
+            {/* 장착된 테두리 표시 */}
             {borderImageUrl && (
               <img
                 src={borderImageUrl}
@@ -252,13 +316,13 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             className="text:[16px] md:text-[18px]"
             style={nicknameColor ? { color: nicknameColor } : {}}
           >
-            {comment.nickname}
+            {displayNickname}
           </p>
         </div>
         <p className="whitespace-pre-line break-words font-gothicFont text-[16px] md:text-[18px] md:leading-tight my-4">
           {comment.content}
         </p>
-        <div className="flex text-[14px] md:text-[16px] items-center">
+        <div className="flex text-[14px] md:text-[16px] items-center flex-wrap gap-2">
           <p className="mr-4">
             {comment.createdAt.split('T')[0].replace(/-/g, '.')}
           </p>
@@ -290,6 +354,16 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               신고하기
             </div>
           )}
+          {/* 채택 버튼 - 게시글 작성자만, 본인 댓글이 아닌 댓글, 채택되지 않은 댓글, 답글이 아닌 댓글만 */}
+          {canSelect && (
+            <button
+              onClick={handleSelectAnswer}
+              disabled={isSelecting}
+              className="px-3 py-1 bg-mainColor text-white rounded-full text-sm font-mainFont hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSelecting ? '채택 중...' : '채택하기'}
+            </button>
+          )}
           <div onClick={handleCommentLikeToggle} className="mr-2">
             <img
               src={commentLikeState.likedByMe ? Liked : Like}
@@ -309,7 +383,14 @@ export const CommentItem: React.FC<CommentItemProps> = ({
         {comment.replies && comment.replies.length > 0 && (
           <div className="ml-6 mt-2">
             {comment.replies.map((reply) => (
-              <CommentItem key={reply.id} comment={reply} depth={depth + 1} />
+              <CommentItem
+                key={reply.id}
+                comment={reply}
+                depth={depth + 1}
+                boardId={boardId}
+                boardAuthorId={boardAuthorId}
+                isBoardAnonymous={isBoardAnonymous}
+              />
             ))}
           </div>
         )}
