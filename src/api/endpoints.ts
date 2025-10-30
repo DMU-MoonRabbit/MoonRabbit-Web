@@ -8,6 +8,7 @@ export const ENDPOINTS = {
     `${BASE_URL}/boards/list?page=${page}&size=${size}`,
   CONCERN_DETAIL: (id: number) => `${BASE_URL}/boards/list/${id}`,
   CONCERN_CREATE: `${BASE_URL}/boards/save`,
+  TOTAL_BOARD_COUNT: `${BASE_URL}/boards/count/total`,
 
   // 댓글(Comment)
   COMMENT_LIST: (boardId: number) => `${BASE_URL}/answer/board/${boardId}`,
