@@ -1,8 +1,10 @@
 import clsx from 'clsx'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import CategoryBar from '@/common/components/CategoryBar'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
+import axios from 'axios'
+import { ENDPOINTS } from '@/api/endpoints'
 
 import ConcernCard from '../components/ConcernCard'
 
@@ -10,6 +12,22 @@ const ConcernSection: React.FC = () => {
   const res = useResponsiveStore((state) => state.res)
   const columns = res === 'pc' ? 3 : 1
   const [selectedCategory, setSelectedCategory] = useState('전체')
+  const [totalBoards, setTotalBoards] = useState<number | null>(null)
+
+  useEffect(() => {
+    const fetchTotal = async () => {
+      try {
+        const res = await axios.get(ENDPOINTS.TOTAL_BOARD_COUNT, {
+          withCredentials: true,
+        })
+        const count = res.data?.totalCount
+        setTotalBoards(typeof count === 'number' ? count : null)
+      } catch {
+        setTotalBoards(null)
+      }
+    }
+    fetchTotal()
+  }, [])
 
   const concerns = [
     {
@@ -129,7 +147,9 @@ const ConcernSection: React.FC = () => {
         달토끼의 밤하늘
       </h2>
       <p className="text-[1.2rem] text-center text-lightWalnut font-mainFont mb-8">
-        벌써 2,193개의 고민들이 밤하늘을 수놓고 있어요.
+        {totalBoards === null
+          ? '밤하늘의 고민 수를 불러오는 중이에요...'
+          : `벌써 ${totalBoards.toLocaleString()}개의 고민들이 밤하늘을 수놓고 있어요.`}
       </p>
       <div className="mb-8">
         <CategoryBar
