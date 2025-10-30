@@ -19,6 +19,7 @@ export const ConcernComment: React.FC = () => {
   const { comments, setComments } = useCommentStore()
   const { concern } = useUnifiedConcernStore()
   const boardAuthorId = concern?.userId
+  const isBoardAnonymous = concern?.isAnonymous || false
 
   useEffect(() => {
     const getComments = async () => {
@@ -102,6 +103,7 @@ export const ConcernComment: React.FC = () => {
             comment={comment}
             boardId={boardId}
             boardAuthorId={boardAuthorId}
+            isBoardAnonymous={isBoardAnonymous}
           />
         ))}
       </>

@@ -22,6 +22,7 @@ interface CommentItemProps {
   depth?: number
   boardId?: number
   boardAuthorId?: number
+  isBoardAnonymous?: boolean
 }
 
 export const CommentItem: React.FC<CommentItemProps> = ({
@@ -29,6 +30,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   depth = 0,
   boardId,
   boardAuthorId,
+  isBoardAnonymous = false,
 }) => {
   const { replyTargetId, setReplyTargetId, deleteComment, selectAnswer } =
     useCommentStore()
@@ -56,8 +58,16 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   // API 데이터에서 장착 아이템 정보를 받아오거나, 본인 댓글이면 현재 장착 아이템 사용
   const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } =
     usePostAuthorItems(comment.userId)
+  
+  // 익명 게시글인 경우, 본인 댓글이면 실제 닉네임을 표시
+  const isMyComment = userProfile?.id === comment.userId
+  const displayNickname = (isBoardAnonymous && isMyComment && userProfile?.nickname)
+    ? userProfile.nickname
+    : comment.nickname
+  
   const borderImageUrl = comment.borderImageUrl || ownBorderUrl
   const nicknameColor = comment.nicknameColor || ownNicknameColor
+  const displayProfileImg = comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'
 
   const [modalState, setModalState] = useState<{
     isOpen: boolean
@@ -284,15 +294,15 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             style={{ aspectRatio: '1 / 1' }}
           >
             <img
-              src={comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'}
-              className="absolute inset-0 w-full h-full rounded-full object-cover"
+              src={displayProfileImg}
+              className="absolute inset-0 w-full h-full rounded-full object-cover cursor-pointer"
               style={{ aspectRatio: '1 / 1' }}
               onError={(e) => {
                 e.currentTarget.src = '/images/MoonRabbitSleep2.png'
               }}
               onClick={() => navigate(`/mypage/${comment.userId}`)}
             />
-            {/* 장착된 테두리 - 본인 댓글일 때만 표시 */}
+            {/* 장착된 테두리 표시 */}
             {borderImageUrl && (
               <img
                 src={borderImageUrl}
@@ -306,7 +316,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             className="text:[16px] md:text-[18px]"
             style={nicknameColor ? { color: nicknameColor } : {}}
           >
-            {comment.nickname}
+            {displayNickname}
           </p>
         </div>
         <p className="whitespace-pre-line break-words font-gothicFont text-[16px] md:text-[18px] md:leading-tight my-4">
@@ -379,6 +389,7 @@ export const CommentItem: React.FC<CommentItemProps> = ({
                 depth={depth + 1}
                 boardId={boardId}
                 boardAuthorId={boardAuthorId}
+                isBoardAnonymous={isBoardAnonymous}
               />
             ))}
           </div>
