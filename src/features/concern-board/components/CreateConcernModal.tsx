@@ -27,6 +27,7 @@ interface CreateConcernModalProps {
 }
 
 const categoryMap: Record<string, string> = {
+  전체: 'ENTIRE',
   가족: 'FAMILY',
   연애: 'LOVE',
   진로: 'CAREER',
@@ -64,10 +65,6 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
     if (loading) return
     if (!title.trim() || !content.trim() || !selectedCategory.trim()) {
       setError('제목, 내용, 카테고리를 모두 입력해주세요.')
-      return
-    }
-    if (selectedCategory === '전체') {
-      setError('게시글 작성 시 구체적인 카테고리를 선택해주세요.')
       return
     }
     if (content.trim().length < 20) {
