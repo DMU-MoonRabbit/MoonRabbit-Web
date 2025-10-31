@@ -22,14 +22,12 @@ interface BoardEditModalProps {
 
 const CATEGORIES = [
   '전체',
-  '진로',
-  '연애',
   '가족',
-  '친구',
-  '학업',
-  '건강',
-  '일상',
-  '기타',
+  '연애',
+  '진로',
+  '정신건강',
+  '사회생활',
+  '대인관계',
 ]
 
 export const BoardEditModal: React.FC<BoardEditModalProps> = ({
