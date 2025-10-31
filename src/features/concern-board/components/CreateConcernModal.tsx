@@ -27,6 +27,7 @@ interface CreateConcernModalProps {
 }
 
 const categoryMap: Record<string, string> = {
+  전체: 'ENTIRE',
   가족: 'FAMILY',
   연애: 'LOVE',
   진로: 'CAREER',
@@ -64,10 +65,6 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
     if (loading) return
     if (!title.trim() || !content.trim() || !selectedCategory.trim()) {
       setError('제목, 내용, 카테고리를 모두 입력해주세요.')
-      return
-    }
-    if (selectedCategory === '전체') {
-      setError('게시글 작성 시 구체적인 카테고리를 선택해주세요.')
       return
     }
     if (content.trim().length < 20) {
@@ -200,7 +197,7 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
           </div>
 
           {/* 고민내용 */}
-          <div className="mb-6">
+          <div className="mb-6 relative">
             <label
               htmlFor="content"
               className="block text-[20px] mb-2 font-mainFont"
@@ -214,6 +211,9 @@ const CreateConcernModal: React.FC<CreateConcernModalProps> = ({
               placeholder="고민을 자유롭게 작성해주세요."
               className="w-full px-4 py-3 text-[16px] border-2 border-lightBeige rounded-lg focus:outline-none focus:border-mainColor transition-colors duration-200 placeholder:text-mainGray min-h-[200px] resize-none"
             />
+            <div className="absolute bottom-2 right-2 text-sm text-gray-500 font-mainFont">
+              {content.trim().length}/255자 (최소 20자)
+            </div>
           </div>
         </div>
 
