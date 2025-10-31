@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom'
 import { ENDPOINTS } from '@/api/endpoints'
 import Liked from '@/assets/images/likedThick.svg'
 import Like from '@/assets/images/likeThick.svg'
+import Report from '@/assets/images/Report.svg'
 import MiniModal from '@/common/components/MiniModal'
 import ReportModal from '@/common/components/ReportModal'
-import { ReportCreateRequest } from '@/features/admin/types/report'
 import { useAuthStore } from '@/features/auth/stores/useAuthStore'
 import { usePostAuthorItems } from '@/features/mypage/hooks/usePostAuthorItems'
 import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
@@ -129,23 +129,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
     }
   }
 
-  // 신고 제출 함수
-  const handleReportSubmit = async (reportData: ReportCreateRequest) => {
-    const token = localStorage.getItem('accessToken')
-    if (!token) {
-      throw new Error('로그인 후 신고할 수 있습니다.')
-    }
-
-    const response = await axios.post(ENDPOINTS.REPORT_CREATE, reportData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      withCredentials: true,
-    })
-
-    return response.data
-  }
 
   // 댓글 좋아요 토글 함수
   const handleCommentLikeToggle = async () => {
@@ -338,6 +321,16 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               {replyTargetId === comment.id ? '닫기' : '답글쓰기'}
             </div>
           )}
+          {/* 채택 버튼 - 게시글 작성자만, 본인 댓글이 아닌 댓글, 채택되지 않은 댓글, 답글이 아닌 댓글만 */}
+          {canSelect && (
+            <button
+              onClick={handleSelectAnswer}
+              disabled={isSelecting}
+              className="mr-2 px-3 py-1 bg-mainColor text-white rounded-full text-sm font-mainFont hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSelecting ? '채택 중...' : '채택하기'}
+            </button>
+          )}
           {userId === comment.userId && (
             <div
               className="mr-4 text-mainColor cursor-pointer"
@@ -347,22 +340,13 @@ export const CommentItem: React.FC<CommentItemProps> = ({
             </div>
           )}
           {userId !== comment.userId && (
-            <div
-              className="mr-4 text-red-500 cursor-pointer"
+            <img
+              src={Report}
+              alt="신고"
+              className="mr-2 cursor-pointer h-[25px]"
+              loading="lazy"
               onClick={() => setReportModalOpen(true)}
-            >
-              신고하기
-            </div>
-          )}
-          {/* 채택 버튼 - 게시글 작성자만, 본인 댓글이 아닌 댓글, 채택되지 않은 댓글, 답글이 아닌 댓글만 */}
-          {canSelect && (
-            <button
-              onClick={handleSelectAnswer}
-              disabled={isSelecting}
-              className="px-3 py-1 bg-mainColor text-white rounded-full text-sm font-mainFont hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSelecting ? '채택 중...' : '채택하기'}
-            </button>
+            />
           )}
           <div onClick={handleCommentLikeToggle} className="mr-2">
             <img
@@ -407,7 +391,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       <ReportModal
         isOpen={reportModalOpen}
         onClose={() => setReportModalOpen(false)}
-        onSubmit={handleReportSubmit}
         targetType="ANSWER"
         targetId={comment.id}
       />

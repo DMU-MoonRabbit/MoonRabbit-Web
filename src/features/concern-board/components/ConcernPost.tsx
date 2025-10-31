@@ -12,7 +12,6 @@ import Report from '@/assets/images/Report.svg'
 import MiniModal from '@/common/components/MiniModal'
 import ReportModal from '@/common/components/ReportModal'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
-import { ReportCreateRequest } from '@/features/admin/types/report'
 import { usePostAuthorItems } from '@/features/mypage/hooks/usePostAuthorItems'
 import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
 import { EquippedItem } from '@/features/mypage/types/user'
@@ -106,23 +105,6 @@ export const ConcernContent: React.FC = () => {
     setModalState((prev) => ({ ...prev, isOpen: false }))
   }
 
-  // 신고 제출 함수
-  const handleReportSubmit = async (reportData: ReportCreateRequest) => {
-    const token = localStorage.getItem('accessToken')
-    if (!token) {
-      throw new Error('로그인 후 신고할 수 있습니다.')
-    }
-
-    const response = await axios.post(ENDPOINTS.REPORT_CREATE, reportData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      withCredentials: true,
-    })
-
-    return response.data
-  }
 
   // 좋아요 토글 함수
   const handleLikeToggle = async () => {
@@ -404,7 +386,7 @@ export const ConcernContent: React.FC = () => {
               <img
                 src={Report}
                 alt="신고"
-                className="mr-[16px] cursor-pointer h-[25px]"
+                className="mr-2 cursor-pointer h-[25px]"
                 loading="lazy"
                 onClick={() => setReportModalOpen(true)}
               />
@@ -432,7 +414,6 @@ export const ConcernContent: React.FC = () => {
       <ReportModal
         isOpen={reportModalOpen}
         onClose={() => setReportModalOpen(false)}
-        onSubmit={handleReportSubmit}
         targetType="BOARD"
         targetId={currentId}
       />
