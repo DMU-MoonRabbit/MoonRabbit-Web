@@ -182,7 +182,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
             <h3 className="text-2xl font-mainFont text-darkWalnut text-center mb-2">
               신고하기
             </h3>
-            <p className="text-sm text-gray-500 text-center">
+            <p className="text-sm font-gothicFont text-gray-500 text-center">
               {targetTypeLabel}을 신고하는 사유를 선택해주세요.
             </p>
           </div>
@@ -219,38 +219,17 @@ export const ReportModal: React.FC<ReportModalProps> = ({
                   value={customReason}
                   onChange={(e) => setCustomReason(e.target.value)}
                   placeholder="신고 사유를 자세히 입력해주세요..."
-                  className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-mainColor"
+                  className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-mainColor font-gothicFont"
                   rows={3}
                   disabled={submitting}
                 />
               </div>
             )}
-
-            {/* 직접 입력 옵션 */}
-            <div className="mt-4">
-              <div className="flex items-center mb-2">
-                <span className="text-sm text-gray-500">또는 직접 입력</span>
-              </div>
-              <textarea
-                value={reason}
-                onChange={(e) => {
-                  setReason(e.target.value)
-                  if (e.target.value) {
-                    setSelectedReason('')
-                    setCustomReason('')
-                  }
-                }}
-                placeholder="신고 사유를 직접 입력해주세요..."
-                className="w-full p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-mainColor"
-                rows={3}
-                disabled={submitting}
-              />
-            </div>
           </div>
 
           {/* 안내 문구 */}
           <div className="mb-6 p-3 bg-blue-50 rounded-lg">
-            <p className="text-xs text-gray-600">
+            <p className="text-xs font-gothicFont text-gray-600">
               💡 허위 신고는 제재를 받을 수 있습니다. 신중하게 신고해주세요.
             </p>
           </div>
