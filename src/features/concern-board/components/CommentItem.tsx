@@ -321,6 +321,16 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               {replyTargetId === comment.id ? '닫기' : '답글쓰기'}
             </div>
           )}
+          {/* 채택 버튼 - 게시글 작성자만, 본인 댓글이 아닌 댓글, 채택되지 않은 댓글, 답글이 아닌 댓글만 */}
+          {canSelect && (
+            <button
+              onClick={handleSelectAnswer}
+              disabled={isSelecting}
+              className="mr-2 px-3 py-1 bg-mainColor text-white rounded-full text-sm font-mainFont hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSelecting ? '채택 중...' : '채택하기'}
+            </button>
+          )}
           {userId === comment.userId && (
             <div
               className="mr-4 text-mainColor cursor-pointer"
@@ -337,16 +347,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
               loading="lazy"
               onClick={() => setReportModalOpen(true)}
             />
-          )}
-          {/* 채택 버튼 - 게시글 작성자만, 본인 댓글이 아닌 댓글, 채택되지 않은 댓글, 답글이 아닌 댓글만 */}
-          {canSelect && (
-            <button
-              onClick={handleSelectAnswer}
-              disabled={isSelecting}
-              className="px-3 py-1 bg-mainColor text-white rounded-full text-sm font-mainFont hover:bg-opacity-80 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSelecting ? '채택 중...' : '채택하기'}
-            </button>
           )}
           <div onClick={handleCommentLikeToggle} className="mr-2">
             <img
