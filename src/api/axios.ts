@@ -24,6 +24,7 @@ const processQueue = (error: Error | null, token: string | null = null) => {
 // 401 에러 발생 시 Access Token 재발급
 const refreshAccessToken = async (): Promise<string | null> => {
   try {
+    console.log('[Token Refresh] 재발급 시작')
     const refreshToken = localStorage.getItem('refreshToken')
     if (!refreshToken) {
       throw new Error('Refresh token이 없습니다.')
@@ -43,14 +44,17 @@ const refreshAccessToken = async (): Promise<string | null> => {
 
     if (accessToken) {
       localStorage.setItem('accessToken', accessToken)
+      console.log('[Token Refresh] Access Token 재발급 성공')
     }
 
     if (newRefreshToken) {
       localStorage.setItem('refreshToken', newRefreshToken)
+      console.log('[Token Refresh] Refresh Token 저장 완료')
     }
 
     return accessToken
   } catch (error) {
+    console.error('[Token Refresh] 재발급 실패:', error)
     // Refresh Token도 만료된 경우 로그아웃 처리
     localStorage.removeItem('accessToken')
     localStorage.removeItem('refreshToken')
@@ -83,7 +87,10 @@ axios.interceptors.response.use(
 
     // 401 에러이고, 아직 재시도하지 않은 요청인 경우
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log('[Token Interceptor] 401 에러 감지:', originalRequest.url)
+      
       if (isRefreshing) {
+        console.log('[Token Interceptor] 재발급 중... 대기열에 추가')
         // 이미 재발급 중이면 대기열에 추가
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
@@ -106,10 +113,12 @@ axios.interceptors.response.use(
         processQueue(null, newAccessToken)
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
         isRefreshing = false
+        console.log('[Token Interceptor] 원래 요청 재시도:', originalRequest.url)
         return axios(originalRequest)
       } else {
         isRefreshing = false
         // Refresh Token 재발급 실패 시 로그아웃 및 로그인 페이지로 리다이렉트
+        console.log('[Token Interceptor] 로그인 페이지로 리다이렉트')
         window.location.href = '/login'
         return Promise.reject(error)
       }
