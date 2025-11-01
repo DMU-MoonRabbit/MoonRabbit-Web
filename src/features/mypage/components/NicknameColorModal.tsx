@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 
 import MiniModal from '@/common/components/MiniModal'
 import { NICKNAME_COLOR_DEFINITIONS } from '@/common/constants/colors'
@@ -25,7 +25,15 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({
 
   const { getItemsByType, loading } = useShopStore()
   const apiNicknameColorItems = getItemsByType('NAME_COLOR')
-  const { userInventory } = useUserProfileStore()
+  const { userInventory, userProfile, fetchUserInventory } =
+    useUserProfileStore()
+
+  // 모달이 열릴 때 인벤토리 로드
+  useEffect(() => {
+    if (isOpen && userProfile?.id) {
+      fetchUserInventory(userProfile.id)
+    }
+  }, [isOpen, userProfile?.id, fetchUserInventory])
 
   // 공통 구매 로직 훅 사용
   const { purchasingItemId, miniModal, handlePurchaseClick, closeMiniModal } =
@@ -137,7 +145,7 @@ const NicknameColorModal: React.FC<NicknameColorModalProps> = ({
                 {/* 색상 카드 */}
                 <div
                   className={clsx(
-                    'rounded-[10px] border-[3px] border-mainColor p-4 mb-4 flex flex-col items-center',
+                    'p-4 mb-4 flex flex-col items-center',
                     isMobile ? 'w-full' : 'w-52 h-56',
                   )}
                 >

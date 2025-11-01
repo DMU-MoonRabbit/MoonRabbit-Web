@@ -33,11 +33,12 @@ export const useShopPurchase = () => {
 
     // 포인트 부족 체크
     if (userProfile && userProfile.point < itemPrice) {
+      const shortage = itemPrice - userProfile.point
       setMiniModal({
         isOpen: true,
         type: 'error',
         title: '포인트 부족',
-        message: '포인트가 부족합니다.',
+        message: `포인트가 ${shortage}포인트 부족합니다.`,
       })
       return
     }

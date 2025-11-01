@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import MiniModal from '@/common/components/MiniModal'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
@@ -24,7 +24,15 @@ const BannerShopModal: React.FC<BannerShopModalProps> = ({
 
   const { getItemsByType, loading } = useShopStore()
   const bannerItems = getItemsByType('BANNER')
-  const { userInventory } = useUserProfileStore()
+  const { userInventory, userProfile, fetchUserInventory } =
+    useUserProfileStore()
+
+  // 모달이 열릴 때 인벤토리 로드
+  useEffect(() => {
+    if (isOpen && userProfile?.id) {
+      fetchUserInventory(userProfile.id)
+    }
+  }, [isOpen, userProfile?.id, fetchUserInventory])
 
   // 공통 구매 로직 훅 사용
   const { purchasingItemId, miniModal, handlePurchaseClick, closeMiniModal } =

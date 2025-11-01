@@ -8,6 +8,7 @@ import PageHeader from '@/common/components/PageHeader'
 import StarBackground from '@/common/components/StarBackground'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import NicknameColorModal from '@/features/mypage/components/NicknameColorModal'
+import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
 import BannerShopModal from '@/features/shop/components/BannerShopModal'
 import BorderShopModal from '@/features/shop/components/BorderShopModal'
 import { useShopStore } from '@/features/shop/stores/useShopStore'
@@ -21,10 +22,12 @@ const ShopPage: React.FC = memo(() => {
     useState(false)
 
   const { fetchShopItems } = useShopStore()
+  const { userProfile, fetchUserProfile } = useUserProfileStore()
 
   useEffect(() => {
     fetchShopItems()
-  }, [fetchShopItems])
+    fetchUserProfile()
+  }, [fetchShopItems, fetchUserProfile])
 
   const shopItems = [
     {
@@ -59,6 +62,25 @@ const ShopPage: React.FC = memo(() => {
 
       <div className="container mx-auto px-4 py-8 lg:py-16 relative z-10">
         <PageHeader showSubtitle={true} subtitleText="상점" />
+
+        {/* 보유 포인트 표시 */}
+        <div className="flex justify-center mb-8">
+          <div className="relative flex items-center">
+            <img
+              src="/images/point.png"
+              alt="포인트"
+              className={clsx(isMobile ? 'w-16 h-8' : 'w-20 h-10')}
+            />
+            <span
+              className={clsx(
+                'absolute ml-5 inset-0 flex items-center justify-center font-mainFont text-darkWalnut font-bold',
+                isMobile ? 'text-base' : 'text-lg',
+              )}
+            >
+              {userProfile?.point !== undefined ? userProfile.point : 0}
+            </span>
+          </div>
+        </div>
 
         {/* 상품 그리드 */}
         <div
