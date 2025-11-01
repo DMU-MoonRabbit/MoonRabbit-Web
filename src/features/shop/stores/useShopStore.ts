@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { create } from 'zustand'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 
 import { ShopItem, ShopItemListResponse, PurchaseResponse } from '../types/shop'

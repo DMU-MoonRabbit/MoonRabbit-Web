@@ -1,9 +1,9 @@
-import axios from 'axios'
 import clsx from 'clsx'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import CommentIcon from '@/assets/images/Comment.svg'
 import Liked from '@/assets/images/likedThick.svg'

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 
 const ServiceIntro: React.FC = () => {

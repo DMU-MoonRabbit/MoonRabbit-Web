@@ -38,6 +38,7 @@ export const ENDPOINTS = {
   SIGNUP: `${BASE_URL}/auth/signup`,
   LOGOUT: `${BASE_URL}/auth/logout`,
   VERIFY: `${BASE_URL}/auth/verify`,
+  REISSUE: `${BASE_URL}/users/reissue`,
 
   // 플레이리스트(Playlist)
   PLAYLIST_LIST: `${BASE_URL}/playlists`,

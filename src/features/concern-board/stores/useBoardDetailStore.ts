@@ -1,5 +1,6 @@
-import axios from 'axios'
 import { create } from 'zustand'
+
+import axios from '@/api/axios'
 
 interface Answer {
   userId: number
