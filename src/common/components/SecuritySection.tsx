@@ -1,6 +1,7 @@
-import axios from 'axios'
 import clsx from 'clsx'
 import React, { useState } from 'react'
+
+import axios from '@/api/axios'
 
 import { ENDPOINTS } from '../../api/endpoints'
 import { useUserProfileStore } from '../../features/mypage/stores/useUserProfileStore'

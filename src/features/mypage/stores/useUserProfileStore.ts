@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { create } from 'zustand'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import { NICKNAME_COLOR_MAP } from '@/common/constants/colors'
 

@@ -1,7 +1,7 @@
-import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import Liked from '@/assets/images/likedThick.svg'
 import Like from '@/assets/images/likeThick.svg'

@@ -1,7 +1,7 @@
-import axios from 'axios'
 import clsx from 'clsx'
 import React, { useEffect, useState } from 'react'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 import { DailyQuestion } from '@/features/daily-question/types/question'

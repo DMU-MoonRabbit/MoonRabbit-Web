@@ -1,8 +1,8 @@
-import axios from 'axios'
 import clsx from 'clsx'
 import React, { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import CommentIcon from '@/assets/images/Comment.svg'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'

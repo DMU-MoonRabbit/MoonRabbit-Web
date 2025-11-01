@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
-import NightSkyDrawing from '@/assets/images/NightSkyDrawing.png'
-import CommentWriting from '@/assets/images/CommentWriting.png'
+
 import ClickLike from '@/assets/images/ClickingLike.png'
+import CommentWriting from '@/assets/images/CommentWriting.png'
+import NightSkyDrawing from '@/assets/images/NightSkyDrawing.png'
+
 import FeatureCard from './FeatureCard'
 import PointCard from './PointCard'
 

@@ -1,7 +1,7 @@
-import axios from 'axios'
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import MiniModal from '@/common/components/MiniModal'
 

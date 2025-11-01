@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { useState, useEffect } from 'react'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import useUserStore from '@/features/mypage/stores/useUserStore'
 

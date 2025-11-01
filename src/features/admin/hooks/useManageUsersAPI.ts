@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { useCallback } from 'react'
 
+import axios from '@/api/axios'
 import ENDPOINTS from '@/api/endpoints'
 
 import { updateUserPoint, updateUserTrust } from '../stores/useAdminStore'

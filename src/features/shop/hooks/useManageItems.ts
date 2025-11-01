@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { useState, useCallback } from 'react'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import { ShopItemListResponse, ShopItem } from '@/features/shop/types/shop'
 

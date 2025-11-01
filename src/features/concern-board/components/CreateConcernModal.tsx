@@ -1,7 +1,7 @@
-import axios from 'axios'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import CategoryBar from '@/common/components/CategoryBar'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
