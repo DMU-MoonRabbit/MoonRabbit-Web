@@ -1,7 +1,8 @@
-import axios from 'axios'
 import clsx from 'clsx'
 import React, { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+import axios from '@/api/axios'
 
 import { ENDPOINTS } from '../../api/endpoints'
 import { useAuthStore } from '../../features/auth/stores/useAuthStore'

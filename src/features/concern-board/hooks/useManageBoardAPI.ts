@@ -1,6 +1,6 @@
-import axios from 'axios'
 import { useCallback, useEffect } from 'react'
 
+import axios from '@/api/axios'
 import ENDPOINTS from '@/api/endpoints'
 import { usePaginationStore } from '@/common/hooks/usePaginationStore'
 import { useManageBoardStore } from '@/features/admin/stores/useManageBoardStore'

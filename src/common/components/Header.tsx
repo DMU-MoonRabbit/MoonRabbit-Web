@@ -1,7 +1,8 @@
-import axios from 'axios'
 import { Menu, X } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+
+import axios from '@/api/axios'
 
 import { useAuthStore } from '../../features/auth/stores/useAuthStore'
 import useUserStore from '../../features/mypage/stores/useUserStore'

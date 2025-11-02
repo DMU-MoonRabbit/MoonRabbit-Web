@@ -1,8 +1,8 @@
-import axios from 'axios'
 import clsx from 'clsx'
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
 import GoogleLoginImg from '@/assets/images/GoogleLogin.svg'
 import kakaoLoginImg from '@/assets/images/KakaoLogin.png'
@@ -71,10 +71,13 @@ export const LoginForm = () => {
         password,
       })
 
-      // 응답에서 accessToken 추출 및 저장
-      const { accessToken, ...userData } = response.data
+      // 응답에서 accessToken과 refreshToken 추출 및 저장
+      const { accessToken, refreshToken, ...userData } = response.data
       if (accessToken) {
         localStorage.setItem('accessToken', accessToken)
+        if (refreshToken) {
+          localStorage.setItem('refreshToken', refreshToken)
+        }
         localStorage.setItem('cachedUser', JSON.stringify(userData))
         setUser(userData)
         setIsLoggedIn(true)
