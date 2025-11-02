@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Edit2, Trash2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 
@@ -16,6 +16,7 @@ import { usePostAuthorItems } from '@/features/mypage/hooks/usePostAuthorItems'
 import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
 import { EquippedItem } from '@/features/mypage/types/user'
 
+import EditConcernModal from './EditConcernModal'
 import { useBoardDetailStore } from '../stores/useBoardDetailStore'
 import { useCommentStore, Comment } from '../stores/useCommentStore'
 import { useUnifiedConcernStore } from '../stores/useUnifiedConcernStore'
@@ -86,6 +87,12 @@ export const ConcernContent: React.FC = () => {
   // 신고 모달 상태
   const [reportModalOpen, setReportModalOpen] = useState(false)
 
+  // 수정 모달 상태
+  const [editModalOpen, setEditModalOpen] = useState(false)
+
+  // 삭제 확인 모달 상태
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false)
+
   // 알림 모달 상태
   const [modalState, setModalState] = useState<{
     isOpen: boolean
@@ -105,6 +112,159 @@ export const ConcernContent: React.FC = () => {
     setModalState((prev) => ({ ...prev, isOpen: false }))
   }
 
+  // 작성자 확인
+  const isAuthor = concern?.userId === userProfile?.id
+
+  // 게시글 수정 함수
+  const handleEditBoard = async (updateData: {
+    title: string
+    content: string
+    category: string
+    anonymous: boolean
+  }) => {
+    if (!concern) return
+
+    try {
+      const token = localStorage.getItem('accessToken')
+      if (!token) {
+        showModal('error', '로그인이 필요합니다.')
+        return
+      }
+
+      await axios.patch(ENDPOINTS.CONCERN_UPDATE(concern.id), updateData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true,
+      })
+
+      showModal('success', '게시글이 성공적으로 수정되었습니다.')
+      
+      // 게시글 데이터 새로고침
+      const fetchConcern = async () => {
+        try {
+          const token = localStorage.getItem('accessToken')
+          let response
+
+          try {
+            const headers: Record<string, string> = {}
+            if (token) {
+              headers['Authorization'] = `Bearer ${token}`
+            }
+
+            response = await axios.get(ENDPOINTS.CONCERN_DETAIL(concern.id), {
+              headers,
+              withCredentials: true,
+            })
+          } catch (authError) {
+            if (axios.isAxiosError(authError)) {
+              const errorCode = authError.response?.data?.code
+              const status = authError.response?.status
+
+              if (status === 401 || status === 403 || errorCode === 'U002') {
+                if (errorCode === 'U002') {
+                  localStorage.removeItem('accessToken')
+                }
+
+                response = await axios.get(ENDPOINTS.CONCERN_DETAIL(concern.id), {
+                  withCredentials: true,
+                })
+              } else {
+                throw authError
+              }
+            } else {
+              throw authError
+            }
+          }
+
+          const data = response.data
+
+          const { borderImageUrl, nicknameColor } = data.anonymous
+            ? { borderImageUrl: undefined, nicknameColor: undefined }
+            : parseEquippedItems(data.equippedItems)
+
+          const isLiked = data.likedByMe ?? data.liked ?? false
+
+          const updatedConcern = {
+            id: data.boardId,
+            userId: data.userId,
+            title: data.title,
+            profileImg:
+              data.anonymous || !data.profileImg
+                ? '/images/MoonRabbitSleep2.png'
+                : data.profileImg,
+            nickname: data.nickname,
+            content: data.content,
+            createdAt: data.createdAt || new Date().toISOString(),
+            answer: data.answers?.[0]?.content || '',
+            like: isLiked,
+            category: data.category,
+            equippedItems: data.equippedItems || [],
+            borderImageUrl,
+            nicknameColor,
+            isAnonymous: data.anonymous,
+          }
+          setConcern(updatedConcern)
+        } catch {
+          // 에러 처리
+        }
+      }
+      fetchConcern()
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status
+        if (status === 401 || status === 403) {
+          showModal('error', '로그인이 필요합니다.')
+        } else {
+          showModal('error', '게시글 수정에 실패했습니다.')
+        }
+      } else {
+        showModal('error', '게시글 수정에 실패했습니다.')
+      }
+    }
+  }
+
+  // 게시글 삭제 확인 모달 열기
+  const handleDeleteClick = () => {
+    setDeleteModalOpen(true)
+  }
+
+  // 게시글 삭제 함수
+  const handleDeleteBoard = async () => {
+    if (!concern) return
+
+    try {
+      const token = localStorage.getItem('accessToken')
+      if (!token) {
+        showModal('error', '로그인이 필요합니다.')
+        return
+      }
+
+      await axios.delete(ENDPOINTS.CONCERN_DELETE(concern.id), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      })
+
+      showModal('success', '게시글이 성공적으로 삭제되었습니다.')
+      setTimeout(() => {
+        navigate('/night-sky')
+      }, 1500)
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status
+        if (status === 401 || status === 403) {
+          showModal('error', '로그인이 필요합니다.')
+        } else {
+          showModal('error', '게시글 삭제에 실패했습니다.')
+        }
+      } else {
+        showModal('error', '게시글 삭제에 실패했습니다.')
+      }
+    }
+  }
 
   // 좋아요 토글 함수
   const handleLikeToggle = async () => {
@@ -266,6 +426,7 @@ export const ConcernContent: React.FC = () => {
             createdAt: data.createdAt || new Date().toISOString(), // createdAt이 없으면 현재 시간
             answer: data.answers?.[0]?.content || '', // answers 배열의 첫번째 답변
             like: isLiked,
+            category: data.category, // 카테고리 추가
             equippedItems: data.equippedItems || [],
             borderImageUrl,
             nicknameColor,
@@ -397,6 +558,24 @@ export const ConcernContent: React.FC = () => {
                   loading="lazy"
                 />
               </div>
+              {isAuthor && (
+                <>
+                  <button
+                    onClick={() => setEditModalOpen(true)}
+                    className="ml-3 text-darkWalnut hover:text-mainColor transition-colors"
+                    title="수정"
+                  >
+                    <Edit2 size={20} />
+                  </button>
+                  <button
+                    onClick={handleDeleteClick}
+                    className="ml-2 text-darkWalnut hover:text-red-600 transition-colors"
+                    title="삭제"
+                  >
+                    <Trash2 size={20} />
+                  </button>
+                </>
+              )}
             </div>
             <p>{createdAt?.split('T')[0]}</p>
           </div>
@@ -416,6 +595,31 @@ export const ConcernContent: React.FC = () => {
         onClose={() => setReportModalOpen(false)}
         targetType="BOARD"
         targetId={currentId}
+      />
+
+      {/* 수정 모달 */}
+      <EditConcernModal
+        isOpen={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        onSave={handleEditBoard}
+        initialData={{
+          title: title,
+          content: content,
+          category: concern.category || '전체',
+          anonymous: isAnonymous || false,
+        }}
+      />
+
+      {/* 삭제 확인 모달 */}
+      <MiniModal
+        isOpen={deleteModalOpen}
+        onClose={() => setDeleteModalOpen(false)}
+        type="error"
+        title="게시글 삭제"
+        message="정말로 이 게시글을 삭제하시겠습니까?"
+        onConfirm={handleDeleteBoard}
+        confirmText="삭제"
+        cancelText="취소"
       />
 
       {/* 알림 모달 */}
