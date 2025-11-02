@@ -55,7 +55,10 @@ export const ReportModal: React.FC<ReportModalProps> = ({
 
   const handleSubmit = async () => {
     // 사유 선택 또는 직접 입력 검증
-    const finalReason = selectedReason === '기타' ? customReason.trim() : selectedReason || reason.trim()
+    const finalReason =
+      selectedReason === '기타'
+        ? customReason.trim()
+        : selectedReason || reason.trim()
 
     if (!finalReason) {
       showModal('error', '신고 사유를 입력해주세요.')
@@ -88,7 +91,7 @@ export const ReportModal: React.FC<ReportModalProps> = ({
       setReason('')
       setSelectedReason('')
       setCustomReason('')
-      
+
       if (onSuccess) {
         onSuccess()
       }

@@ -7,7 +7,6 @@ import { ENDPOINTS } from '@/api/endpoints'
 import CategoryBar from '@/common/components/CategoryBar'
 import { useResponsiveStore } from '@/common/hooks/useResponsiveStore'
 
-
 import ConcernCard from '../components/ConcernCard'
 
 interface ConcernCardData {
@@ -55,7 +54,10 @@ const ConcernSection: React.FC = () => {
         })
         const content = res.data?.content || []
         const mapped: ConcernCardData[] = content.map((b: any) => {
-          const firstAnswer = Array.isArray(b.answers) && b.answers.length > 0 ? b.answers[0] : null
+          const firstAnswer =
+            Array.isArray(b.answers) && b.answers.length > 0
+              ? b.answers[0]
+              : null
           return {
             id: b.boardId,
             profileImage: b.profileImg || '/images/MoonRabbitSleep2.png',
@@ -63,9 +65,17 @@ const ConcernSection: React.FC = () => {
             category: b.category,
             content: b.content,
             recentComment: firstAnswer
-              ? { author: firstAnswer.nickname || '달토끼', text: firstAnswer.content }
-              : { author: '달토끼', text: '아직 답변이 없어요. 첫 답변을 남겨보세요!' },
-            date: firstAnswer?.createdAt ? String(firstAnswer.createdAt).split('T')[0] : undefined,
+              ? {
+                  author: firstAnswer.nickname || '달토끼',
+                  text: firstAnswer.content,
+                }
+              : {
+                  author: '달토끼',
+                  text: '아직 답변이 없어요. 첫 답변을 남겨보세요!',
+                },
+            date: firstAnswer?.createdAt
+              ? String(firstAnswer.createdAt).split('T')[0]
+              : undefined,
             isAnonymous: b.anonymous,
           }
         })
