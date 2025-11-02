@@ -406,7 +406,12 @@ const AccountSection: React.FC = () => {
       </div>
 
       {/* 로그아웃 버튼 */}
-      <div className={clsx('mt-6 flex', isMobile ? 'justify-center' : 'justify-start')}>
+      <div
+        className={clsx(
+          'mt-6 flex',
+          isMobile ? 'justify-center' : 'justify-start',
+        )}
+      >
         <button
           onClick={handleLogoutClick}
           className={clsx(

@@ -139,7 +139,7 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
       }
 
       const { userProfile } = get()
-      
+
       // 본인 인벤토리인지 타유저 인벤토리인지 구분
       if (userProfile && userProfile.id === userId) {
         set({
@@ -288,9 +288,8 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
     const inventory = isOtherUser ? otherUserInventory : userInventory
     if (!inventory?.items) return null
     return (
-      inventory.items.find(
-        (item) => item.type === 'BORDER' && item.equipped,
-      ) || null
+      inventory.items.find((item) => item.type === 'BORDER' && item.equipped) ||
+      null
     )
   },
 
@@ -299,9 +298,8 @@ export const useUserProfileStore = create<UserProfileStore>((set, get) => ({
     const inventory = isOtherUser ? otherUserInventory : userInventory
     if (!inventory?.items) return null
     return (
-      inventory.items.find(
-        (item) => item.type === 'BANNER' && item.equipped,
-      ) || null
+      inventory.items.find((item) => item.type === 'BANNER' && item.equipped) ||
+      null
     )
   },
 

@@ -147,7 +147,8 @@ const MypageProfile: React.FC<MypageProfileProps> = memo(
                 className={clsx(
                   'relative flex-shrink-0',
                   isMobile ? 'w-[60px] h-[60px]' : 'w-[120px] h-[120px]',
-                  isOwnPage && 'cursor-pointer hover:opacity-80 transition-opacity',
+                  isOwnPage &&
+                    'cursor-pointer hover:opacity-80 transition-opacity',
                 )}
                 style={{ aspectRatio: '1 / 1' }}
                 onClick={handleNavigateToSettings}
@@ -183,7 +184,8 @@ const MypageProfile: React.FC<MypageProfileProps> = memo(
                   <p
                     className={clsx(
                       nameTextClass,
-                      isOwnPage && 'cursor-pointer hover:opacity-70 transition-opacity',
+                      isOwnPage &&
+                        'cursor-pointer hover:opacity-70 transition-opacity',
                     )}
                     style={nicknameStyle}
                     onClick={handleNavigateToSettings}

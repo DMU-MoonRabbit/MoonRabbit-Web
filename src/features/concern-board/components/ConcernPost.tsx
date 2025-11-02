@@ -16,10 +16,11 @@ import { usePostAuthorItems } from '@/features/mypage/hooks/usePostAuthorItems'
 import { useUserProfileStore } from '@/features/mypage/stores/useUserProfileStore'
 import { EquippedItem } from '@/features/mypage/types/user'
 
-import EditConcernModal from './EditConcernModal'
 import { useBoardDetailStore } from '../stores/useBoardDetailStore'
 import { useCommentStore, Comment } from '../stores/useCommentStore'
 import { useUnifiedConcernStore } from '../stores/useUnifiedConcernStore'
+
+import EditConcernModal from './EditConcernModal'
 
 // equippedItems에서 테두리와 닉네임 색상 추출하는 헬퍼 함수
 const parseEquippedItems = (equippedItems?: EquippedItem[]) => {
@@ -140,7 +141,7 @@ export const ConcernContent: React.FC = () => {
       })
 
       showModal('success', '게시글이 성공적으로 수정되었습니다.')
-      
+
       // 게시글 데이터 새로고침
       const fetchConcern = async () => {
         try {
@@ -167,9 +168,12 @@ export const ConcernContent: React.FC = () => {
                   localStorage.removeItem('accessToken')
                 }
 
-                response = await axios.get(ENDPOINTS.CONCERN_DETAIL(concern.id), {
-                  withCredentials: true,
-                })
+                response = await axios.get(
+                  ENDPOINTS.CONCERN_DETAIL(concern.id),
+                  {
+                    withCredentials: true,
+                  },
+                )
               } else {
                 throw authError
               }
