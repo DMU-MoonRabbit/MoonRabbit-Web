@@ -192,7 +192,7 @@ const EditConcernModal: React.FC<EditConcernModalProps> = ({
               maxLength={1000}
             />
             <div className="absolute bottom-2 right-2 text-sm text-gray-500 font-mainFont">
-              {content.trim().length}/1000자 (최소 20자)
+              {content.trim().length}/255자 (최소 20자)
             </div>
           </div>
         </div>
