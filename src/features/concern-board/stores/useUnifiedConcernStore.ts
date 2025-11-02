@@ -70,6 +70,7 @@ export interface ConcernArticle {
   createdAt: string
   answer: string
   like: boolean
+  category?: string // 카테고리 추가
   equippedItems?: EquippedItem[] // API에서 제공되는 장착 아이템
   borderImageUrl?: string // 작성자의 장착 테두리
   nicknameColor?: string // 작성자의 장착 닉네임 색상
