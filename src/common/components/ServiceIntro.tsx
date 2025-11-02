@@ -74,7 +74,10 @@ const ServiceIntro: React.FC = () => {
             혼자 끌어안고 있던 마음을 밤하늘에 띄워보세요.
           </span>
           <span className="block text-mainColor">
-            달토끼가 조용히 듣고, 따뜻하게 위로할게요.
+            AI 상담사 달토끼가 고민을 듣고, 바로 답을 해드릴게요.
+          </span>
+          <span className="block text-mainBlack mt-4">
+            어떤 이야기든 괜찮아요. 달토끼는 언제나 그대 곁에서 귀 기울이고 있을게요.
           </span>
         </p>
 
