@@ -5,7 +5,7 @@ import FeatureCard from './FeatureCard'
 const ServiceExplainSection: React.FC = () => {
   const [expandedCard, setExpandedCard] = useState<string | null>(null)
   return (
-    <section className="relative w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-20 md:my-16">
+    <section className="relative w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 my-20">
       {/* 달토끼 게시판 역할 */}
       <div className="mb-8">
         <h2 className="text-2xl md:text-4xl text-center text-mainColor font-mainFont leading-tight">

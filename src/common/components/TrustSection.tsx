@@ -11,7 +11,7 @@ import PointUsingCard from './PointUsingCard'
 
 const TrustSection: React.FC = () => {
   return (
-    <section className="relative w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 mb-20 md:my-20">
+    <section className="relative w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 mb-20 my-20">
       <div className="w-full">
         <div>
           <div className="text-right mb-8">
@@ -41,7 +41,7 @@ const TrustSection: React.FC = () => {
             />
           </div>
         </div>
-        <div className="mt-20 md:mt-40">
+        <div className="my-20 md:my-40">
           <div className="mb-12 text-left">
             <h3 className="text-2xl md:text-4xl text-mainColor font-mainFont mb-2">
               포인트로 프로필을 꾸며보세요
