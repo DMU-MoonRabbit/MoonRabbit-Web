@@ -19,7 +19,7 @@ const PointCard: React.FC<PointCardProps> = ({
         </h4>
       </div>
       <div 
-        className="rounded-2xl w-full md:h-50 h-32 text-white shadow-md bg-cover bg-center bg-no-repeat"
+        className="rounded-2xl w-full md:h-50 h-32 text-white shadow-md bg-cover bg-center bg-no-repeat md:min-h-[250px]"
         style={{ backgroundImage: `url(${imageUrl})` }}
       />
       <p className="text-sm text-mainGray font-gothicFont mt-2">{description}</p>
