@@ -18,7 +18,6 @@ const AccountSection: React.FC = () => {
     getEquippedBorder,
     getEquippedNicknameColor,
   } = useUserProfileStore()
-  const { logout } = useAuthStore()
   const navigate = useNavigate()
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
@@ -38,9 +37,6 @@ const AccountSection: React.FC = () => {
     type: 'success',
     message: '',
   })
-
-  // 로그아웃 확인 모달 상태
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
 
   const showModal = (type: 'success' | 'error', message: string) => {
     setModalState({ isOpen: true, type, message })
@@ -104,15 +100,6 @@ const AccountSection: React.FC = () => {
 
   const handleProfileImageClick = () => {
     fileInputRef.current?.click()
-  }
-
-  const handleLogoutClick = () => {
-    setIsLogoutModalOpen(true)
-  }
-
-  const handleLogoutConfirm = () => {
-    logout()
-    navigate('/login')
   }
 
   const handleImageUpload = async (
@@ -405,37 +392,12 @@ const AccountSection: React.FC = () => {
         </div>
       </div>
 
-      {/* 로그아웃 버튼 */}
-      <div className={clsx('mt-6 flex', isMobile ? 'justify-center' : 'justify-start')}>
-        <button
-          onClick={handleLogoutClick}
-          className={clsx(
-            'bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-gothicFont',
-            isMobile ? 'w-full px-6 py-3 text-base' : 'px-6 py-2 text-sm',
-          )}
-        >
-          로그아웃
-        </button>
-      </div>
-
       {/* 알림 모달 */}
       <MiniModal
         isOpen={modalState.isOpen}
         onClose={closeModal}
         type={modalState.type}
         message={modalState.message}
-      />
-
-      {/* 로그아웃 확인 모달 */}
-      <MiniModal
-        isOpen={isLogoutModalOpen}
-        onClose={() => setIsLogoutModalOpen(false)}
-        type="confirm"
-        title="로그아웃"
-        message="정말 로그아웃 하시겠습니까?"
-        onConfirm={handleLogoutConfirm}
-        confirmText="로그아웃"
-        cancelText="취소"
       />
     </section>
   )
