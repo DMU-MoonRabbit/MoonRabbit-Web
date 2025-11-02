@@ -13,10 +13,10 @@ const ServiceExplainSection: React.FC = () => {
     <section className="relative w-full max-w-[1920px] mx-auto px-4 md:px-8 lg:px-12 py-20 md:my-16">
       {/* 달토끼 게시판 역할 */}
       <div className="mb-8">
-        <h2 className="text-2xl md:text-4xl text-right text-mainColor font-mainFont leading-tight">
+        <h2 className="text-2xl md:text-4xl text-center text-mainColor font-mainFont leading-tight">
           달토끼와 같이 고민을 나눠요
         </h2>
-        <p className="text-base sm:text-lg md:text-xl text-lightWalnut font-mainFont mt-2 text-right">
+        <p className="text-base sm:text-lg md:text-xl text-lightWalnut font-mainFont mt-2 text-center">
           마음이 답답한데 어디에도 털어놓지 못하고 있다면, 달토끼에게 털어놓아보세요.
         </p>
       </div>
@@ -53,7 +53,7 @@ const ServiceExplainSection: React.FC = () => {
               신뢰도를 쌓아 포인트를 얻어요
             </h3>
             <p className="text-base sm:text-lg text-lightWalnut font-mainFont">
-              여러 활동을 통해 포인트를 얻고 내 프로필을 꾸며보세요!
+              고민을 함께 나누며 신뢰도를 쌓으면 포인트를 얻을 수 있어요!
             </p>
           </div>
 
