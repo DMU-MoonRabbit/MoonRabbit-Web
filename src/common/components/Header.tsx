@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 import axios from '@/api/axios'
+import { ENDPOINTS } from '@/api/endpoints'
 
 import { useAuthStore } from '../../features/auth/stores/useAuthStore'
 import useUserStore from '../../features/mypage/stores/useUserStore'
@@ -33,18 +34,15 @@ const Header = () => {
   }, [setRes])
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && !nickname) {
       const fetchNickname = async () => {
         const token = localStorage.getItem('accessToken')
         try {
-          const response = await axios.get(
-            `https://moonrabbit-api.kro.kr/api/users/profile`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+          const response = await axios.get(ENDPOINTS.USER_PROFILE, {
+            headers: {
+              Authorization: `Bearer ${token}`,
             },
-          )
+          })
           setNickname(response.data.nickname)
         } catch (error) {
           console.error('닉네임 조회 실패', error)
@@ -52,7 +50,7 @@ const Header = () => {
       }
       fetchNickname()
     }
-  }, [isLoggedIn, setNickname])
+  }, [isLoggedIn, nickname, setNickname])
 
   // 외부 클릭 시 드롭다운 닫기
   useEffect(() => {
@@ -76,6 +74,8 @@ const Header = () => {
 
   const handleLogoutConfirm = () => {
     logout()
+    setNickname('')
+    localStorage.removeItem('cachedUser')
     navigate('/login')
     setIsLogoutModalOpen(false)
   }
