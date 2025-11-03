@@ -36,7 +36,7 @@ export const ENDPOINTS = {
     `${BASE_URL}/boards/users/${userId}?page=${page}&size=${size}`,
 
   // 인증(Auth)
-  LOGIN: `${BASE_URL}/auth/login`,
+  LOGIN: `${BASE_URL}/users/login`,
   SIGNUP: `${BASE_URL}/users/register`,
   LOGOUT: `${BASE_URL}/auth/logout`,
   REISSUE: `${BASE_URL}/users/reissue`,
