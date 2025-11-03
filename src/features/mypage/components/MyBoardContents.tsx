@@ -30,20 +30,28 @@ const MyBoardContents: React.FC<MyBoardContentsProps> = memo(
     const navigate = useNavigate()
 
     // 현재 사용할 데이터와 함수들 결정
-    const concerns = isOwnPage ? filteredConcerns : otherUserFilteredConcerns
+    const allConcerns = isOwnPage
+      ? filteredConcerns
+      : otherUserFilteredConcerns
     const currentPageInfo = isOwnPage ? pageInfo : otherUserPageInfo
     const setPageFunction = isOwnPage ? setPage : setOtherUserPage
 
+    // 페이지당 2개씩 표시 (현재 페이지에 해당하는 데이터만)
+    const pageSize = 2
+    const startIndex = currentPageInfo.number * pageSize
+    const endIndex = startIndex + pageSize
+    const concerns = allConcerns.slice(startIndex, endIndex)
+
     useEffect(() => {
       if (isOwnPage) {
-        fetchMyConcerns(pageInfo.number)
+        // 페이징 없이 모든 데이터를 한 번에 가져옴
+        fetchMyConcerns(0)
       } else if (userId) {
         fetchOtherUserConcerns(userId, otherUserPageInfo.number)
       }
     }, [
       fetchMyConcerns,
       fetchOtherUserConcerns,
-      pageInfo.number,
       otherUserPageInfo.number,
       userId,
       isOwnPage,
@@ -92,8 +100,8 @@ const MyBoardContents: React.FC<MyBoardContentsProps> = memo(
           ))}
         </div>
 
-        {/* 페이징 UI */}
-        {!currentPageInfo.empty && (
+        {/* 페이징 UI - 2개 이상일 때만 표시 */}
+        {!currentPageInfo.empty && currentPageInfo.totalPages > 1 && (
           <div className="flex justify-center items-center mt-8 gap-2">
             <button
               onClick={() => handlePageChange(currentPageInfo.number - 1)}

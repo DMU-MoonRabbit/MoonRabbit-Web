@@ -34,6 +34,7 @@ export const ENDPOINTS = {
   USER_PROFILE_BY_ID: (userId: number) => `${BASE_URL}/users/users/${userId}`,
   USER_BOARDS_BY_ID: (userId: number, page = 0, size = 2) =>
     `${BASE_URL}/boards/users/${userId}?page=${page}&size=${size}`,
+  MY_ALL_BOARDS: `${BASE_URL}/boards/my-all`,
 
   // 인증(Auth)
   LOGIN: `${BASE_URL}/users/login`,
