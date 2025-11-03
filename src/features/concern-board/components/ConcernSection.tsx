@@ -96,7 +96,7 @@ const ConcernSection: React.FC = () => {
     res === 'pc' ? filteredConcerns : filteredConcerns.slice(0, 3)
 
   return (
-    <section className="w-full max-w-[1920px] mx-auto px-[47px]">
+    <section className="w-full max-w-[1920px] mx-auto px-[47px] my-20">
       <h2 className="text-2xl text-center text-darkWalnut font-mainFont mb-4">
         달토끼의 밤하늘
       </h2>
