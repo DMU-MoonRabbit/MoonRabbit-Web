@@ -31,7 +31,7 @@ function App() {
     const accessToken = localStorage.getItem('accessToken')
     if (accessToken) {
       setIsLoggedIn(true)
-      
+
       // cachedUser에서 닉네임 가져오기
       const cachedUser = localStorage.getItem('cachedUser')
       if (cachedUser) {

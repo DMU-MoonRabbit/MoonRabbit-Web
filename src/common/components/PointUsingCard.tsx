@@ -11,10 +11,9 @@ const PointUsingCard: React.FC<PointUsingCardProps> = ({
   imageUrl,
   description,
 }) => {
-  
   return (
     <div className="flex flex-col items-start hover:scale-102 duration-300 flex-1 group rounded-3xl shadow-lg overflow-hidden bg-white">
-      <div 
+      <div
         className="w-full md:h-64 h-48 bg-cover bg-bottom bg-no-repeat relative"
         style={{ backgroundImage: `url(${imageUrl})` }}
       >

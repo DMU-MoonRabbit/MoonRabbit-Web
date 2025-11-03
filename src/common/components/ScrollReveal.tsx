@@ -13,12 +13,12 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
   children,
   className = '',
   delay = 0,
-  direction = 'up'
+  direction = 'up',
 }) => {
   const { elementRef, isVisible } = useScrollAnimation({
     threshold: 0.1,
     rootMargin: '0px 0px -100px 0px',
-    triggerOnce: true
+    triggerOnce: true,
   })
 
   const getTransformClass = () => {

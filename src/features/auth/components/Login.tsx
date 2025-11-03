@@ -81,7 +81,7 @@ export const LoginForm = () => {
         }
         localStorage.setItem('cachedUser', JSON.stringify(userData))
         setUser(userData)
-        
+
         // 로그인 응답에 닉네임이 있으면 사용, 없으면 프로필 API로 조회
         if (userData.nickname) {
           setNickname(userData.nickname)
@@ -99,13 +99,15 @@ export const LoginForm = () => {
             // 프로필 조회 실패는 무시 (Header의 useEffect에서 처리됨)
           }
         }
-        
+
         setIsLoggedIn(true)
         navigate('/')
       }
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
-        const errorMessage = error.response.data.message || '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.'
+        const errorMessage =
+          error.response.data.message ||
+          '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.'
         showModal('error', errorMessage)
       } else {
         showModal(
@@ -230,7 +232,14 @@ export const SignupForm = () => {
 
   const handleSignup = async () => {
     // 유효성 검사
-    if (!email || !nickname || !phoneNum || !verification || !password || !passwordConfirm) {
+    if (
+      !email ||
+      !nickname ||
+      !phoneNum ||
+      !verification ||
+      !password ||
+      !passwordConfirm
+    ) {
       showModal('error', '모든 정보를 입력해주세요.')
       return
     }
@@ -265,14 +274,14 @@ export const SignupForm = () => {
       if (axios.isAxiosError(error) && error.response?.data) {
         const errorData = error.response.data
         let errorMessage = '회원가입에 실패했습니다.'
-        
+
         // 비밀번호 검증 에러 처리
         if (errorData.password) {
           errorMessage = errorData.password
         } else if (errorData.message) {
           errorMessage = errorData.message
         }
-        
+
         showModal('error', errorMessage)
       } else {
         showModal('error', '회원가입에 실패했습니다.')
@@ -292,7 +301,8 @@ export const SignupForm = () => {
       showModal('success', '인증번호가 전송되었습니다.')
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
-        const errorMessage = error.response.data.message || '인증번호 전송에 실패했습니다.'
+        const errorMessage =
+          error.response.data.message || '인증번호 전송에 실패했습니다.'
         showModal('error', errorMessage)
       } else {
         showModal('error', '인증번호 전송에 실패했습니다.')
@@ -314,7 +324,8 @@ export const SignupForm = () => {
       showModal('success', '인증번호가 확인되었습니다.')
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.data) {
-        const errorMessage = error.response.data.message || '인증번호 확인에 실패했습니다.'
+        const errorMessage =
+          error.response.data.message || '인증번호 확인에 실패했습니다.'
         showModal('error', errorMessage)
       } else {
         showModal('error', '인증번호 확인에 실패했습니다.')
@@ -379,7 +390,7 @@ export const SignupForm = () => {
             onClick={handleVerifyCode}
             className={clsx(
               'max-h-[42px] rounded-[5px] w-fit px-3 py-2 whitespace-nowrap',
-              isVerified && 'bg-green-500 hover:bg-green-600'
+              isVerified && 'bg-green-500 hover:bg-green-600',
             )}
           >
             {isVerified ? '인증 완료' : '인증 확인'}
