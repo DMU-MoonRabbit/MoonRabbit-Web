@@ -41,6 +41,7 @@ export const LogoPanel = () => {
 export const LoginForm = () => {
   const { email, password, setEmail, setPassword, setIsLoggedIn, setUser } =
     useAuthStore()
+  const setNickname = useUserStore((state) => state.setNickname)
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
@@ -80,14 +81,38 @@ export const LoginForm = () => {
         }
         localStorage.setItem('cachedUser', JSON.stringify(userData))
         setUser(userData)
+        
+        // 로그인 응답에 닉네임이 있으면 사용, 없으면 프로필 API로 조회
+        if (userData.nickname) {
+          setNickname(userData.nickname)
+        } else {
+          try {
+            const profileResponse = await axios.get(ENDPOINTS.USER_PROFILE, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            })
+            if (profileResponse.data.nickname) {
+              setNickname(profileResponse.data.nickname)
+            }
+          } catch {
+            // 프로필 조회 실패는 무시 (Header의 useEffect에서 처리됨)
+          }
+        }
+        
         setIsLoggedIn(true)
         navigate('/')
       }
-    } catch {
-      showModal(
-        'error',
-        '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.',
-      )
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorMessage = error.response.data.message || '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.'
+        showModal('error', errorMessage)
+      } else {
+        showModal(
+          'error',
+          '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.',
+        )
+      }
     }
   }
 
