@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
-import GoogleLoginImg from '@/assets/images/GoogleLogin.svg'
+import GoogleLoginImg from '@/assets/images/GoogleLogin.png'
 import kakaoLoginImg from '@/assets/images/KakaoLogin.png'
 import LogoImg from '@/assets/images/MoonRabbitSleep2.png'
 import MiniModal from '@/common/components/MiniModal'
@@ -130,7 +130,7 @@ export const LoginForm = () => {
     <>
       <div
         className={clsx(
-          'flex flex-col justify-center p-6 bg-white',
+          'flex flex-col justify-center p-6 bg-white font-gothicFont',
           isMobile ? 'w-full' : 'w-4/7',
         )}
       >
@@ -338,7 +338,7 @@ export const SignupForm = () => {
     <>
       <div
         className={clsx(
-          'flex flex-col justify-center p-6 bg-white',
+          'flex flex-col justify-center p-6 bg-white font-gothicFont',
           isMobile ? 'w-full' : 'w-4/7',
         )}
       >
@@ -496,6 +496,7 @@ export const SocialLogin = ({ SNSLoginImg, onClick }: SocialLoginProps) => {
       onClick={onClick}
     >
       <img src={SNSLoginImg} className="h-full object-contain" />
+      {isGoogle && <p className="pl-8 pr-10 font-roboto">구글 로그인</p>}
     </div>
   )
 }
