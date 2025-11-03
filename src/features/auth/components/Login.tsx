@@ -496,11 +496,7 @@ export const SocialLogin = ({ SNSLoginImg, onClick }: SocialLoginProps) => {
       onClick={onClick}
     >
       <img src={SNSLoginImg} className="h-full object-contain" />
-      {isGoogle && (
-        <p className="pl-8 pr-10 font-roboto">
-          구글 로그인
-        </p>
-      )}
+      {isGoogle && <p className="pl-8 pr-10 font-roboto">구글 로그인</p>}
     </div>
   )
 }
