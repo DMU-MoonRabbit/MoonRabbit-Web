@@ -5,6 +5,7 @@ import Footer from './common/components/Footer'
 import Header from './common/components/Header'
 import { useResponsiveStore } from './common/hooks/useResponsiveStore'
 import { useAuthStore } from './features/auth/stores/useAuthStore'
+import useUserStore from './features/mypage/stores/useUserStore'
 import AdminPage from './pages/AdminPage'
 import ConstellationPage from './pages/ConstellationPage'
 import FAQPage from './pages/FAQPage'
@@ -23,6 +24,7 @@ import TodayQuestionPage from './pages/TodayQuestionPage'
 function App() {
   const setRes = useResponsiveStore((state) => state.setRes)
   const setIsLoggedIn = useAuthStore((state) => state.setIsLoggedIn)
+  const setNickname = useUserStore((state) => state.setNickname)
 
   useEffect(() => {
     // 토큰 체크
@@ -30,6 +32,19 @@ function App() {
     const accessToken = localStorage.getItem('accessToken')
     if (accessToken) {
       setIsLoggedIn(true)
+
+      // cachedUser에서 닉네임 가져오기
+      const cachedUser = localStorage.getItem('cachedUser')
+      if (cachedUser) {
+        try {
+          const userData = JSON.parse(cachedUser)
+          if (userData.nickname) {
+            setNickname(userData.nickname)
+          }
+        } catch {
+          // JSON 파싱 실패 시 무시
+        }
+      }
     }
 
     const handleResize = () => {
@@ -38,7 +53,7 @@ function App() {
     handleResize()
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [setRes, setIsLoggedIn])
+  }, [setRes, setIsLoggedIn, setNickname])
 
   return (
     <BrowserRouter>

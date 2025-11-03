@@ -6,9 +6,7 @@ interface UseScrollAnimationOptions {
   triggerOnce?: boolean
 }
 
-export const useScrollAnimation = (
-  options: UseScrollAnimationOptions = {}
-) => {
+export const useScrollAnimation = (options: UseScrollAnimationOptions = {}) => {
   const { threshold = 0.1, rootMargin = '0px', triggerOnce = true } = options
   const [isVisible, setIsVisible] = useState(false)
   const elementRef = useRef<HTMLDivElement>(null)
@@ -28,7 +26,7 @@ export const useScrollAnimation = (
       {
         threshold,
         rootMargin,
-      }
+      },
     )
 
     const currentElement = elementRef.current
