@@ -15,8 +15,10 @@ interface MypageStore {
   filteredConcerns: Concern[]
   pageInfo: PageInfo
   totalBoardCount: number
+  otherUserBoardCount: number
   fetchMyConcerns: (page?: number) => Promise<void>
   fetchTotalBoardCount: () => Promise<void>
+  fetchOtherUserBoardCount: (userId: number) => Promise<void>
   setSelectedCategory: (category: string) => void
   setPage: (page: number) => void
 }
@@ -26,6 +28,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
   selectedCategory: '전체',
   filteredConcerns: [],
   totalBoardCount: 0,
+  otherUserBoardCount: 0,
   pageInfo: {
     totalPages: 0,
     totalElements: 0,
@@ -175,6 +178,23 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
     } catch {
       set({
         totalBoardCount: 0,
+      })
+    }
+  },
+
+  fetchOtherUserBoardCount: async (userId: number) => {
+    try {
+      // 첫 페이지만 요청해서 totalCount 가져오기
+      const response = await axios.get(
+        ENDPOINTS.USER_BOARDS_BY_ID(userId, 0, 1),
+      )
+
+      set({
+        otherUserBoardCount: response.data.totalCount || 0,
+      })
+    } catch {
+      set({
+        otherUserBoardCount: 0,
       })
     }
   },

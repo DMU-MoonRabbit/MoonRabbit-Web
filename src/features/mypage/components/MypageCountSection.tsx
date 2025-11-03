@@ -14,7 +14,12 @@ interface MypageCountSectionProps {
 
 const MypageCountSection: React.FC<MypageCountSectionProps> = memo(
   ({ isOwnPage, userId }) => {
-    const { totalBoardCount, fetchTotalBoardCount } = useMypageStore()
+    const {
+      totalBoardCount,
+      otherUserBoardCount,
+      fetchTotalBoardCount,
+      fetchOtherUserBoardCount,
+    } = useMypageStore()
 
     const { otherUserProfile, fetchUserProfileById } = useUserProfileStore()
 
@@ -23,10 +28,17 @@ const MypageCountSection: React.FC<MypageCountSectionProps> = memo(
         fetchTotalBoardCount()
       } else if (userId) {
         fetchUserProfileById(userId)
+        fetchOtherUserBoardCount(userId)
       }
-    }, [fetchTotalBoardCount, fetchUserProfileById, userId, isOwnPage])
+    }, [
+      fetchTotalBoardCount,
+      fetchOtherUserBoardCount,
+      fetchUserProfileById,
+      userId,
+      isOwnPage,
+    ])
 
-    const boardCount = isOwnPage ? totalBoardCount : 0
+    const boardCount = isOwnPage ? totalBoardCount : otherUserBoardCount
 
     const res = useResponsiveStore((state) => state.res)
     const isMobile = res === 'mo'
