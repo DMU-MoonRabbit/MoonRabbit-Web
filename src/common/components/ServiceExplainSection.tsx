@@ -12,7 +12,8 @@ const ServiceExplainSection: React.FC = () => {
           달토끼와 같이 고민을 나눠요
         </h2>
         <p className="text-base sm:text-lg md:text-xl text-lightWalnut font-mainFont mt-2 text-center">
-          마음이 답답한데 어디에도 털어놓지 못하고 있다면, 달토끼에게 털어놓아보세요.
+          마음이 답답한데 어디에도 털어놓지 못하고 있다면, 달토끼에게
+          털어놓아보세요.
         </p>
       </div>
 

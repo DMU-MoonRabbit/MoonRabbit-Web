@@ -1,10 +1,10 @@
 import clsx from 'clsx'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import axios from '@/api/axios'
 import { ENDPOINTS } from '@/api/endpoints'
-import GoogleLoginImg from '@/assets/images/GoogleLogin.svg'
+import GoogleLoginImg from '@/assets/images/GoogleLogin.png'
 import kakaoLoginImg from '@/assets/images/KakaoLogin.png'
 import LogoImg from '@/assets/images/MoonRabbitSleep2.png'
 import MiniModal from '@/common/components/MiniModal'
@@ -41,6 +41,7 @@ export const LogoPanel = () => {
 export const LoginForm = () => {
   const { email, password, setEmail, setPassword, setIsLoggedIn, setUser } =
     useAuthStore()
+  const setNickname = useUserStore((state) => state.setNickname)
   const res = useResponsiveStore((state) => state.res)
   const isMobile = res === 'mo'
 
@@ -80,14 +81,40 @@ export const LoginForm = () => {
         }
         localStorage.setItem('cachedUser', JSON.stringify(userData))
         setUser(userData)
+
+        // 로그인 응답에 닉네임이 있으면 사용, 없으면 프로필 API로 조회
+        if (userData.nickname) {
+          setNickname(userData.nickname)
+        } else {
+          try {
+            const profileResponse = await axios.get(ENDPOINTS.USER_PROFILE, {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
+            })
+            if (profileResponse.data.nickname) {
+              setNickname(profileResponse.data.nickname)
+            }
+          } catch {
+            // 프로필 조회 실패는 무시 (Header의 useEffect에서 처리됨)
+          }
+        }
+
         setIsLoggedIn(true)
         navigate('/')
       }
-    } catch {
-      showModal(
-        'error',
-        '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.',
-      )
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorMessage =
+          error.response.data.message ||
+          '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.'
+        showModal('error', errorMessage)
+      } else {
+        showModal(
+          'error',
+          '로그인에 실패했습니다. 이메일과 비밀번호를 확인해주세요.',
+        )
+      }
     }
   }
 
@@ -103,7 +130,7 @@ export const LoginForm = () => {
     <>
       <div
         className={clsx(
-          'flex flex-col justify-center p-6 bg-white',
+          'flex flex-col justify-center p-6 bg-white font-gothicFont',
           isMobile ? 'w-full' : 'w-4/7',
         )}
       >
@@ -163,11 +190,13 @@ export const SignupForm = () => {
 
   const {
     email,
+    nickname,
     phoneNum,
     verification,
     password,
     passwordConfirm,
     setEmail,
+    setNickname,
     setPhoneNum,
     setVerification,
     setPassword,
@@ -186,6 +215,8 @@ export const SignupForm = () => {
     message: '',
   })
 
+  const [isVerified, setIsVerified] = useState(false)
+
   const showModal = (type: 'success' | 'error', message: string) => {
     setModalState({ isOpen: true, type, message })
   }
@@ -194,10 +225,26 @@ export const SignupForm = () => {
     setModalState((prev) => ({ ...prev, isOpen: false }))
   }
 
+  // 전화번호가 변경되면 인증 상태 초기화
+  useEffect(() => {
+    setIsVerified(false)
+  }, [phoneNum])
+
   const handleSignup = async () => {
     // 유효성 검사
-    if (!email || !phoneNum || !verification || !password || !passwordConfirm) {
+    if (
+      !email ||
+      !nickname ||
+      !phoneNum ||
+      !verification ||
+      !password ||
+      !passwordConfirm
+    ) {
       showModal('error', '모든 정보를 입력해주세요.')
+      return
+    }
+    if (!isVerified) {
+      showModal('error', '인증번호를 확인해주세요.')
       return
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -213,6 +260,7 @@ export const SignupForm = () => {
     try {
       await axios.post(ENDPOINTS.SIGNUP, {
         email,
+        nickname,
         password,
         passwordConfirm,
         phoneNum,
@@ -222,19 +270,67 @@ export const SignupForm = () => {
       setTimeout(() => {
         setIsLogin(true)
       }, 1500)
-    } catch {
-      showModal('error', '회원가입에 실패했습니다.')
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorData = error.response.data
+        let errorMessage = '회원가입에 실패했습니다.'
+
+        // 비밀번호 검증 에러 처리
+        if (errorData.password) {
+          errorMessage = errorData.password
+        } else if (errorData.message) {
+          errorMessage = errorData.message
+        }
+
+        showModal('error', errorMessage)
+      } else {
+        showModal('error', '회원가입에 실패했습니다.')
+      }
     }
   }
 
-  const handleVerification = async () => {
+  const handleSendVerification = async () => {
+    if (!phoneNum) {
+      showModal('error', '전화번호를 입력해주세요.')
+      return
+    }
     try {
-      await axios.post(ENDPOINTS.VERIFY, {
+      await axios.post(ENDPOINTS.SMS_SEND, {
         phoneNum,
       })
       showModal('success', '인증번호가 전송되었습니다.')
-    } catch {
-      showModal('error', '인증번호 전송에 실패했습니다.')
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorMessage =
+          error.response.data.message || '인증번호 전송에 실패했습니다.'
+        showModal('error', errorMessage)
+      } else {
+        showModal('error', '인증번호 전송에 실패했습니다.')
+      }
+    }
+  }
+
+  const handleVerifyCode = async () => {
+    if (!verification) {
+      showModal('error', '인증번호를 입력해주세요.')
+      return
+    }
+    try {
+      await axios.post(ENDPOINTS.SMS_VERIFY, {
+        phoneNum,
+        certification: verification,
+      })
+      setIsVerified(true)
+      showModal('success', '인증번호가 확인되었습니다.')
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.data) {
+        const errorMessage =
+          error.response.data.message || '인증번호 확인에 실패했습니다.'
+        showModal('error', errorMessage)
+      } else {
+        showModal('error', '인증번호 확인에 실패했습니다.')
+      }
+      setIsVerified(false)
     }
   }
 
@@ -242,7 +338,7 @@ export const SignupForm = () => {
     <>
       <div
         className={clsx(
-          'flex flex-col justify-center p-6 bg-white',
+          'flex flex-col justify-center p-6 bg-white font-gothicFont',
           isMobile ? 'w-full' : 'w-4/7',
         )}
       >
@@ -259,12 +355,28 @@ export const SignupForm = () => {
         />
         <LoginInputField
           type="string"
-          placeholder="전화번호"
-          value={phoneNum}
+          placeholder="닉네임"
+          value={nickname}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setPhoneNum(e.target.value)
+            setNickname(e.target.value)
           }
         />
+        <div className="flex gap-2">
+          <LoginInputField
+            type="string"
+            placeholder="전화번호"
+            value={phoneNum}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPhoneNum(e.target.value)
+            }
+          />
+          <LoginButton
+            onClick={handleSendVerification}
+            className="max-h-[42px] rounded-[5px] w-fit px-3 py-2 whitespace-nowrap"
+          >
+            인증번호 전송
+          </LoginButton>
+        </div>
         <div className="flex gap-2">
           <LoginInputField
             type="string"
@@ -275,10 +387,13 @@ export const SignupForm = () => {
             }
           />
           <LoginButton
-            onClick={handleVerification}
-            className="max-h-[42px] rounded-[5px] w-fit px-3 py-2 whitespace-nowrap"
+            onClick={handleVerifyCode}
+            className={clsx(
+              'max-h-[42px] rounded-[5px] w-fit px-3 py-2 whitespace-nowrap',
+              isVerified && 'bg-green-500 hover:bg-green-600',
+            )}
           >
-            인증번호 전송
+            {isVerified ? '인증 완료' : '인증 확인'}
           </LoginButton>
         </div>
         <LoginInputField
@@ -381,6 +496,7 @@ export const SocialLogin = ({ SNSLoginImg, onClick }: SocialLoginProps) => {
       onClick={onClick}
     >
       <img src={SNSLoginImg} className="h-full object-contain" />
+      {isGoogle && <p className="pl-8 pr-10 font-roboto">구글 로그인</p>}
     </div>
   )
 }

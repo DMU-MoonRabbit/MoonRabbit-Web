@@ -77,7 +77,8 @@ const ServiceIntro: React.FC = () => {
             AI 상담사 달토끼가 고민을 듣고, 바로 답을 해드릴게요.
           </span>
           <span className="block text-mainBlack mt-4">
-            어떤 이야기든 괜찮아요. 달토끼는 언제나 그대 곁에서 귀 기울이고 있을게요.
+            어떤 이야기든 괜찮아요. 달토끼는 언제나 그대 곁에서 귀 기울이고
+            있을게요.
           </span>
         </p>
 
