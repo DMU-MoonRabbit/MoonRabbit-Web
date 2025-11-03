@@ -4,8 +4,10 @@ const BASE_URL = 'https://moonrabbit-api.kro.kr/api'
 
 export const ENDPOINTS = {
   // 고민(Concern)
-  CONCERN_LIST: (page = 0, size = 9) =>
-    `${BASE_URL}/boards/list?page=${page}&size=${size}`,
+  CONCERN_LIST: (page = 0, size = 9, category = '전체') => {
+    const categoryParam = category === '전체' ? '' : `&category=${encodeURIComponent(category)}`
+    return `${BASE_URL}/boards/list?page=${page}&size=${size}${categoryParam}`
+  },
   CONCERN_DETAIL: (id: number) => `${BASE_URL}/boards/list/${id}`,
   CONCERN_CREATE: `${BASE_URL}/boards/save`,
   CONCERN_UPDATE: (id: number) => `${BASE_URL}/boards/edit/${id}`,

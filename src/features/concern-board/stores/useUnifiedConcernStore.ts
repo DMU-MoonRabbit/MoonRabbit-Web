@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 
 import axios from '@/api/axios'
+import ENDPOINTS from '@/api/endpoints'
 import { EquippedItem } from '@/features/mypage/types/user'
 
 // 기존 ConcernStore Concern, Board, PageInfo 타입 등 복사
@@ -193,17 +194,11 @@ export const useUnifiedConcernStore = create<UnifiedConcernStore>(
     newConcernCategory: '학교',
 
     setSelectedCategory: (category) => {
-      const { concerns } = get()
       const selectedCategory = category || '전체'
-      const filtered =
-        selectedCategory === '전체'
-          ? concerns
-          : concerns.filter((concern) => concern.category === selectedCategory)
-
-      set({
-        selectedCategory,
-        filteredConcerns: filtered,
-      })
+      // 카테고리 변경 시 첫 페이지로 리셋하고 API 재호출
+      set({ selectedCategory })
+      set({ pageInfo: { ...get().pageInfo, number: 0 } })
+      get().fetchConcerns(0)
     },
 
     setIsModalOpen: (isOpen) => set({ isModalOpen: isOpen }),
@@ -231,29 +226,43 @@ export const useUnifiedConcernStore = create<UnifiedConcernStore>(
 
     fetchConcerns: async (page = 0) => {
       try {
-        const { pageInfo } = get()
+        const { pageInfo, selectedCategory } = get()
         const response = await axios.get(
-          `https://moonrabbit-api.kro.kr/api/boards/list?page=${page}&size=${pageInfo.size}`,
+          ENDPOINTS.CONCERN_LIST(page, pageInfo.size, selectedCategory),
         )
-        const boards: Board[] = response.data.content
+        const boards: Board[] = response.data.content || []
         const concerns = boards.map(transformBoardToConcern)
 
         set({
           concerns,
-          filteredConcerns: concerns,
+          filteredConcerns: concerns, // 서버에서 이미 필터링된 데이터
           pageInfo: {
-            totalPages: response.data.totalPages,
-            totalElements: response.data.totalElements,
-            first: response.data.first,
-            last: response.data.last,
-            size: response.data.size,
-            number: response.data.number,
-            numberOfElements: response.data.numberOfElements,
-            empty: response.data.empty,
+            totalPages: response.data.totalPages || 0,
+            totalElements: response.data.totalElements || 0,
+            first: response.data.first ?? true,
+            last: response.data.last ?? true,
+            size: response.data.size || pageInfo.size,
+            number: response.data.number ?? page,
+            numberOfElements: response.data.numberOfElements || 0,
+            empty: response.data.empty ?? true,
           },
         })
       } catch {
-        // 에러 처리
+        // 에러 발생 시 기존 데이터는 유지하고 빈 결과만 설정
+        set({
+          concerns: [],
+          filteredConcerns: [],
+          pageInfo: {
+            totalPages: 0,
+            totalElements: 0,
+            first: true,
+            last: true,
+            size: 9,
+            number: page,
+            numberOfElements: 0,
+            empty: true,
+          },
+        })
       }
     },
 
