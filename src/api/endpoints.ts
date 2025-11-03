@@ -37,10 +37,13 @@ export const ENDPOINTS = {
 
   // 인증(Auth)
   LOGIN: `${BASE_URL}/auth/login`,
-  SIGNUP: `${BASE_URL}/auth/signup`,
+  SIGNUP: `${BASE_URL}/users/register`,
   LOGOUT: `${BASE_URL}/auth/logout`,
-  VERIFY: `${BASE_URL}/auth/verify`,
   REISSUE: `${BASE_URL}/users/reissue`,
+
+  // SMS 인증
+  SMS_SEND: `${BASE_URL}/sms/send`,
+  SMS_VERIFY: `${BASE_URL}/sms/check`,
 
   // 플레이리스트(Playlist)
   PLAYLIST_LIST: `${BASE_URL}/playlists`,
