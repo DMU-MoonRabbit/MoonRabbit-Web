@@ -15,16 +15,10 @@ interface MypageStore {
   filteredConcerns: Concern[]
   pageInfo: PageInfo
   totalBoardCount: number
-  otherUserConcerns: Concern[]
-  otherUserFilteredConcerns: Concern[]
-  otherUserPageInfo: PageInfo
-  otherUserBoardCount: number
   fetchMyConcerns: (page?: number) => Promise<void>
   fetchTotalBoardCount: () => Promise<void>
-  fetchOtherUserConcerns: (userId: number, page?: number) => Promise<void>
   setSelectedCategory: (category: string) => void
   setPage: (page: number) => void
-  setOtherUserPage: (page: number) => void
 }
 
 export const useMypageStore = create<MypageStore>((set, get) => ({
@@ -32,20 +26,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
   selectedCategory: '전체',
   filteredConcerns: [],
   totalBoardCount: 0,
-  otherUserConcerns: [],
-  otherUserFilteredConcerns: [],
-  otherUserBoardCount: 0,
   pageInfo: {
-    totalPages: 0,
-    totalElements: 0,
-    first: true,
-    last: true,
-    size: 2,
-    number: 0,
-    numberOfElements: 0,
-    empty: true,
-  },
-  otherUserPageInfo: {
     totalPages: 0,
     totalElements: 0,
     first: true,
@@ -57,7 +38,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
   },
 
   setSelectedCategory: (category) => {
-    const { concerns, otherUserConcerns, pageInfo, otherUserPageInfo } = get()
+    const { concerns, pageInfo } = get()
     const selectedCategory = category || '전체'
 
     // 내 글 필터링
@@ -66,27 +47,15 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         ? concerns
         : concerns.filter((concern) => concern.category === selectedCategory)
 
-    // 타유저 글 필터링
-    const otherUserFiltered =
-      selectedCategory === '전체'
-        ? otherUserConcerns
-        : otherUserConcerns.filter(
-            (concern) => concern.category === selectedCategory,
-          )
-
     // 페이지당 2개씩 표시하도록 페이징 정보 업데이트
     // 카테고리 변경 시 첫 페이지로 리셋
     const pageSize = 2
     const totalPages = Math.ceil(filtered.length / pageSize)
     const currentPage = 0 // 카테고리 변경 시 첫 페이지로
 
-    const otherUserTotalPages = Math.ceil(otherUserFiltered.length / pageSize)
-    const otherUserCurrentPage = 0 // 카테고리 변경 시 첫 페이지로
-
     set({
       selectedCategory,
       filteredConcerns: filtered,
-      otherUserFilteredConcerns: otherUserFiltered,
       pageInfo: {
         ...pageInfo,
         totalPages: totalPages || 1,
@@ -101,20 +70,6 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         ),
         empty: filtered.length === 0,
       },
-      otherUserPageInfo: {
-        ...otherUserPageInfo,
-        totalPages: otherUserTotalPages || 1,
-        totalElements: otherUserFiltered.length,
-        first: otherUserCurrentPage === 0,
-        last: otherUserCurrentPage >= otherUserTotalPages - 1,
-        size: pageSize,
-        number: otherUserCurrentPage,
-        numberOfElements: Math.min(
-          pageSize,
-          otherUserFiltered.length - otherUserCurrentPage * pageSize,
-        ),
-        empty: otherUserFiltered.length === 0,
-      },
     })
   },
 
@@ -126,18 +81,6 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
         number: page,
         first: page === 0,
         last: page >= pageInfo.totalPages - 1,
-      },
-    })
-  },
-
-  setOtherUserPage: (page) => {
-    const { otherUserPageInfo } = get()
-    set({
-      otherUserPageInfo: {
-        ...otherUserPageInfo,
-        number: page,
-        first: page === 0,
-        last: page >= otherUserPageInfo.totalPages - 1,
       },
     })
   },
@@ -166,7 +109,7 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
       const filtered =
         selectedCategory === '전체'
           ? concerns
-          : concerns.filter((concern) => concern.category === selectedCategory)
+          : concerns.filter((concern: Concern) => concern.category === selectedCategory)
 
       // 페이지당 2개씩 표시
       const pageSize = 2
@@ -232,56 +175,6 @@ export const useMypageStore = create<MypageStore>((set, get) => ({
     } catch {
       set({
         totalBoardCount: 0,
-      })
-    }
-  },
-
-  fetchOtherUserConcerns: async (userId: number, page = 0) => {
-    try {
-      const response = await axios.get(
-        ENDPOINTS.USER_BOARDS_BY_ID(userId, page, 2),
-      )
-      const boards: Board[] = response.data.content || []
-      const concerns = boards.map(transformBoardToConcern)
-
-      const { selectedCategory } = get()
-      const otherUserFiltered =
-        selectedCategory === '전체'
-          ? concerns
-          : concerns.filter((concern) => concern.category === selectedCategory)
-
-      set({
-        otherUserConcerns: concerns,
-        otherUserFilteredConcerns: otherUserFiltered,
-        otherUserBoardCount: response.data.totalCount || 0,
-        otherUserPageInfo: {
-          totalPages: response.data.totalPages || 0,
-          totalElements: response.data.totalCount || boards.length,
-          first: (response.data.pageNumber || page) === 0,
-          last:
-            (response.data.pageNumber || page) >=
-            (response.data.totalPages || 1) - 1,
-          size: response.data.pageSize || 2,
-          number: response.data.pageNumber || page,
-          numberOfElements: response.data.content?.length || boards.length,
-          empty: boards.length === 0,
-        },
-      })
-    } catch {
-      set({
-        otherUserConcerns: [],
-        otherUserFilteredConcerns: [],
-        otherUserBoardCount: 0,
-        otherUserPageInfo: {
-          totalPages: 0,
-          totalElements: 0,
-          first: true,
-          last: true,
-          size: 2,
-          number: page,
-          numberOfElements: 0,
-          empty: true,
-        },
       })
     }
   },
