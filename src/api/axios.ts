@@ -88,7 +88,7 @@ axios.interceptors.response.use(
     // 401 에러이고, 아직 재시도하지 않은 요청인 경우
     if (error.response?.status === 401 && !originalRequest._retry) {
       console.log('[Token Interceptor] 401 에러 감지:', originalRequest.url)
-      
+
       if (isRefreshing) {
         console.log('[Token Interceptor] 재발급 중... 대기열에 추가')
         // 이미 재발급 중이면 대기열에 추가
@@ -113,7 +113,10 @@ axios.interceptors.response.use(
         processQueue(null, newAccessToken)
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
         isRefreshing = false
-        console.log('[Token Interceptor] 원래 요청 재시도:', originalRequest.url)
+        console.log(
+          '[Token Interceptor] 원래 요청 재시도:',
+          originalRequest.url,
+        )
         return axios(originalRequest)
       } else {
         isRefreshing = false
@@ -129,4 +132,3 @@ axios.interceptors.response.use(
 )
 
 export default axios
-

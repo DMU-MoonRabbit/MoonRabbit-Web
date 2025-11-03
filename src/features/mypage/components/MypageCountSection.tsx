@@ -81,9 +81,7 @@ const MypageCountSection: React.FC<MypageCountSectionProps> = memo(
                   ? '내가 그린 밤하늘'
                   : `${otherUserProfile?.nickname || ''}의 밤하늘`}
               </p>
-              <p
-                className={clsx(isMobile ? 'text-[28px]' : 'text-[4vw]')}
-              >
+              <p className={clsx(isMobile ? 'text-[28px]' : 'text-[4vw]')}>
                 {boardCount}
               </p>
             </div>

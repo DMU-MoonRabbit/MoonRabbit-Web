@@ -53,21 +53,29 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       likeCount: comment.likeCount,
     })
     setIsSelected(comment.isSelected || false)
-  }, [comment.id, comment.likedByMe, comment.like, comment.likeCount, comment.isSelected])
+  }, [
+    comment.id,
+    comment.likedByMe,
+    comment.like,
+    comment.likeCount,
+    comment.isSelected,
+  ])
 
   // API 데이터에서 장착 아이템 정보를 받아오거나, 본인 댓글이면 현재 장착 아이템 사용
   const { borderImageUrl: ownBorderUrl, nicknameColor: ownNicknameColor } =
     usePostAuthorItems(comment.userId)
-  
+
   // 익명 게시글인 경우, 본인 댓글이면 실제 닉네임을 표시
   const isMyComment = userProfile?.id === comment.userId
-  const displayNickname = (isBoardAnonymous && isMyComment && userProfile?.nickname)
-    ? userProfile.nickname
-    : comment.nickname
-  
+  const displayNickname =
+    isBoardAnonymous && isMyComment && userProfile?.nickname
+      ? userProfile.nickname
+      : comment.nickname
+
   const borderImageUrl = comment.borderImageUrl || ownBorderUrl
   const nicknameColor = comment.nicknameColor || ownNicknameColor
-  const displayProfileImg = comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'
+  const displayProfileImg =
+    comment.profileImg?.trim() || '/images/MoonRabbitSleep2.png'
 
   const [modalState, setModalState] = useState<{
     isOpen: boolean
@@ -128,7 +136,6 @@ export const CommentItem: React.FC<CommentItemProps> = ({
       showModal('error', '삭제에 실패했습니다.')
     }
   }
-
 
   // 댓글 좋아요 토글 함수
   const handleCommentLikeToggle = async () => {
@@ -251,7 +258,8 @@ export const CommentItem: React.FC<CommentItemProps> = ({
   }, [comment.id, isLoggedIn, setUserId])
 
   // 게시글 작성자인지 확인 (댓글 작성자가 아닌 게시글 작성자)
-  const isBoardAuthor = boardAuthorId === userProfile?.id && userId !== comment.userId
+  const isBoardAuthor =
+    boardAuthorId === userProfile?.id && userId !== comment.userId
   const canSelect = isBoardAuthor && depth === 0 && !isSelected
 
   return (

@@ -9,7 +9,7 @@ const TalkSection: React.FC = () => {
   }, [navigate])
 
   return (
-    <section className="w-full max-w-[1400px] mt-8 mb-12 px-4">
+    <section className="w-full max-w-[1400px] mx-auto my-20 px-4">
       <h2
         className="text-2xl md:text-4xl font-mainFont text-center mb-8"
         style={{ color: 'var(--color-mainColor)' }}

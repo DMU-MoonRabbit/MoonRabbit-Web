@@ -37,8 +37,8 @@ const ServiceIntro: React.FC = () => {
   }, [])
 
   return (
-    <section className="w-full max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8">
-      <h2 className="text-2xl md:text-3xl text-center text-mainColor font-mainFont mt-10 md:mt-24 mb-2">
+    <section className="w-full max-w-[1920px] mx-auto px-4 md:px-6 lg:px-8 my-20">
+      <h2 className="text-2xl md:text-4xl text-center text-mainColor font-mainFont md:mt-24 mb-2">
         달토끼 서비스 소개
       </h2>
 
@@ -74,7 +74,10 @@ const ServiceIntro: React.FC = () => {
             혼자 끌어안고 있던 마음을 밤하늘에 띄워보세요.
           </span>
           <span className="block text-mainColor">
-            달토끼가 조용히 듣고, 따뜻하게 위로할게요.
+            AI 상담사 달토끼가 고민을 듣고, 바로 답을 해드릴게요.
+          </span>
+          <span className="block text-mainBlack mt-4">
+            어떤 이야기든 괜찮아요. 달토끼는 언제나 그대 곁에서 귀 기울이고 있을게요.
           </span>
         </p>
 

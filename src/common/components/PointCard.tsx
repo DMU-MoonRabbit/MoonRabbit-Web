@@ -9,7 +9,7 @@ interface PointCardProps {
 const PointCard: React.FC<PointCardProps> = ({
   title,
   imageUrl,
-  description
+  description,
 }) => {
   return (
     <div className="flex flex-col items-start hover:scale-105 duration-300 flex-1">
@@ -19,10 +19,12 @@ const PointCard: React.FC<PointCardProps> = ({
         </h4>
       </div>
       <div 
-        className="rounded-2xl w-full md:h-50 h-32 text-white shadow-md bg-cover bg-center bg-no-repeat"
+        className="rounded-2xl w-full md:h-50 h-32 text-white shadow-md bg-cover bg-center bg-no-repeat md:min-h-[250px]"
         style={{ backgroundImage: `url(${imageUrl})` }}
       />
-      <p className="text-sm text-mainGray font-gothicFont mt-2">{description}</p>
+      <p className="text-sm text-mainGray font-gothicFont mt-2">
+        {description}
+      </p>
     </div>
   )
 }
