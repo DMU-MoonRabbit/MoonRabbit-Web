@@ -18,7 +18,7 @@ const MypageCountSection: React.FC<MypageCountSectionProps> = memo(
       totalBoardCount,
       otherUserBoardCount,
       fetchTotalBoardCount,
-      fetchOtherUserConcerns,
+      fetchOtherUserBoardCount,
     } = useMypageStore()
 
     const { otherUserProfile, fetchUserProfileById } = useUserProfileStore()
@@ -27,12 +27,12 @@ const MypageCountSection: React.FC<MypageCountSectionProps> = memo(
       if (isOwnPage) {
         fetchTotalBoardCount()
       } else if (userId) {
-        fetchOtherUserConcerns(userId, 0)
         fetchUserProfileById(userId)
+        fetchOtherUserBoardCount(userId)
       }
     }, [
       fetchTotalBoardCount,
-      fetchOtherUserConcerns,
+      fetchOtherUserBoardCount,
       fetchUserProfileById,
       userId,
       isOwnPage,

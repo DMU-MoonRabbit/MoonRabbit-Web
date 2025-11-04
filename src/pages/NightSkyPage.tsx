@@ -66,7 +66,7 @@ const NightSkyPage: React.FC = () => {
 
   useEffect(() => {
     fetchConcerns(pageInfo.number)
-  }, [fetchConcerns, pageInfo.number])
+  }, [fetchConcerns, pageInfo.number, selectedCategory])
 
   useEffect(() => {
     fetchUserProfile()
